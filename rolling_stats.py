@@ -3,6 +3,11 @@
 Created on Tue Jun 16 11:04:26 2020
 
 @author: arsii
+
+This script consists of functions for converting unix time to Pandas datetime,
+resampling the dataframe, calculating the rolling statistics, and plotting the 
+timeseries.
+
 """
 
 import os
@@ -58,7 +63,7 @@ def resample_dataframe(df, scale, column):
         Resampled dataframe
     
     """
-    df_rs = df.resample(scale, on=column).sum().reset_index().sort_values(by=column)
+    df_rs = df.resample(scale, on=column).mean().reset_index().sort_values(by=column)
     return df_rs
 
 def rolling_statistics(series,roll,func):

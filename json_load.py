@@ -89,6 +89,6 @@ def load_all_subjects(foldername):
 
 if __name__ == "__main__":
     # give the correct folder here
-    DATA_FOLDER = Path(r'C:/Users/arsii/Documents/Work/Json_test/files/')
+    DATA_FOLDER = Path(r'C:/Users/arsii/Documents/Work/Data/Json/')
     json_dict = load_all_subjects(DATA_FOLDER)
 
