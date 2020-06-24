@@ -18,8 +18,11 @@ http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
-from pyunicorn.timeseries import RecurrencePlot, CrossRecurrencePlot
 
+
+#from pyunicorn.timeseries import RecurrencePlot, CrossRecurrencePlot
+
+'''
 def Create_recurrence_plot(time_series, rr=0.15):
     """
     Create a (n,n) recurrence plot object, where n denotes the 
@@ -77,7 +80,12 @@ def Create_cross_recurrence_plot(x, y, thr=0.15):
     crp = CrossRecurrencePlot(x,y,threshold=thr)
     
     return crp
-    
+
+'''
+
+#%%
+
+
 def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot", 
                          savename = False, savepath = False):
     

@@ -18,12 +18,12 @@ os.chdir(WORK_DIR)
 import numpy as np
 from csv_load import load_all_subjects, load_one_subject
 from rolling_stats import convert_to_datetime, resample_dataframe
-from plot_recurrence import Create_recurrence_plot, Create_cross_recurrence_plot, Show_recurrence_plot, Save_recurrence_plot
+#from plot_recurrence import Create_recurrence_plot, Create_cross_recurrence_plot, Show_recurrence_plot, Save_recurrence_plot
 from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler
 #from pyunicorn.timeseries import RecurrencePlot, CrossRecurrencePlot
 
 #%%
-DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/')
+DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
 csv = load_all_subjects(DATA_FOLDER)
 
 #%%
@@ -39,7 +39,7 @@ Dict keys:
 '''
 ##############################################################################
 #%% App notifications
-df0 = csv[dict_keys[0]]
+df0 = csv[dict_keys[1]]
 # put these on import!!!
 df0['time'] = convert_to_datetime(df0['time'],'s')
 df0 = df0.set_index("time")
@@ -52,7 +52,7 @@ values0 = ordinal_encoding(df0_filt['application_name'].values.reshape(-1,1))
 
 ##############################################################################
 #%% Battery level
-df1 = csv[dict_keys[1]]
+df1 = csv[dict_keys[2]]
 # put these on import!!!
 df1['time'] = convert_to_datetime(df1['time'],'s')
 df1 = df1.set_index("time")
@@ -64,7 +64,7 @@ values1 = resampled.values
 
 ##############################################################################
 #%% ESM data
-df2 = csv[dict_keys[2]]
+df2 = csv[dict_keys[4]]
 # put these on import!!!
 df2['time'] = convert_to_datetime(df2['time'],'s')
 df2 = df2.set_index("time")
@@ -88,7 +88,7 @@ values2 = np.stack(values2[:-1])
 
 ##############################################################################
 #%% Location / day ??
-df3 = csv[dict_keys[3]]
+df3 = csv[dict_keys[0]]
 # put these on import!!!
 df3 = df3.set_index("day")
 values3 = df3["totdist"].values
@@ -98,7 +98,7 @@ values3 = df3["totdist"].values
 
 ##############################################################################
 #%% Screen events
-df4 = csv[dict_keys[4]]
+df4 = csv[dict_keys[3]]
 # put these on import!!!
 df4['time'] = convert_to_datetime(df4['time'],'s')
 df4 = df4.set_index("time")
