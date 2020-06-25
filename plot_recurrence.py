@@ -16,72 +16,21 @@ http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
 """
 
 from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-#from pyunicorn.timeseries import RecurrencePlot, CrossRecurrencePlot
-
-'''
-def Create_recurrence_plot(time_series, rr=0.15):
-    """
-    Create a (n,n) recurrence plot object, where n denotes the 
-    length of the 1D-timeseries. Function requires Pyunicorn library. 
-    Full documentation of Pyunicorn Recurrence Plot function can be found at:
-    http://www.pik-potsdam.de/~donges/pyunicorn/api/timeseries/recurrence_plot.html
-    
-    Parameters
-    ----------
-    time_series : numpy array
-        timesieries must be a numpy array of a shape (time,features)
-    rr : int or float (default=0.15)
-        fixed recurrence rate the plot is build on
-    
-    additional parameters?
-
-    Returns
-    -------
-    rp : recurrence plot object
-        An object containing the recurrence matrix and precalculated metrics. 
-       
-    """
-    
-    rp = RecurrencePlot(time_series, recurrence_rate=rr)
-                  
-    return rp
-
-
-def Create_cross_recurrence_plot(x, y, thr=0.15):
-    """
-    Create a (m,n) cross recurrence plot object, where m and n denotes the 
-    length of the timeseries x and y. Function requires Pyunicorn library. 
-    Full documentation of Pyunicorn Cross Recurrence Plot function can be 
-    found at:
-    http://www.pik-potsdam.de/~donges/pyunicorn/api/timeseries/cross_recurrence_plot.html
-    
-    Parameters
-    ----------
-    x : numpy array
-        timeseries must be a numpy array of a shape (time,features)
-    x : numpy array
-        timeseries must be a numpy array of a shape (time,features)
-    rr : int or float (default=0.15)
-        fixed recurrence rate the plot is build on
-    
-    additional parameters?
-
-    Returns
-    -------
-    crp : cross recurrence plot object
-        An object containing the cross recurrence matrix and precalculated metrics. 
-       
-    """
-    
-    crp = CrossRecurrencePlot(x,y,threshold=thr)
-    
-    return crp
+from pyrqa.computation import RPComputation
+from pyrqa.image_generator import ImageGenerator
+computation = RPComputation.create(settings)
+result = computation.run()
 
 '''
+ImageGenerator.save_recurrence_plot(result.recurrence_matrix_reverse,
+                                    'recurrence_plot.png')
+'''
+
+
+
 
 #%%
 
