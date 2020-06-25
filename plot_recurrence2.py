@@ -16,23 +16,11 @@ http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
 """
 
 from pathlib import Path
-
 import numpy as np
 import matplotlib.pyplot as plt
-from pyrqa.computation import RPComputation
-from pyrqa.image_generator import ImageGenerator
-computation = RPComputation.create(settings)
-result = computation.run()
-
-'''
-ImageGenerator.save_recurrence_plot(result.recurrence_matrix_reverse,
-                                    'recurrence_plot.png')
-'''
 
 
 
-
-#%%
 
 
 def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot", 
