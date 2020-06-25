@@ -35,6 +35,8 @@ def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot",
     recurrence_matrix : numpy array
         Recurrence plot array of a shape (m,n), where m does not have to be 
         equal to n
+    title : str (default = "Recurrence Plot")
+        Plot title
     savename : str (default = False)
         Name used as plot save name. Has to be a type of str
     savepath : Path -object (default = False)

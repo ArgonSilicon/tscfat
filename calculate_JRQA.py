@@ -6,37 +6,83 @@ Created on Thu Jun 25 11:47:09 2020
 @author: arsi
 """
 
-
 from pyrqa.time_series import TimeSeries
 from pyrqa.settings import Settings
-from pyrqa.analysis_type import Joint
-from pyrqa.neighbourhood import FixedRadius
-from pyrqa.metric import EuclideanMetric
-from pyrqa.computation import RQAComputation
+from pyrqa.analysis_type import Classic, Cross
+from pyrqa.neighbourhood import FixedRadius, RadiusCorridor
+from pyrqa.computation import JRQAComputation
+from pyrqa.metric import MaximumMetric, TaxicabMetric
+from pyrqa.settings import JointSettings
+from pyrqa.computation import RPComputation, JRPComputation
 
-data_points_x = [0.9, 0.1, 0.2, 0.3, 0.5, 1.7, 0.4, 0.8, 1.5]
-time_series_x = TimeSeries(values1,
-                           embedding_dimension=2,
-                           time_delay=1)
-data_points_y = [0.3, 1.3, 0.6, 0.2, 1.1, 1.9, 1.3, 0.4, 0.7, 0.9, 1.6]
+def Calculate_JRQA(ts_x,ts_y):
+    """
+    Create a joint recurrence plot object containing RQA results and a recurrence
+    matrix
+    
+    Parameters
+    ----------
+    ts_x : numpy array
+        timeseries must be a numpy array of a shape (time,features)
+    ts_y : numpy array
+        timeseries must be a numpy array of a shape (time,features)
+    
+    additional parameters?
 
-time_series_y = TimeSeries(values3,
+    Returns
+    -------
+    result : pyrqa.result.RQAResult
+        An object containing the recurrence matrix and precalculated metrics. 
+    rec_mat : numpy.ndarray
+        A recurcion matrix array
+    """
+
+    time_series_1 = TimeSeries(ts_x,
                            embedding_dimension=2,
                            time_delay=2)
+    
+    settings_1 = Settings(time_series_1,
+                      analysis_type=Classic,
+                      neighbourhood=FixedRadius(0.75),
+                      similarity_measure=MaximumMetric,
+                      theiler_corrector=1)
 
-time_series = (time_series_x,
-               time_series_x)
+    
+    time_series_2 = TimeSeries(ts_y,
+                             embedding_dimension=2,
+                             time_delay=2)
 
-settings = Settings(time_series,
-                    analysis_type=Cross,
-                    neighbourhood=FixedRadius(0.9),
-                    similarity_measure=EuclideanMetric,
-                    theiler_corrector=0)
 
-computation = RQAComputation.create(settings,
-                                    verbose=True)
-result = computation.run()
-result.min_diagonal_line_length = 2
-result.min_vertical_line_length = 2
-result.min_white_vertical_line_length = 2
-print(result)
+    settings_2 = Settings(time_series_2,
+                      analysis_type=Classic,
+                      neighbourhood=FixedRadius(0.75),
+                      similarity_measure=MaximumMetric,
+                      theiler_corrector=1)
+
+    joint_settings = JointSettings(settings_1,
+                    settings_2)
+
+    computation = JRQAComputation.create(joint_settings,
+                                     verbose=False)
+
+    result = computation.run()
+    result.min_diagonal_line_length = 2
+    result.min_vertical_line_length = 1
+    result.min_white_vertical_line_length = 2
+    
+    computation_2 = JRPComputation.create(joint_settings)
+    result_2 = computation_2.run()
+    cross_rec_mat = result_2.recurrence_matrix
+    
+    return result, cross_rec_mat
+
+if __name__ == "__main__":
+    pass
+
+
+
+
+    
+
+
+
