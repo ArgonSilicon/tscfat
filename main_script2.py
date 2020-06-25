@@ -8,14 +8,17 @@ This is main file
 
 
 """
+# standard library imports
 import os
 from pathlib import Path
 
-WORK_DIR = Path(r'C:/Users/arsii/Documents/Work/Code/')
 WORK_DIR = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
 os.chdir(WORK_DIR)
 
+# third party imports
 import numpy as np
+
+# Local application import
 from csv_load import load_all_subjects, load_one_subject
 from rolling_stats import convert_to_datetime, resample_dataframe
 #from plot_recurrence import Create_recurrence_plot, Create_cross_recurrence_plot, Show_recurrence_plot, Save_recurrence_plot
