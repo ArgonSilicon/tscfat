@@ -28,7 +28,7 @@ ft.loc[mask,"encoded"] = encoded
 
 #%%
 
-sns.lineplot(x="time",y="battery_level",data=df_resampled)
+sns.lineplot(x='index',y="application_name",data=df0_filt)
 plt.title('Battery level plot')
 plt.xticks(rotation=45)
 plt.show()

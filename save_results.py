@@ -10,12 +10,11 @@ import json
 
 def dump_to_json(result,savepath,filename):
     
-    """ Convert result to json.
+    """ Convert result object to json and save it into given folder.
     """
     
-    
     #assert isinstance(result, pyrqa.result.RQAResult), "Filetype should be numpy.ndarray."
-    assert isinstance(filename,str), "Invalid savename type."
+    assert isinstance(filename,str), "Invalid savename type, should be str."
     
     if savepath.exists():
         
