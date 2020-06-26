@@ -15,7 +15,7 @@ from pyrqa.computation import RQAComputation
 from pyrqa.computation import RPComputation
 
 
-def Calculate_RQA(ts):
+def Calculate_RQA(ts,ED,TD,RA):
     """
     Create a recurrence plot object containing RQA results and a recurrence
     matrix
@@ -36,12 +36,12 @@ def Calculate_RQA(ts):
     """
     
     time_series = TimeSeries(ts,
-                             embedding_dimension=2,
-                             time_delay=2)
+                             embedding_dimension=ED,
+                             time_delay=TD)
     
     settings = Settings(time_series,
                         analysis_type=Classic,
-                        neighbourhood=FixedRadius(0.65),
+                        neighbourhood=FixedRadius(0.05),
                         similarity_measure=EuclideanMetric,
                         theiler_corrector=1)
     
