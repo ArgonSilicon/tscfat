@@ -27,6 +27,7 @@ from calculate_RQA import Calculate_RQA
 from plot_recurrence2 import Show_recurrence_plot
 from save_results import dump_to_json
 from plot_timeseries2 import show_timeseries
+from save2mat import save2mat
 
 #%% Load the data into dictionary and extract keys 
 DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
@@ -43,6 +44,7 @@ df0 = df0.set_index("time")
 #%% filter dataframe, extract timeseries and encode labels 
 df0_filt = df0.filter(["time","application_name",])
 timeseries0 = ordinal_encoding(df0_filt['application_name'].values.reshape(-1,1))
+
 
 #%% calculate receursion plot and metrics
 
@@ -65,7 +67,12 @@ Show_recurrence_plot(mat0,TITLE,FIGPATH,FIGNAME)
 # set correct names and save metrics as json 
 RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
 RESNAME = "metrics_0.json"
-dump_to_json(res0,RESPATH,RESNAME)          
+dump_to_json(res0,RESPATH,RESNAME)  
+
+# save the timeseries
+TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+TSNAME = "timeseries_0.mat"
+save2mat(timeseries0,TSPATH,TSNAME)        
 
 #%% Plot timeseries and save figure
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
@@ -106,7 +113,12 @@ Show_recurrence_plot(mat1,TITLE,FIGPATH,FIGNAME)
 # set correct names and save metrics as json 
 RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
 RESNAME = "metrics_1.json"
-dump_to_json(res1,RESPATH,RESNAME)          
+dump_to_json(res1,RESPATH,RESNAME)   
+
+# save the timeseries
+TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+TSNAME = "timeseries_1.mat"
+save2mat(timeseries1,TSPATH,TSNAME)       
 
 #%% Plot timeseries and save figure
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
@@ -157,7 +169,12 @@ Show_recurrence_plot(mat2,TITLE,FIGPATH,FIGNAME)
 # set correct names and save metrics as json 
 RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
 RESNAME = "metrics_2.json"
-dump_to_json(res2,RESPATH,RESNAME)          
+dump_to_json(res2,RESPATH,RESNAME)  
+
+# save the timeseries
+TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+TSNAME = "timeseries_2.mat"
+save2mat(timeseries2,TSPATH,TSNAME)        
 
 #%% Plot timeseries and save figure -> How to plot these!!!
 #FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
@@ -192,7 +209,12 @@ Show_recurrence_plot(mat3,TITLE,FIGPATH,FIGNAME)
 # set correct names and save metrics as json 
 RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
 RESNAME = "metrics_3.json"
-dump_to_json(res3,RESPATH,RESNAME)          
+dump_to_json(res3,RESPATH,RESNAME)   
+
+# save the timeseries
+TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+TSNAME = "timeseries_3.mat"
+save2mat(timeseries3,TSPATH,TSNAME)       
 
 #%% Plot timeseries and save figure
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
@@ -234,6 +256,10 @@ RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
 RESNAME = "metrics_4.json"
 dump_to_json(res4,RESPATH,RESNAME)          
 
+# save the timeseries
+TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+TSNAME = "timeseries_4.mat"
+save2mat(timeseries4,TSPATH,TSNAME)
 #%% Plot timeseries and save figure
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_4"
