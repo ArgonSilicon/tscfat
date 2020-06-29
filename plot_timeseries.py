@@ -1,58 +1,46 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun 23 12:51:52 2020
+Created on Fri Jun 26 14:56:03 2020
 
-@author: arsii
+@author: arsi
 """
-
-from rolling_stats import convert_to_datetime, resample_dataframe
 import matplotlib.pyplot as plt
 import seaborn as sns
-#%%
-df_resampled = resample_dataframe(df, 'D', 'time')
-#%%
-timeseries = df_resampled.iloc[:,3].dropna().values.reshape(-1,1)
-timeseries = df.iloc[:,3].dropna().values.reshape(-1,1)
-#%% ESM asnwers encoder
-ft = df.filter(["time","id","answer","type"])
 
-# mask
-mask = df["type"] == 6
-# encode
-encoded = one_hot_encoding(ft[mask]["answer"].values.reshape(-1,1))
-encoded = ordinal_encoding(ft[mask]["answer"].values.reshape(-1,1))
-# replace values
-ft["encoded"] = np.empty((len(ft), 0)).tolist()
-ft.loc[mask,"encoded"] = encoded
-
-
-#%%
-
-sns.lineplot(x='index',y="application_name",data=df0_filt)
-plt.title('Battery level plot')
-plt.xticks(rotation=45)
-plt.show()
-
-#%%
-sns.lineplot(x="time",y="screen_status",data=df)
-plt.title('Screen status')
-plt.xticks(rotation=45)
-plt.show()
-
-#%% Test Pyunicorn
-# Parameters for recursion
-DIM = 1  # Embedding dimension
-TAU = 0  # Embedding delay
-
-#  Settings for the recurrence plot
-EPS = 0.05  # Fixed threshold
-RR = 0.05   # Fixed recurrence rate
-# Distance metric in phase space ->
-# Possible choices ("manhattan","euclidean","supremum")
-METRIC = "supremum"
-
-#%%
-rp = Create_recurrence_plot(timeseries,recurrence_rate=0.3)
-rm = rp.recurrence_matrix()
-Show_recurrence_plot(rm)
-
+def show_timeseries(x_name,
+                    y_name,
+                    title,
+                    xlab,
+                    ylab,
+                    savepath = False, 
+                    savename = False):
+    """ Write docstrings
+    """
+    
+    # Insert assertions
+    
+    plt.figure(figsize=(15,15))
+    plt.scatter(x_name, y_name)
+    plt.title(title)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
+    plt.xticks(rotation=45)
+    
+    if not savename and not savepath:
+        plt.show()
+        
+    elif savename and savepath:
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+        
+if __name__ == "__main__":
+    pass

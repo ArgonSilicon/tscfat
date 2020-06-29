@@ -16,27 +16,17 @@ http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
 """
 
 from pathlib import Path
-
 import numpy as np
 import matplotlib.pyplot as plt
-from pyrqa.computation import RPComputation
-from pyrqa.image_generator import ImageGenerator
-computation = RPComputation.create(settings)
-result = computation.run()
-
-'''
-ImageGenerator.save_recurrence_plot(result.recurrence_matrix_reverse,
-                                    'recurrence_plot.png')
-'''
 
 
 
 
-#%%
 
-
-def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot", 
-                         savename = False, savepath = False):
+def Show_recurrence_plot(recurrence_matrix,
+                         title="Recurrence Plot",
+                         savepath = False, 
+                         savename = False):
     
     """
     Plots given recurrence plot. Optionally, the plot can be saved 
@@ -47,6 +37,8 @@ def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot",
     recurrence_matrix : numpy array
         Recurrence plot array of a shape (m,n), where m does not have to be 
         equal to n
+    title : str (default = "Recurrence Plot")
+        Plot title
     savename : str (default = False)
         Name used as plot save name. Has to be a type of str
     savepath : Path -object (default = False)
@@ -57,6 +49,7 @@ def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot",
     -------
 
     """
+    
     assert isinstance(recurrence_matrix,np.ndarray), "Recurrence matrix type is not np.ndarray."
     
     plt.figure(figsize=(5, 5))
@@ -81,6 +74,7 @@ def Show_recurrence_plot(recurrence_matrix,title="Recurrence Plot",
     else:
         raise Exception("Arguments were not given correctly.")
     
+''' REMOVE THIS!!!
 def Save_recurrence_plot(rp,savename,savepath):
     """
     SAves given recurrence plot matrix as a numpy array.
@@ -107,7 +101,7 @@ def Save_recurrence_plot(rp,savename,savepath):
             np.save(outfile, rp)
     else:
         raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-
+'''
 
 if __name__ == "__main__":
     pass
