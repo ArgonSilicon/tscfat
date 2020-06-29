@@ -24,9 +24,9 @@ from csv_load import load_all_subjects
 from rolling_stats import convert_to_datetime
 from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler
 from calculate_RQA import Calculate_RQA
-from plot_recurrence2 import Show_recurrence_plot
+from plot_recurrence import Show_recurrence_plot
 from save_results import dump_to_json
-from plot_timeseries2 import show_timeseries
+from plot_timeseries import show_timeseries
 from save2mat import save2mat
 
 #%% Load the data into dictionary and extract keys 
