@@ -84,7 +84,7 @@ def rolling_statistics(series,roll,func):
         Rolling statistics time series.
     
     """
-    rs = series.rolling(roll).apply(lambda x: x.autocorr(), raw=False)
+    rs = series.rolling(roll).apply(lambda x: x.var(), raw=False)
     return rs
 
 def plot_roll_stats(rs,title,xlab,ylab,savename = False, savepath = False):
@@ -137,7 +137,7 @@ def plot_roll_stats(rs,title,xlab,ylab,savename = False, savepath = False):
 
 if __name__ == "__main__":
     # this code is for testing purposes only
-    data_folder = Path("C:/Users/arsii/Documents/Work/StudentLife/dataset/call_log/")
+    data_folder = Path(r'/home/arsi/Documents/SpecialAssignment/StudentLife/dataset/call_log/')
     files = os.listdir(data_folder)
     csv_list = []
     #%%

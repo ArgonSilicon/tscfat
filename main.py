@@ -18,46 +18,40 @@ os.chdir(WORK_DIR)
 
 # third party imports
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Local application import
 from csv_load import load_all_subjects
-from rolling_stats import convert_to_datetime
+
 from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
 from save_results import dump_to_json
-from plot_timeseries import show_timeseries
+from plot_timeseries import show_timeseries, show_features
 from save2mat import save2mat
 
-#%% Load the data into dictionary and extract keys 
-DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
-csv = load_all_subjects(DATA_FOLDER)
-dict_keys = list(csv.keys())
+
 
 ###############################################################################
-#%% choose App notifications
-df0 = csv[dict_keys[1]]
-# put these on import!!!
-df0['time'] = convert_to_datetime(df0['time'],'s')
-df0 = df0.set_index("time")
-
-#%% filter dataframe, extract timeseries and encode labels 
-df0_filt = df0.filter(["time","application_name",])
-timeseries0 = ordinal_encoding(df0_filt['application_name'].values.reshape(-1,1))
-
-
-#%% calculate receursion plot and metrics
-
-# Recursion plot settings
+#%% Recursion plot default parameters
 ED = 1 # embedding dimensions
 TD = 1 # time delay
 RA = 0.05 # neigborhood radius
+FTC = [np.min,np.max,np.mean,np.std] # features to be calculated (functions)
 
-# Calculate recursion plot and metrix
-res0, mat0 = Calculate_RQA(timeseries0,ED,TD,RA)
+###############################################################################
+#%% Load the data into dictionary and extract keys 
+DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
+csv_dict = load_all_subjects(DATA_FOLDER)
+dict_keys = list(csv_dict.keys())
+
+###############################################################################
+#%% choose App notifications, extract timeseries, calculate recursion plot and metrics
+df0 = csv_dict[dict_keys[1]]
+df0['Encoded'] = ordinal_encoding(df0['application_name'].values.reshape(-1,1))
+res0, mat0 = Calculate_RQA(df0['Encoded'].values,ED,TD,RA)
      
 #%% show recursion plot and save figure
-
 # set correct names and plot title
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "recplot_0"
@@ -72,15 +66,19 @@ dump_to_json(res0,RESPATH,RESNAME)
 # save the timeseries
 TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
 TSNAME = "timeseries_0.mat"
-save2mat(timeseries0,TSPATH,TSNAME)        
+save2mat(df0['Encoded'].values,TSPATH,TSNAME)        
 
-#%% Plot timeseries and save figure
+#% Plot timeseries and save figure
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_0"
-show_timeseries(df0_filt.index,df0_filt.application_name,"Application usage","time","Applications",FIGPATH,FIGNAME)
+show_timeseries(df0.index,df0.application_name,"Application usage","time","Applications",FIGPATH,FIGNAME)
+
+#%% Extract features from timeseries, plot, and save
+FIGNAME = "features_0"
+show_features(df0['Encoded'],"title","xlab","ylab")
 
 
-##############################################################################
+###############################################################################
 #%% Choose Battery level
 df1 = csv[dict_keys[2]]
 # put these on import!!!
@@ -98,6 +96,7 @@ timeseries1 = resampled.values
 ED = 1 # embedding dimensions
 TD = 1 # time delay
 RA = 0.05 # neigborhood radius
+
 
 # Calculate recursion plot and metrix
 res1, mat1 = Calculate_RQA(timeseries1,ED,TD,RA)
@@ -121,9 +120,12 @@ TSNAME = "timeseries_1.mat"
 save2mat(timeseries1,TSPATH,TSNAME)       
 
 #%% Plot timeseries and save figure
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_1"
 show_timeseries(resampled.index,resampled.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
+
+#%% Extract features from timeseries, plot, and save
+
+
 
 ##############################################################################
 #%% ESM data
@@ -264,8 +266,6 @@ save2mat(timeseries4,TSPATH,TSNAME)
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_4"
 show_timeseries(df4_filt.index,df4_filt.screen_status,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-
-
 
 
 
