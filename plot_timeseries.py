@@ -5,8 +5,52 @@ Created on Fri Jun 26 14:56:03 2020
 
 @author: arsi
 """
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from interpolate_missing import interpolate_missing
+from arma import arma
+
+def show_features(timeseries,               
+                  title,
+                  xlab,
+                  ylab,
+                  window = 24,
+                  mp = 1,
+                  cl = "right",
+                  interpolation = False,
+                  savepath = False,
+                  savename = False,
+                  ):
+    
+    # TODO: write assertions here
+    # TODO: write docstrings
+    features_to_calculate = [np.min,np.max,np.mean,np.std] 
+    if interpolation:
+        
+        assert isinstance(interpolation,str), "Interpolation type is: {}, not str".format(type(interpolation))
+        
+        timeseries, missing_mask = interpolate_missing(timeseries,interpolation)
+    
+    rolling_ts = timeseries.rolling(window, 
+                                    min_periods = mp, 
+                                    closed = cl)
+    
+    features = rolling_ts.aggregate(features_to_calculate)
+    
+    features['ar_1'] = (timeseries.iloc[:,0]).rolling(window).apply(arma)
+    #plt.subplots(figsize=(10,10))
+    
+    #plt.plot(features['ar_1'], label = "Autoregression_1")
+    #plt.plot(features['screen_status']['std'],label="STD")
+    features.plot()
+    plt.title('Screen status total count / AR(1)')
+    plt.xlabel('Day')
+    plt.ylabel("Value")
+    plt.xticks(rotation=45)
+    plt.legend()
+    plt.show()
 
 def show_timeseries(x_name,
                     y_name,
@@ -15,10 +59,42 @@ def show_timeseries(x_name,
                     ylab,
                     savepath = False, 
                     savename = False):
-    """ Write docstrings
+    
+    #  TODO: fill docstrings!
+    
+    """ Timeseries docstrings go here 
+    
+   
+    
+    Parameters
+    ----------
+    x_name : TYPE
+        DESCRIPTION.
+    y_name : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlab : TYPE
+        DESCRIPTION.
+    ylab : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
     """
     
-    # Insert assertions
+    # TODO: Insert assertions!
     
     plt.figure(figsize=(15,15))
     plt.scatter(x_name, y_name)
@@ -27,10 +103,10 @@ def show_timeseries(x_name,
     plt.ylabel(ylab)
     plt.xticks(rotation=45)
     
-    if not savename and not savepath:
+    if not all((savename,savepath)):
         plt.show()
         
-    elif savename and savepath:
+    elif all((savename,savepath)):
         
         assert isinstance(savename,str), "Invalid savename type."
         

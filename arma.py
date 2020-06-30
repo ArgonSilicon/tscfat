@@ -3,35 +3,39 @@
 Created on Tue Jun  9 11:36:18 2020
 
 @author: arsii
+
+Calculate ARMA model for given timeseries and return the results.
+
 """
-import numpy as np
+
 import pandas as pd
-
-from statsmodels.graphics.tsaplots import plot_pacf
+import numpy as np
 from statsmodels.tsa.arima_model import ARMA
-from statsmodels.tsa.stattools import periodogram
-import matplotlib.pyplot as plt
-
-#%%
-df = pd.read_excel("C:/Users/arsii/Documents/Work/Suunto/Move_2020_06_05_18_28_21_Running.xlsx")
-#df = pd.read_excel("Move_2020_06_05_18_28_21_Juoksu.xlsx")
-#%%
-hr = df.iloc[1:,115].dropna()
-
-#%%
-plt.plot(hr)
-plt.show()
 
 
+def arma(series,ar=1,ma=0):
+    """ Calculate ARMA model for given timeseries.
 
-#%%
-plot_pacf(hr.values,lags=20,alpha=0.05)
-#%%
-mod = ARMA(hr.values,order=(1,1))
-res = mod.fit()
-print(res.params)
-
-#%%
-pg = periodogram(hr.values)
-plt.plot(pg)
-plt.xlim([0,100])
+    Parameters
+    ----------
+    series : pandas series or numpy array
+        Timeseries for ARMA model
+    ar : int (default = 1)
+        ARMA model autoregression parameter
+    ma : int (default = 0)
+        ARMA model moving average parameter
+    
+    Returns
+    -------
+    result : ARMAResultWrapper object
+        Object containing the ARMA results
+    
+    """
+    '''
+    assert isinstance(series,(pd.core.series.Series, np.ndarray), "Timeseries should be a Pandas series type or an numpy array."
+    assert isinstance(ar,int), "Unit type should be int, not {}".format(type(ar))
+    assert isinstance(ma,int), "Unit type should be int, not {}".format(type(ma))
+    '''
+    model = ARMA(series, order=(ar,ma))
+    result = model.fit()
+    return result.params[1]

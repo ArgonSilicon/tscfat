@@ -16,6 +16,45 @@ import pandas as pd
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join, exists
+from rolling_stats import convert_to_datetime
+
+def convert_time(df, colname = None, conv_type = 's'):
+    
+    """ Convert dataframe time to pandas datetime object and set the 
+    corrensponding column as a dataframe index.
+
+    Parameters
+    ----------
+    df : pandas dataframe
+        pandas dataframe 
+    colname : str, optional
+        Name of the column to be converted. The default is None.
+
+    Returns
+    -------
+    df : pandas dataframe
+        pandas datafrane with converted column
+
+    """
+    
+    if colname == None:
+        names = [('time','s'),('day','D')]
+        for name in names:
+            if name[0] in df.columns:
+                try: 
+                    df[name[0]] = convert_to_datetime(df[name[0]],name[1])
+                except:
+                    print('Cannot convert column named: \"{}\" to datetime.'.format(name[0]))
+                df = df.set_index(name[0])
+                
+    else:
+        try:
+            df[colname] = convert_to_datetime(df[colname],conv_type)
+            df = df.set_index(colname)
+        except:
+                print('Cannot convert column named: \"{}\" to datetime.'.format(name[0]))
+    return df
+
     
 def load_one_subject(open_name):
     """
@@ -39,6 +78,7 @@ def load_one_subject(open_name):
 
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file)
+        df = convert_time(df)
         file_name = open_name.stem
         return file_name, df
     
@@ -87,7 +127,5 @@ def load_all_subjects(foldername):
        
     
 if __name__ == "__main__":
-    # give the correct folder here
-    DATA_FOLDER = Path(r'C:/Users/arsii/Documents/Work/StudentLife/dataset/call_log/')
-    csv = load_all_subjects(DATA_FOLDER)
+    pass
     
