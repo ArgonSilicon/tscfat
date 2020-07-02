@@ -35,3 +35,21 @@ def decode_string_3(cell_value):
 
 def custom_resampler(array_like):
     return array_like.values               
+
+def normalize_values(array,maximum=1,minimum=0):
+
+    X = array.reshape(-1,1)
+
+    X_std = (X -X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+
+    X_scaled = X_std * (maximum - minimum) + minimum
+    
+    return X_scaled
+    
+    """
+    # this is how it's done with sklearn.preprocessing.MinMaxScaler
+    array.reshape(-1,1)
+    scaler = MinMaxScaler()
+    scaler.fit(data)
+    scaled_data = scaler.transform(data)
+    """
