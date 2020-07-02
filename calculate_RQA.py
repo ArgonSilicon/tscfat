@@ -41,7 +41,7 @@ def Calculate_RQA(ts,ED,TD,RA):
     
     settings = Settings(time_series,
                         analysis_type=Classic,
-                        neighbourhood=FixedRadius(0.05),
+                        neighbourhood=FixedRadius(0.85),
                         similarity_measure=EuclideanMetric,
                         theiler_corrector=1)
     
