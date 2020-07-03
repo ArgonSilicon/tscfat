@@ -34,14 +34,16 @@ def Calculate_RQA(ts,ED,TD,RA):
     rec_mat : numpy.ndarray
         A recurcion matrix array
     """
-    
+    print(ED)
+    print(TD)
+    print(RA)
     time_series = TimeSeries(ts,
                              embedding_dimension=ED,
                              time_delay=TD)
     
     settings = Settings(time_series,
                         analysis_type=Classic,
-                        neighbourhood=FixedRadius(0.85),
+                        neighbourhood=FixedRadius(RA),
                         similarity_measure=EuclideanMetric,
                         theiler_corrector=1)
     
