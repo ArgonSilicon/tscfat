@@ -11,6 +11,7 @@ This is main file
 # standard library imports
 import os
 from pathlib import Path
+import json
 
 # change correct working directory
 WORK_DIR = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
@@ -19,6 +20,7 @@ os.chdir(WORK_DIR)
 # third party imports
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Local application import
 from csv_load import load_all_subjects
@@ -31,14 +33,15 @@ from plot_timeseries import show_timeseries, show_features
 from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
+from json_load import load_one_subject
 
-
+#%%
 
 ###############################################################################
 #%% Recursion plot default parameters
-ED = 1 # embedding dimensions
-TD = 1 # time delay
-RA = 0.05 # neigborhood radius
+ED = 5 # embedding dimensions
+TD = 2 # time delay
+RA = 0.1# neigborhood radius
 FTC = [np.min,np.max,np.mean,np.std] # features to be calculated (functions)
 
 #############################################################df2.loc[mask3,"answer"] = df2.loc[mask3,"answer"].map(decode_string_3)##################
@@ -47,12 +50,33 @@ DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys())
 
+#%% Process App notfications
+df = csv_dict[dict_keys[1]]
+process_apps(df)
+'''
 ###############################################################################
 #%% choose App notifications, extract timeseries, calculate recursion plot and metrics
+DICT_PATH = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
+DICT_NAME = 'labels_dict.json'
+loadname = DICT_PATH / DICT_NAME
+_,labels = load_one_subject(loadname)
+
+#%%
 df0 = csv_dict[dict_keys[1]]
 df0['Encoded'] = ordinal_encoding(df0['application_name'].values.reshape(-1,1))
-res0, mat0 = Calculate_RQA(df0['Encoded'].values,ED,TD,RA)
-     
+df0['group'] = [labels[value] for value in df0['application_name'].values]
+df0['Encoded_group'] = ordinal_encoding(df0['group'].values.reshape(-1,1))
+#enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,4)))
+Colnames = ['Communication','Entertainment','Other','Sports','Work/Study']
+enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,1)),columns=Colnames,index=df0.index)
+df0 = pd.concat([df0,enc_df], axis=1, join='outer') 
+df0_filt = df0.filter(["time",*Colnames])
+resampled = df0_filt.resample("H").sum()
+
+timeseries1 = resampled.to_numpy()
+#%%
+res0, mat0 = Calculate_RQA(timeseries1,ED,TD,RA)
+sim0 = calculate_similarity(timeseries1,'euclidean')
 #%% show recursion plot and save figure
 # set correct names and plot title
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
@@ -73,12 +97,12 @@ save2mat(df0['Encoded'].values,TSPATH,TSNAME)
 #% Plot timeseries and save figureShow_recurrence_plot(sim2)
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_0"
-show_timeseries(df0.index,df0.application_name,"Application usage","time","Applications",FIGPATH,FIGNAME)
+show_timeseries(df0.index,df0.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
 
 #%% Extract features from timeseries, plot, and save
 FIGNAME = "features_0"
 show_features(df0['Encoded'],"title","xlab","ylab")
-
+'''
 
 ###############################################################################
 #%% Choose Battery level
@@ -90,18 +114,20 @@ df1 = df1.set_index("time")
 #%% filter
 df1_filt = df1.filter(["time","battery_level",])
 resampled = df1_filt.resample("H").mean()
+resampled = resampled.drop(columns='Other')
 timeseries1 = resampled.values
 
 #%% calculate receursion plot and metrics
 
 # Recursion plot settings
-ED = 1 # embedding dimensions
-TD = 1 # time delay
-RA = 0.05 # neigborhood radius
+ED = 2 # embedding dimensions
+TD = 2 # time delay
+RA = 0.01 # neigborhood radius
 
 
 # Calculate recursion plot and metrix
 res1, mat1 = Calculate_RQA(timeseries1,ED,TD,RA)
+
 
 #%% show recursion plot and save figure
 
@@ -126,7 +152,6 @@ FIGNAME = "timeseries_1"
 show_timeseries(resampled.index,resampled.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
 
 #%% Extract features from timeseries, plot, and save
-
 
 
 ###############################################Show_recurrence_plot(sim2)###############################
