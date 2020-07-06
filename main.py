@@ -24,7 +24,7 @@ import pandas as pd
 
 # Local application import
 from csv_load import load_all_subjects
-
+import process_apps, process_ESM, process_battery, process_screen_events, process_location
 from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
@@ -35,132 +35,30 @@ from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
 from json_load import load_one_subject
 
-#%%
 
 ###############################################################################
-#%% Recursion plot default parameters
-ED = 5 # embedding dimensions
-TD = 2 # time delay
-RA = 0.1# neigborhood radius
-FTC = [np.min,np.max,np.mean,np.std] # features to be calculated (functions)
-
-#############################################################df2.loc[mask3,"answer"] = df2.loc[mask3,"answer"].map(decode_string_3)##################
-#%% Load the data into dictionary and extract keys 
+#%% Load the data
 DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys())
 
+###############################################################################
 #%% Process App notfications
 df = csv_dict[dict_keys[1]]
-process_apps(df)
-'''
-###############################################################################
-#%% choose App notifications, extract timeseries, calculate recursion plot and metrics
-DICT_PATH = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
-DICT_NAME = 'labels_dict.json'
-loadname = DICT_PATH / DICT_NAME
-_,labels = load_one_subject(loadname)
-
-#%%
-df0 = csv_dict[dict_keys[1]]
-df0['Encoded'] = ordinal_encoding(df0['application_name'].values.reshape(-1,1))
-df0['group'] = [labels[value] for value in df0['application_name'].values]
-df0['Encoded_group'] = ordinal_encoding(df0['group'].values.reshape(-1,1))
-#enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,4)))
-Colnames = ['Communication','Entertainment','Other','Sports','Work/Study']
-enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,1)),columns=Colnames,index=df0.index)
-df0 = pd.concat([df0,enc_df], axis=1, join='outer') 
-df0_filt = df0.filter(["time",*Colnames])
-resampled = df0_filt.resample("H").sum()
-
-timeseries1 = resampled.to_numpy()
-#%%
-res0, mat0 = Calculate_RQA(timeseries1,ED,TD,RA)
-sim0 = calculate_similarity(timeseries1,'euclidean')
-#%% show recursion plot and save figure
-# set correct names and plot title
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-FIGNAME = "recplot_0"
-TITLE = "AppNotifications Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-Show_recurrence_plot(mat0,TITLE,FIGPATH,FIGNAME)
-
-# set correct names and save metrics as json 
-RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
-RESNAME = "metrics_0.json"
-dump_to_json(res0,RESPATH,RESNAME)  
-
-# save the timeseries
-TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
-TSNAME = "timeseries_0.mat"
-save2mat(df0['Encoded'].values,TSPATH,TSNAME)        
-
-#% Plot timeseries and save figureShow_recurrence_plot(sim2)
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-FIGNAME = "timeseries_0"
-show_timeseries(df0.index,df0.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
-
-#%% Extract features from timeseries, plot, and save
-FIGNAME = "features_0"
-show_features(df0['Encoded'],"title","xlab","ylab")
-'''
+df_r = process_apps.process_apps(df)
 
 ###############################################################################
-#%% Choose Battery level
-df1 = csv[dict_keys[2]]
-# put these on import!!!
-df1['time'] = convert_to_datetime(df1['time'],'s')
-df1 = df1.set_index("time")
+#%% Process Battery level
+df1 = csv_dict[dict_keys[2]]
+df1_r = process_battery.process_battery(df1)
 
-#%% filter
-df1_filt = df1.filter(["time","battery_level",])
-resampled = df1_filt.resample("H").mean()
-resampled = resampled.drop(columns='Other')
-timeseries1 = resampled.values
-
-#%% calculate receursion plot and metrics
-
-# Recursion plot settings
-ED = 2 # embedding dimensions
-TD = 2 # time delay
-RA = 0.01 # neigborhood radius
-
-
-# Calculate recursion plot and metrix
-res1, mat1 = Calculate_RQA(timeseries1,ED,TD,RA)
-
-
-#%% show recursion plot and save figure
-
-# set correct names and plot title
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-FIGNAME = "recplot_1"
-TITLE = "Battery level Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-Show_recurrence_plot(mat1,TITLE,FIGPATH,FIGNAME)
-
-# set correct names and save metrics as json 
-RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
-RESNAME = "metrics_1.json"
-dump_to_json(res1,RESPATH,RESNAME)   
-
-# save the timeseries
-TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
-TSNAME = "timeseries_1.mat"
-save2mat(timeseries1,TSPATH,TSNAME)       
-
-#%% Plot timeseries and save figure
-FIGNAME = "timeseries_1"
-show_timeseries(resampled.index,resampled.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-
-#%% Extract features from timeseries, plot, and save
-
-
-###############################################Show_recurrence_plot(sim2)###############################
-#%% ESM data
+###############################################################################
+#%% Process ESM data
 df2 = csv_dict[dict_keys[4]]
-# put these on import!!!
-#df2['time'] = convert_to_datetime(df2['time'],'s')
-#df2 = df2.set_index("time")
-# decode answer values
+df2_r = process_ESM.process_ESM(df2)
+
+###############################################################################
+'''
 mask1 = df2["type"] == 1
 mask2 = df2["type"] == 2
 mask3 = df2["type"] == 3
@@ -224,14 +122,16 @@ save2mat(timeseries2,TSPATH,TSNAME)
 #FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 #FIGNAME = "timeseries_2"
 #show_timeseries(resampled.index,resampled.battery_level,"ESM","time","Level",FIGPATH,FIGNAME)
-
+'''
 
 ##############################################################################
 #%% Location / day ??
-df3 = csv[dict_keys[0]]
+df3 = csv_dict[dict_keys[0]]
 # put these on import!!!
 df3 = df3.set_index("day")
 timeseries3 = df3["totdist"].values # what to choose?
+process_location(df3)
+'''
 #%% calculate receursion plot and metrics
 
 # Recursion plot settings
@@ -265,13 +165,16 @@ FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_3"
 show_timeseries(df3.index,df3.totdist,"Total distance travelled / daily binned","time","Level",FIGPATH,FIGNAME)
 
-
+'''
 ##############################################################################
 #%% Screen events
-df4 = csv[dict_keys[3]]
+df4 = csv_dict[dict_keys[3]]
 # put these on import!!!
 df4['time'] = convert_to_datetime(df4['time'],'s')
 df4 = df4.set_index("time")
+
+process_screen_events(df4)
+'''
 #%% filter
 df4_filt = df4.filter(["time","screen_status",])
 resampled4 = df4_filt.resample("H").count()
@@ -308,6 +211,6 @@ save2mat(timeseries4,TSPATH,TSNAME)
 FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
 FIGNAME = "timeseries_4"
 show_timeseries(df4_filt.index,df4_filt.screen_status,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-
+'''
 
 

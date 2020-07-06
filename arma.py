@@ -36,6 +36,7 @@ def arma(series,ar=1,ma=0):
     assert isinstance(ar,int), "Unit type should be int, not {}".format(type(ar))
     assert isinstance(ma,int), "Unit type should be int, not {}".format(type(ma))
     '''
+    #series.index = series.index.to_period('H')
     model = ARMA(series, order=(ar,ma))
     result = model.fit()
     return result.params[1]

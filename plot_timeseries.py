@@ -26,26 +26,38 @@ def show_features(timeseries,
     
     # TODO: write assertions here
     # TODO: write docstrings
-    features_to_calculate = [np.min,np.max,np.mean,np.std] 
+    #features_to_calculate = [np.min,np.max,np.mean,np.std] 
+    features_to_calculate = [np.mean,np.std]
+    
     if interpolation:
         
         assert isinstance(interpolation,str), "Interpolation type is: {}, not str".format(type(interpolation))
         
         timeseries, missing_mask = interpolate_missing(timeseries,interpolation)
     
+    #print(timeseries)
+    
     rolling_ts = timeseries.rolling(window, 
                                     min_periods = mp, 
                                     closed = cl)
     
+    #print(rolling_ts)
     features = rolling_ts.aggregate(features_to_calculate)
     
-    features['ar_1'] = (timeseries.iloc[:,0]).rolling(window).apply(arma)
-    #plt.subplots(figsize=(10,10))
+    #print(features)
     
+    # features['ar_1'] = (timeseries.iloc[:,0]).rolling(window).apply(arma)
+    # plt.subplots(figsize=(10,10))
+    n = timeseries.shape[0]
+    timeseries_noise = timeseries + 0.00001*np.random.rand(n,)
+    features['ar_1'] = timeseries_noise.rolling(window).apply(arma)
+    #features['Observations'] = timeseries.values
     #plt.plot(features['ar_1'], label = "Autoregression_1")
     #plt.plot(features['screen_status']['std'],label="STD")
+    
+    
     features.plot()
-    plt.title('Screen status total count / AR(1)')
+    plt.title(title)
     plt.xlabel('Day')
     plt.ylabel("Value")
     plt.xticks(rotation=45)
