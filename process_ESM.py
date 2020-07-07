@@ -26,7 +26,7 @@ from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, d
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
 from save_results import dump_to_json
-from plot_timeseries import show_timeseries, show_features
+from plot_timeseries import show_timeseries_scatter, show_features
 from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
@@ -69,6 +69,7 @@ def process_ESM(df):
     timeseries = resampled.values
     timeseries = np.stack(timeseries[:-1])
     print(timeseries.shape)
+    
     #%% calculate receursion plot and metrics
     # similarity
     sim = calculate_similarity(timeseries,'euclidean')
@@ -101,6 +102,8 @@ def process_ESM(df):
     #FIGNAME = "timeseries_2"
     #show_timeseries(resampled.index,resampled.battery_level,"ESM","time","Level",FIGPATH,FIGNAME)
     #&& how about features???
+    #%% Extract features from timeseries, plot, and save
+    #show_features(timeseries,"ESM","xlab","ylab")
     return resampled
     
 if __name__ == "__main__":

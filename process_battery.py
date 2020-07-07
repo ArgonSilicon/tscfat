@@ -27,7 +27,7 @@ from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, d
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
 from save_results import dump_to_json
-from plot_timeseries import show_timeseries, show_features
+from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features
 from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
@@ -74,11 +74,12 @@ def process_battery(df):
     save2mat(timeseries,TSPATH,TSNAME)       
     
     #%% Plot timeseries and save figure
-    FIGNAME = "timeseries_1"
-    show_timeseries(resampled.index,resampled.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-    
+    FIGNAME = "timeseries_1_scatter"
+    show_timeseries_scatter(resampled_interpolated.index,resampled_interpolated.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
+    FIGNAME = "timeseries_1_line"
+    show_timeseries_line(resampled_interpolated['battery_level'],"Battery level / hourly mean","time","Level",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save
-    show_features(resampled['battery_level'],"Battery level","xlab","ylab")
+    show_features(resampled_interpolated['battery_level'],"Battery level","xlab","ylab")
 
     return df
 

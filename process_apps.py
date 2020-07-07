@@ -27,7 +27,7 @@ from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, d
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
 from save_results import dump_to_json
-from plot_timeseries import show_timeseries, show_features
+from plot_timeseries import show_timeseries_scatter, show_features
 from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
@@ -87,8 +87,8 @@ def process_apps(df):
     
     #% Plot timeseries and save figureShow_recurrence_plot(sim2)
     FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-    FIGNAME = "timeseries_0"
-    show_timeseries(df.index,df.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
+    FIGNAME = "timeseries_0_scatter"
+    show_timeseries_scatter(df.index,df.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
     
     #%% Extract features from timeseries, plot, and save
     

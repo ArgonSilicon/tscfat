@@ -11,20 +11,21 @@ This is main file
 # standard library imports
 import os
 from pathlib import Path
-import json
+#import json
 
 # change correct working directory
 WORK_DIR = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
 os.chdir(WORK_DIR)
 
 # third party imports
-import numpy as np
+#import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 # Local application import
 from csv_load import load_all_subjects
 import process_apps, process_ESM, process_battery, process_screen_events, process_location
+'''
 from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
 from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
@@ -34,7 +35,7 @@ from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
 from json_load import load_one_subject
-
+'''
 
 ###############################################################################
 #%% Load the data
@@ -169,48 +170,19 @@ show_timeseries(df3.index,df3.totdist,"Total distance travelled / daily binned",
 ##############################################################################
 #%% Screen events
 df4 = csv_dict[dict_keys[3]]
-# put these on import!!!
-df4['time'] = convert_to_datetime(df4['time'],'s')
-df4 = df4.set_index("time")
+df4_r = process_screen_events.process_screen_events(df4)
 
-process_screen_events(df4)
-'''
-#%% filter
-df4_filt = df4.filter(["time","screen_status",])
-resampled4 = df4_filt.resample("H").count()
-timeseries4 = resampled4.values
+#%%
+grouped = df4.groupby(df4.index.floor('d'))
+my_day = pd.Timestamp('2020-06-02')
+df_slice = grouped.get_group(my_day)
 
-#%% calculate receursion plot and metrics
+#%%
 
-# Recursion plot settings
-ED = 1 # embedding dimensions
-TD = 1 # time delay
-RA = 0.05 # neigborhood radius
+plt.figure(figsize=(15,15))
+df_slice[:100].plot()
+plt.show()
 
-# Calculate recursion plot and metrix
-res4, mat4 = Calculate_RQA(timeseries4,ED,TD,RA)
-
-#%% show recursion plot and save figure
-
-# set correct names and plot title
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-FIGNAME = "recplot_4"
-TITLE = "Screen events / hourly Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-Show_recurrence_plot(mat4,TITLE,FIGPATH,FIGNAME)
-
-# set correct names and save metrics as json 
-RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
-RESNAME = "metrics_4.json"
-dump_to_json(res4,RESPATH,RESNAME)          
-
-# save the timeseries
-TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
-TSNAME = "timeseries_4.mat"
-save2mat(timeseries4,TSPATH,TSNAME)
-#%% Plot timeseries and save figure
-FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
-FIGNAME = "timeseries_4"
-show_timeseries(df4_filt.index,df4_filt.screen_status,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-'''
-
-
+#%% get previous value?
+target = pd.Timestamp('2020-06-02 23:00:00')
+test = df4.truncate(after=target)
