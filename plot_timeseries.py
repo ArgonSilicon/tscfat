@@ -50,7 +50,7 @@ def show_features(timeseries,
     # plt.subplots(figsize=(10,10))
     n = timeseries.shape[0]
     timeseries_noise = timeseries + 0.00001*np.random.rand(n,)
-    features['ar_1'] = timeseries_noise.rolling(window).apply(arma)
+    features['ar_1'] = timeseries_noise.rolling(48).apply(arma)
     #features['Observations'] = timeseries.values
     #plt.plot(features['ar_1'], label = "Autoregression_1")
     #plt.plot(features['screen_status']['std'],label="STD")
@@ -64,7 +64,7 @@ def show_features(timeseries,
     plt.legend()
     plt.show()
 
-def show_timeseries(x_name,
+def show_timeseries_scatter(x_name,
                     y_name,
                     title,
                     xlab,
@@ -129,6 +129,71 @@ def show_timeseries(x_name,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
+        
+def show_timeseries_line(series,
+                         title,
+                         xlab,
+                         ylab,
+                         savepath = False, 
+                         savename = False):
+    
+    #  TODO: fill docstrings!
+    
+    """ Timeseries docstrings go here 
+    
+   
+    
+    Parameters
+    ----------
+    x_name : TYPE
+        DESCRIPTION.
+    y_name : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlab : TYPE
+        DESCRIPTION.
+    ylab : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    # TODO: Insert assertions!
+    
+    plt.figure(figsize=(15,15))
+    series.plot()
+    plt.title(title)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
+    plt.xticks(rotation=45)
+    
+    if not all((savename,savepath)):
+        plt.show()
+        
+    elif all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")       
         
 if __name__ == "__main__":
     pass
