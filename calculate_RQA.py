@@ -34,9 +34,11 @@ def Calculate_RQA(ts,ED,TD,RA):
     rec_mat : numpy.ndarray
         A recurcion matrix array
     """
-    print(ED)
-    print(TD)
-    print(RA)
+    
+    #print(ED)
+    #print(TD)
+    #print(RA)
+    
     time_series = TimeSeries(ts,
                              embedding_dimension=ED,
                              time_delay=TD)
