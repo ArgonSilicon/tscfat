@@ -11,7 +11,7 @@ from pathlib import Path
 import json
 
 # change correct working directory
-WORK_DIR = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
+WORK_DIR = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/CS-special-assignment/')
 os.chdir(WORK_DIR)
 
 # third party imports
@@ -60,22 +60,21 @@ def process_screen_events(df):
     #%% show recursion plot and save figure
     
     # set correct names and plot title
-    FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Plots/')
     FIGNAME = "recplot_4"
     TITLE = "Screen events / hourly Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     # set correct names and save metrics as json 
-    RESPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Metrics/')
+    RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
     RESNAME = "metrics_4.json"
     dump_to_json(res,RESPATH,RESNAME)          
     
     # save the timeseries
-    TSPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Timeseries/')
+    TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
     TSNAME = "timeseries_4.mat"
     save2mat(timeseries,TSPATH,TSNAME)
     #%% Plot timeseries and save figure
-    FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
     FIGNAME = "timeseries_4"
     show_timeseries_scatter(df_filt.screen_status,"Screen events / hourly binned","time","Level",FIGPATH,FIGNAME)
     show_features(resampled['screen_status'],"Screen_events","xlab","ylab")

@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 # change correct working directory
-WORK_DIR = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
+WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
 os.chdir(WORK_DIR)
 
 # Local application imports
@@ -23,28 +23,28 @@ import process_apps, process_ESM, process_battery, process_screen_events, proces
 
 ###############################################################################
 #%% Load the data
-DATA_FOLDER = Path(r'/home/arsi/Documents/SpecialAssignment/Data/CSV/')
+DATA_FOLDER = Path('/u/26/ikaheia1/data/Documents//SpecialAssignment/Data/CSV/')
 csv_dict = load_all_subjects(DATA_FOLDER)
-dict_keys = list(csv_dict.keys())
+dict_keys = list(csv_dict.keys()) # the order of keys is probably different
 
 ###############################################################################
 #%% Process Battery level
-df1 = csv_dict[dict_keys[2]]
+df1 = csv_dict[dict_keys[4]]
 df1_r = process_battery.process_battery(df1)
 
 ###############################################################################
 #%% Process ESM data
-df2 = csv_dict[dict_keys[4]]
+df2 = csv_dict[dict_keys[2]]
 df2_r = process_ESM.process_ESM(df2)
 
 ##############################################################################
 #%% Location / daily
-df3 = csv_dict[dict_keys[0]]
+df3 = csv_dict[dict_keys[3]]
 df3_r = process_location.process_location(df3)
 
 ##############################################################################
 #%% Screen events
-df4 = csv_dict[dict_keys[3]]
+df4 = csv_dict[dict_keys[0]]
 df4_r = process_screen_events.process_screen_events(df4)
 
 ###############################################################################
