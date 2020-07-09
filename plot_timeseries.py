@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from interpolate_missing import interpolate_missing
-from arma import arma
+from arma import arma, autocorr
 
 def show_features(timeseries,               
                   title,
@@ -51,10 +51,10 @@ def show_features(timeseries,
     n = timeseries.shape[0]
     timeseries_noise = timeseries + 0.00001*np.random.rand(n,)
     features['ar_1'] = timeseries_noise.rolling(48).apply(arma)
+    features['autocorr'] = timeseries_noise.rolling(48).apply(autocorr)
     #features['Observations'] = timeseries.values
     #plt.plot(features['ar_1'], label = "Autoregression_1")
     #plt.plot(features['screen_status']['std'],label="STD")
-    
     
     features.plot()
     plt.title(title)
@@ -64,6 +64,7 @@ def show_features(timeseries,
     plt.legend()
     plt.show()
 
+'''
 def show_timeseries_scatter(x_name,
                     y_name,
                     title,
@@ -71,7 +72,13 @@ def show_timeseries_scatter(x_name,
                     ylab,
                     savepath = False, 
                     savename = False):
-    
+'''    
+def show_timeseries_scatter(series,
+                            title,
+                            xlab,
+                            ylab,
+                            savepath = False, 
+                            savename = False):
     #  TODO: fill docstrings!
     
     """ Timeseries docstrings go here 
@@ -107,9 +114,11 @@ def show_timeseries_scatter(x_name,
     """
     
     # TODO: Insert assertions!
+    # TODO: add legend
     
     plt.figure(figsize=(15,15))
-    plt.scatter(x_name, y_name)
+    #plt.scatter(x_name, y_name)
+    series.plot(style='.')
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)

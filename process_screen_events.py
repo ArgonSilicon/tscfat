@@ -77,7 +77,7 @@ def process_screen_events(df):
     #%% Plot timeseries and save figure
     FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
     FIGNAME = "timeseries_4"
-    show_timeseries_scatter(df_filt.index,df_filt.screen_status,"Screen events / hourly binned","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_scatter(df_filt.screen_status,"Screen events / hourly binned","time","Level",FIGPATH,FIGNAME)
     show_features(resampled['screen_status'],"Screen_events","xlab","ylab")
     
     return resampled

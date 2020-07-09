@@ -13,6 +13,12 @@ import numpy as np
 from statsmodels.tsa.arima_model import ARMA
 
 
+def autocorr(series, t=1):
+    timeseries = series.values.reshape(-1)
+    cc = np.corrcoef(np.array([timeseries[:-t], timeseries[t:]]))
+    return cc[0][1]  
+
+
 def arma(series,ar=1,ma=0):
     """ Calculate ARMA model for given timeseries.
 
