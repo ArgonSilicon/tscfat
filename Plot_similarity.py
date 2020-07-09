@@ -41,8 +41,7 @@ def Plot_similarity(sim,
     -------
 
     """
-    print(type(sim))
-    print(type(nov))
+    
     assert isinstance(sim,np.ndarray), "Recurrence matrix type is not np.ndarray."
     assert isinstance(nov,np.ndarray), "Recurrence matrix type is not np.ndarray."
     

@@ -75,7 +75,7 @@ def process_battery(df):
     
     #%% Plot timeseries and save figure
     FIGNAME = "timeseries_1_scatter"
-    show_timeseries_scatter(resampled_interpolated.index,resampled_interpolated.battery_level,"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_scatter(resampled_interpolated['battery_level'],"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
     FIGNAME = "timeseries_1_line"
     show_timeseries_line(resampled_interpolated['battery_level'],"Battery level / hourly mean","time","Level",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save

@@ -34,13 +34,14 @@ from calculate_novelty import compute_novelty_SSM
 from json_load import load_one_subject
 from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
+from test_status import test_battery_status, test_screen_status
 
-def process_apps(df):
+def process_apps(df, df_b, df_s):
     
-    # parameters
-    ED = 4 # embedding dimensions
+    # parameters for RQA
+    ED = 5 # embedding dimensions
     TD = 1 # time delay
-    RA = 0.05 # neigborhood radius
+    RA = 0.15 # neigborhood radius
        
     # Load dictionary for app labels
     DICT_PATH = Path(r'/home/arsi/Documents/SpecialAssignment/CS-special-assignment/')
@@ -54,14 +55,34 @@ def process_apps(df):
     df['Encoded_group'] = ordinal_encoding(df['group'].values.reshape(-1,1))
     
     #enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,4)))
-    Colnames = ['Communication','Entertainment','Other','Sports','Work/Study']
+    Colnames = ['Communication','Entertainment','Other','Sports','Work/Study',]
     enc_df = pd.DataFrame(one_hot_encoding(df['Encoded_group'].values.reshape(-1,1)),columns=Colnames,index=df.index)
     df = pd.concat([df,enc_df], axis=1, join='outer') 
-    df_filt = df.filter(["time",*Colnames])
+    
+    # TODO: fix this for loop
+    temp = []
+    max_time = pd.Timestamp(min(max(df_b.index.values),max(df_s.index.values)))
+    min_time = pd.Timestamp(max(min(df_b.index.values),min(df_s.index.values)))
+    
+    for i in df.index.values:
+        ts = pd.Timestamp(i)
+        
+        if min_time <= ts <= max_time and all((test_battery_status(df_b,ts),test_screen_status(df_s,ts))):
+            temp.append(True)
+        else:
+            temp.append(False)
+    
+    df['is_active'] = temp
+    
+    #df_filt = df.filter(["time",*Colnames])
+    df_filt = df[df['is_active'] == True]
+    #print(df_filt.shape)
     resampled = df_filt.resample("H").sum()
     #resampled = resampled.drop(columns='Other')
     
-    timeseries = resampled.to_numpy()
+    #timeseries = resampled['Encoded_group'].values.reshape(-1,1) # to_numpy() if an array is needed
+    timeseries = resampled.filter(['time',*Colnames]).to_numpy()
+    
     #%%
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
     sim = calculate_similarity(timeseries,'euclidean')
@@ -88,8 +109,8 @@ def process_apps(df):
     #% Plot timeseries and save figureShow_recurrence_plot(sim2)
     FIGPATH = Path(r'/home/arsi/Documents/SpecialAssignment/Results/Plots/')
     FIGNAME = "timeseries_0_scatter"
-    show_timeseries_scatter(df.index,df.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
-    
+    #show_timeseries_scatter(df_filt.index,df_filt.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
+    show_timeseries_scatter(df_filt.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save
     
     #FIGNAME = "features_0"
@@ -99,6 +120,6 @@ def process_apps(df):
     show_features(resampled['Sports'],"Sports","xlab","ylab")
     show_features(resampled['Work/Study'],"Work/Study","xlab","ylab")
     
-    return df
+    return df, timeseries
 if __name__ == "__main__":
     pass
