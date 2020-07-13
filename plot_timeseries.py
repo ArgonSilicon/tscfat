@@ -8,6 +8,7 @@ Created on Fri Jun 26 14:56:03 2020
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+plt.rcParams.update({'figure.max_open_warning': 0})
 import seaborn as sns
 from interpolate_missing import interpolate_missing
 from arma import arma, autocorr
@@ -16,7 +17,7 @@ def show_features(timeseries,
                   title,
                   xlab,
                   ylab,
-                  window = 24,
+                  window = 48,
                   mp = 1,
                   cl = "right",
                   interpolation = False,
@@ -26,8 +27,8 @@ def show_features(timeseries,
     
     # TODO: write assertions here
     # TODO: write docstrings
-    #features_to_calculate = [np.min,np.max,np.mean,np.std] 
-    features_to_calculate = [np.mean,np.std]
+    
+    features_to_calculate = [np.std]
     
     if interpolation:
         
@@ -37,42 +38,65 @@ def show_features(timeseries,
     
     #print(timeseries)
     
-    rolling_ts = timeseries.rolling(window, 
-                                    min_periods = mp, 
-                                    closed = cl)
+    rolling_ts = timeseries.rolling(window = 48,
+                                    min_periods = 1, 
+                                    closed = 'right')
     
-    #print(rolling_ts)
+   
     features = rolling_ts.aggregate(features_to_calculate)
     
-    #print(features)
-    
-    # features['ar_1'] = (timeseries.iloc[:,0]).rolling(window).apply(arma)
-    # plt.subplots(figsize=(10,10))
-    n = timeseries.shape[0]
-    timeseries_noise = timeseries + 0.00001*np.random.rand(n,)
-    features['ar_1'] = timeseries_noise.rolling(48).apply(arma)
-    features['autocorr'] = timeseries_noise.rolling(48).apply(autocorr)
-    #features['Observations'] = timeseries.values
-    #plt.plot(features['ar_1'], label = "Autoregression_1")
-    #plt.plot(features['screen_status']['std'],label="STD")
-    
+      
+    plt.figure(figsize=(15,15))
     features.plot()
     plt.title(title)
     plt.xlabel('Day')
     plt.ylabel("Value")
     plt.xticks(rotation=45)
     plt.legend()
-    plt.show()
+    
+    if not all((savename,savepath)):
+        plt.show()
+      
+    elif all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        savename1 = savename + "std"
+        if savepath.exists():
+            with open(savepath / (savename1 + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.") 
+    
+    
+    features['autocorr'] = timeseries.rolling(window=48).apply(autocorr)
+    
+    plt.figure(figsize=(15,15))
+    features['autocorr'].plot()
+    plt.title(title)
+    plt.xlabel('Day')
+    plt.ylabel("Value")
+    plt.xticks(rotation=45)
+    plt.legend()
+    
+    if not all((savename,savepath)):
+        plt.show()
 
-'''
-def show_timeseries_scatter(x_name,
-                    y_name,
-                    title,
-                    xlab,
-                    ylab,
-                    savepath = False, 
-                    savename = False):
-'''    
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename2 = savename + "autocorr"
+        
+        if savepath.exists():
+            with open(savepath / (savename2 + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.") 
+
+    
 def show_timeseries_scatter(series,
                             title,
                             xlab,

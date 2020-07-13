@@ -18,6 +18,7 @@ http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams.update({'figure.max_open_warning': 0})
 
 
 

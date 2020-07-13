@@ -38,7 +38,7 @@ def convert_time(df, colname = None, conv_type = 's'):
     """
     
     if colname == None:
-        names = [('time','s'),('day','D')]
+        names = [('time','s'),('day','D'),('timestamp','s')]
         for name in names:
             if name[0] in df.columns:
                 try: 
