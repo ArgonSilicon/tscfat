@@ -89,22 +89,4 @@ def compute_novelty_SSM(S, kernel=None, L=10, var=0.5, exclude=False):
     return nov
 
 if __name__ == "__main__":
-    
-    # test with an ordinary checkerboard kernel
-    L = 10
-    kernel = compute_kernel_checkerboard_box(L)
-    plt.figure(figsize=(4,3))
-    plt.imshow(kernel, aspect='auto', origin='lower', 
-               extent=[-L-0.5,L+0.5,-L-0.5,L+0.5], cmap='seismic')
-    plt.colorbar()
-    plt.tight_layout()
-    
-    # check with gaussian checkerboard kernel
-    L = 10
-    var = 0.5
-    kernel = compute_kernel_checkerboard_Gaussian(L, var)
-    plt.figure(figsize=(4,3))
-    plt.imshow(kernel, aspect='auto', origin='lower', 
-               extent=[-L-0.5,L+0.5,-L-0.5,L+0.5], cmap='seismic')
-    plt.colorbar()
-    plt.tight_layout()
+    pass    

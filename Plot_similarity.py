@@ -10,6 +10,7 @@ Created on Mon Jul  6 14:07:02 2020
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams.update({'figure.max_open_warning': 0})
 
 
 def Plot_similarity(sim,

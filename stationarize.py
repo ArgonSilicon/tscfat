@@ -18,7 +18,7 @@ def test_stationarity(timeseries):
     print('p-value: %f' % result[1])
     print('Critical Values:')
     for key, value in result[4].items():
-        nt('\t%s: %.3f' % (key, value))
+        print('\t%s: %.3f' % (key, value))
 
 def stationarize_timeseries(ts, method, argument):
     
