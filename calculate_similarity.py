@@ -18,4 +18,5 @@ def calculate_similarity(X,metric):
     Y = pdist(X,metric)
     Y_square = squareform(Y)
     Y_sim = 1 / (1+Y_square)
-    return np.rot90(Y_sim,2)
+    return Y_sim
+    #return np.rot90(Y_sim,2)

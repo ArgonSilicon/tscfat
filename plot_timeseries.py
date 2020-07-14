@@ -17,7 +17,7 @@ def show_features(timeseries,
                   title,
                   xlab,
                   ylab,
-                  window = 48,
+                  window = 7,
                   mp = 1,
                   cl = "right",
                   interpolation = False,
@@ -38,7 +38,7 @@ def show_features(timeseries,
     
     #print(timeseries)
     
-    rolling_ts = timeseries.rolling(window = 48,
+    rolling_ts = timeseries.rolling(window,
                                     min_periods = 1, 
                                     closed = 'right')
     
