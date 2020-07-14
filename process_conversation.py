@@ -33,7 +33,7 @@ from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
 from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features
 from binned_conversation import calculate_binned_conversation
-from decompose_timeseries import Decompose_timeseries
+from decompose_timeseries import STL_decomposition
 
 def process_conversation(df,key):
     
