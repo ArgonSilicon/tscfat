@@ -10,18 +10,17 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import seasonal_decompose,STL
 
 
-def Decompose_timeseries(series,
-                         model = 'multiplicative',
-                         plot = False):
+def STL_decomposition(series,
+                      savepath = False,
+                      savename = False):
     """
-    Decompose timeseries into Model, Trend, Seasonal and Residual parts.
+    STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
 
     Parameters
     ----------
     series : TYPE
         DESCRIPTION.
-    model : TYPE, optional
-        DESCRIPTION. The default is 'multiplicative'.
+    
     plot : TYPE, optional
         DESCRIPTION. The default is False.
 
@@ -35,25 +34,56 @@ def Decompose_timeseries(series,
     # TODO finish docstrings
     # TODO additional arguments?
     
-    try:
-        if model == 'multiplicative':
-            result = seasonal_decompose(series, model='multiplicative')
-            
-        elif model == 'additive':
-            result = seasonal_decompose(series, model='additive')
-         
-        elif model == "STL":
-            result = STL(series).fit()
-                        
-    except ValueError:
-        print("No valid model (multiplicative,additive or STL) was given")
+    Result = STL(series, 
+                 period=24, 
+                 seasonal=7, 
+                 trend=None, 
+                 low_pass=None,
+                 seasonal_deg=0, 
+                 trend_deg=0, 
+                 low_pass_deg=0, 
+                 robust=False,
+                 seasonal_jump=1, 
+                 trend_jump=1, 
+                 low_pass_jump=1).fit()
+
+
+    fig = plt.figure(figsize=(15,15))
     
-    if plot:
-            plt.figure(figsize=(20,20))
-            plt.title('Timeseries decomposition')
-            plt.xticks(rotation=45)
-            result.plot()
-            plt.show()
+    plt.suptitle('Timeseries decomposition',fontsize=20)
+    
+    plt.subplot(4,1,1)
+    plt.plot(Result.observed)
+    plt.title('Observations',fontsize=16)
+                
+    plt.subplot(4,1,2)
+    plt.plot(Result.trend)
+    plt.title('Trend',fontsize=16)
+     
+    plt.subplot(4,1,3)
+    plt.plot(Result.seasonal)
+    plt.title('Seasonal',fontsize=16)
+     
+    plt.subplot(4,1,4)
+    plt.plot(Result.resid)
+    plt.title('Residuals',fontsize=16)
+    
+    fig.tight_layout(pad=4.0)
+    
+    if not all((savename,savepath)):
+        plt.show()
+      
+    elif all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
             
-    return result
+    return Result
     
