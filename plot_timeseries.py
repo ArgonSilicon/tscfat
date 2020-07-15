@@ -45,7 +45,7 @@ def show_features(timeseries,
    
     features = rolling_ts.aggregate(features_to_calculate)
     
-      
+    """  
     plt.figure(figsize=(15,15))
     features.plot()
     plt.title(title)
@@ -69,15 +69,17 @@ def show_features(timeseries,
     else:
         raise Exception("Arguments were not given correctly.") 
     
+    """
     
-    features['autocorr'] = timeseries.rolling(window=48).apply(autocorr)
+    features['autocorr'] = timeseries.rolling(window).apply(autocorr)
     
     plt.figure(figsize=(15,15))
-    features['autocorr'].plot()
+    features.plot()
     plt.title(title)
     plt.xlabel('Day')
     plt.ylabel("Value")
     plt.xticks(rotation=45)
+    plt.grid(True)
     plt.legend()
     
     if not all((savename,savepath)):
