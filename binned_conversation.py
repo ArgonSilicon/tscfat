@@ -4,6 +4,10 @@
 Created on Fri Jul 10 14:22:44 2020
 
 @author: ikaheia1
+
+Calculate hourly binned statistics for events having starting and 
+ending times.
+
 """
 import pandas as pd
 import numpy as np
@@ -11,6 +15,23 @@ import numpy as np
 
 
 def calculate_binned_conversation(df):
+    """
+    
+
+    Parameters
+    ----------
+    df : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    timesum : TYPE
+        DESCRIPTION.
+    tr : TYPE
+        DESCRIPTION.
+
+    """
+    # TODO: fix docstrings and write assertions
     
     first_ts = df['start_timestamp'][0]
     last_ts = df['end_timestamp'][df.shape[0]-1] + pd.Timedelta(hours=1)
@@ -56,14 +77,5 @@ def calculate_binned_conversation(df):
                    
                 timesum[k] += (end - start).total_seconds()
                 t0 += 1
-    '''
-    t1_stop = process_time()
-    print("Elapsed time during the whole program in seconds:", 
-                                         t1_stop-t1_start) 
-
-    timeseries = timesum.reshape(-1,1)
-    end_time = timer()
-    diff = end_time - start_time
-    print("Time elapsed: {} seconds.".format(diff))
-     '''     
+  
     return timesum, tr

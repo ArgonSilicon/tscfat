@@ -4,6 +4,9 @@
 Created on Fri Jul  3 09:43:01 2020
 
 @author: arsi
+
+Generate a dictionary for application labels
+ 
 """
 
 # standard library imports

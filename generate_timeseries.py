@@ -18,6 +18,7 @@ from plot_recurrence import Show_recurrence_plot
 from plot_timeseries import show_features
 from vector_encoding import custom_resampler
 
+
 #%%
 time        = np.arange(0, 1344, 1);
 amplitude   = 2*np.abs(np.sin(2*np.pi*(1/48)*time)) \
@@ -47,16 +48,18 @@ decomposition = STL_decomposition(amplitude)
 FIGPATH = False
 FIGNAME = False
 sim = calculate_similarity(amplitude.reshape(-1,1),'euclidean')
-nov = compute_novelty_SSM(sim,L=48)
+nov = compute_novelty_SSM(sim,L=24)
 Plot_similarity(sim,nov,"Similarity and novelty",FIGPATH,FIGNAME)
 
 #%%
 ED = 1 # embedding dimensions
 TD = 1 # time delay
-RA = 0.50 # neigborhood radius
+RA = 0.1 # neigborhood radius
     
 # Calculate recursion plot and metrix
+res, mat = Calculate_RQA(ts2,ED,TD,RA)
 res, mat = Calculate_RQA(amplitude.reshape(-1,1),ED,TD,RA)
+
     
 #%% show recursion plot and save figure
 TITLE = "Test recurrence plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
