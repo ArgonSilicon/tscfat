@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jun  9 11:36:18 2020
 
 @author: arsii
 
-Calculate ARMA model for given timeseries and return the results.
+Calculate ARMA model or autocorrelation for given timeseries.
 
 """
 
@@ -14,6 +15,25 @@ from statsmodels.tsa.arima_model import ARMA
 
 
 def autocorr(series, t=1):
+    """ Calculate autocorrelation for given timeseries
+    
+
+    Parameters
+    ----------
+    series : pandas series or numpy array
+        Timeseries for autocorrelation 
+    t : int (default=1)
+        Autocorrelation lag
+
+    Returns
+    -------
+    cc: float
+        autocorrelation coefficient (lag = 1)
+
+    """
+    
+    # TODO: insert assertions
+    
     timeseries = series.values.reshape(-1)
     cc = np.corrcoef(np.array([timeseries[:-t], timeseries[t:]]))
     return cc[0][1]  
@@ -37,6 +57,8 @@ def arma(series,ar=1,ma=0):
         Object containing the ARMA results
     
     """
+    
+    # TODO: fix assertions
     '''
     assert isinstance(series,(pd.core.series.Series, np.ndarray), "Timeseries should be a Pandas series type or an numpy array."
     assert isinstance(ar,int), "Unit type should be int, not {}".format(type(ar))
