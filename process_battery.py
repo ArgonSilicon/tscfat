@@ -31,7 +31,7 @@ from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_
 from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
-from json_load import load_one_subject
+from decompose_timeseries import STL_decomposition
 from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
 
@@ -39,29 +39,42 @@ from interpolate_missing import interpolate_missing
 def process_battery(df):
     
     #%% Recursion plot settings
-    ED = 2 # embedding dimensions
+    ED = 1 # embedding dimensions
     TD = 1 # time delay
-    RA = 0.15 # neigborhood radius
+    RA = 0.5 # neigborhood radius
     
-    #%% filter
+    #%% filter dataframe and resample hourly means
     df_filt = df.filter(["time","battery_level",])
     resampled = df_filt.resample("H").mean()
     resampled_interpolated, _ = interpolate_missing(resampled,'linear')
     timeseries = resampled_interpolated.values
     
+    #%% timeseries decompostition
+    
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_2/Decomposition/')
+    FIGNAME = "decomposition" 
+    decomp = STL_decomposition(timeseries,FIGPATH,FIGNAME)
+    
     #%% calculate receursion plot and metrics
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
-    sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov)
-    
+        
     #%% show recursion plot and save figure
-    
-    # set correct names and plot title
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Plots/')
     FIGNAME = "recplot_1"
     TITLE = "Battery level Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
+   
+    #%% Recursion on trend
+    res, mat = Calculate_RQA(decomp.trend.reshape(-1,1), ED,TD,RA)
+    
+    FIGNAME = "recplot_1_trend"
+    TITLE = "Battery level Recurrence Plot / Trend \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
+    Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
+    
+    #%% calculate similarity and novelty
+    sim = calculate_similarity(timeseries,'euclidean')
+    nov = compute_novelty_SSM(sim,L=24)
+    Plot_similarity(sim,nov)
     
     # set correct names and save metrics as json 
     RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
@@ -71,7 +84,11 @@ def process_battery(df):
     # save the timeseries
     TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
     TSNAME = "timeseries_1.mat"
-    save2mat(timeseries,TSPATH,TSNAME)       
+    save2mat(timeseries,TSPATH,TSNAME)
+    
+    NPNAME = "timeseries_1.npy"
+    with open(FIGPATH / NPNAME, mode="wb") as outfile:
+        np.save(outfile,timeseries)       
     
     #%% Plot timeseries and save figure
     FIGNAME = "timeseries_1_scatter"
@@ -79,7 +96,9 @@ def process_battery(df):
     FIGNAME = "timeseries_1_line"
     show_timeseries_line(resampled_interpolated['battery_level'],"Battery level / hourly mean","time","Level",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save
-    show_features(resampled_interpolated['battery_level'],"Battery level","xlab","ylab")
+    show_features(resampled_interpolated['battery_level'],"Battery level","xlab","ylab",window=24)
+    
+
 
     return df
 

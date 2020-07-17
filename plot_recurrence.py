@@ -75,34 +75,6 @@ def Show_recurrence_plot(recurrence_matrix,
     else:
         raise Exception("Arguments were not given correctly.")
     
-''' REMOVE THIS!!!
-def Save_recurrence_plot(rp,savename,savepath):
-    """
-    SAves given recurrence plot matrix as a numpy array.
-
-    Parameters
-    ----------
-     rp : numpy array
-        Recurrence plot array of a shape (n,n)
-    savename : str (default = False)
-        Name used as plot save name. Has to be a type of str
-    savepath : Path -object (default = False)
-        path where recurrence plot matrix is to be saved. 
-        Path has to exist before calling this function.
-
-    Returns
-    -------
-    
-    """
-    assert isinstance(rp,np.ndarray), "Filetype should be numpy.ndarray."
-    assert isinstance(savename,str), "Invalid savename type."
-    
-    if savepath.exists():
-        with open(savepath / (savename + ".npy"), mode="wb") as outfile:
-            np.save(outfile, rp)
-    else:
-        raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-'''
 
 if __name__ == "__main__":
     pass

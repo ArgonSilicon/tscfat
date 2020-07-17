@@ -39,9 +39,9 @@ from test_status import test_battery_status, test_screen_status
 def process_apps(df, df_b, df_s):
     
     # parameters for RQA
-    ED = 5 # embedding dimensions
+    ED = 1 # embedding dimensions
     TD = 1 # time delay
-    RA = 0.15 # neigborhood radius
+    RA = 0.5 # neigborhood radius
        
     # Load dictionary for app labels
     DICT_PATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
@@ -55,7 +55,7 @@ def process_apps(df, df_b, df_s):
     df['Encoded_group'] = ordinal_encoding(df['group'].values.reshape(-1,1))
     
     #enc_df = pd.DataFrame(one_hot_encoding(df0['Encoded_group'].values.reshape(-1,4)))
-    Colnames = ['Communication','Entertainment','Other','Sports','Work/Study',]
+    Colnames = ['Communication','Entertainment','Other','Shop','Social_media','Sports','Travel','Work/Study',]
     enc_df = pd.DataFrame(one_hot_encoding(df['Encoded_group'].values.reshape(-1,1)),columns=Colnames,index=df.index)
     df = pd.concat([df,enc_df], axis=1, join='outer') 
     
@@ -118,7 +118,11 @@ def process_apps(df, df_b, df_s):
     show_features(resampled['Other'],"Other","xlab","ylab")
     show_features(resampled['Sports'],"Sports","xlab","ylab")
     show_features(resampled['Work/Study'],"Work/Study","xlab","ylab")
+    show_features(resampled['Shop'],"Shop","xlab","ylab")
+    show_features(resampled['Social_media'],"Work/Study","xlab","ylab")
+    show_features(resampled['Travel'],"Work/Study","xlab","ylab")
     
     return df, timeseries
+
 if __name__ == "__main__":
     pass

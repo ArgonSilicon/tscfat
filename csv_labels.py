@@ -17,7 +17,7 @@ from pathlib import Path
 from csv_load import load_one_subject
 
 #%% open csv
-foldername = Path(r'/home/arsi/Documents/SpecialAssignment/Data/AppClasses/')
+foldername = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Data/AppClasses/')
 filename = 'apps_group.csv'
 open_name = foldername / filename
 
