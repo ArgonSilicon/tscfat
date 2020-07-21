@@ -37,6 +37,9 @@ from interpolate_missing import interpolate_missing
 
 def process_ESM(df):
     
+    GROUP_LABEL_CSV_PATH = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/esm_groups.csv/')
+    df = assign_groups(df,GROUP_LABEL_CSV_PATH)
+    
     #%% Recursion plot settings
     ED = 1 # embedding dimensions
     TD = 1 # time delay

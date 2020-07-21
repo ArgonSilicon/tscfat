@@ -24,7 +24,7 @@ import process_apps, process_ESM, process_battery, process_screen_events, proces
 
 ###############################################################################
 #%% Load the data
-DATA_FOLDER = Path('/u/26/ikaheia1/data/Documents//SpecialAssignment/Data/CSV/')
+DATA_FOLDER = Path('/u/26/ikaheia1/data/Documents''/SpecialAssignment/Data/CSV/')
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys()) # the order of keys is probably different
 
