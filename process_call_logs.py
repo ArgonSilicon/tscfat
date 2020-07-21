@@ -33,7 +33,7 @@ from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
 from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features
 from binned_conversation import calculate_binned_conversation
-from decompose_timeseries import Decompose_timeseries
+from decompose_timeseries import STL_decomposition
 
 
 def process_call_logs(df,key):
@@ -42,11 +42,9 @@ def process_call_logs(df,key):
         return None
     
     df['start_timestamp'] = df.index
-    print("joo")
     df['CALLS_duration'] = pd.to_timedelta(df['CALLS_duration'], unit='s')
-    print("joo")
     df['end_timestamp'] = df['start_timestamp'] + df['CALLS_duration']
-    print("joo")
+
     #filter out nan's
     df_filt = df[df['CALLS_duration'].notnull()]
     df_filt = df_filt.filter(items=['start_timestamp', 'end_timestamp'])
@@ -62,29 +60,46 @@ def process_call_logs(df,key):
 
     pd_series = pd.Series(timesum,index=tr)       
     
+    #%% some resampling
+    #resampled = pd_series.resample("D").apply(custom_resampler)
+    resampled = pd_series.resample("D").apply(np.sum)
+    #timeseries = resampled.values
+    #timeseries = np.stack(timeseries)
+    #timeseries = np.stack(timeseries[1:-1])
+    
+    #%% decompostition
+    
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_2/Decomposition/')
+    FIGNAME = "decomposition_" + key
+    decomp = STL_decomposition(resampled,FIGPATH,FIGNAME)
+    
+    # get trend from decomposition
+    trend = decomp.trend.values.reshape(-1,1)
+    
     #%% calculate SSM and Novelty
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_2/Similarity/')
     FIGNAME = "similarity_" + key    
-    sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim,L=24)
-    Plot_similarity(sim,nov,"Similarity and novelty",FIGPATH,FIGNAME)
+    sim = calculate_similarity(trend,'euclidean')
+    nov = compute_novelty_SSM(sim,L=7)
+    Plot_similarity(sim,nov,"Call events trend / Similarity and novelty",FIGPATH,FIGNAME)
     
     #%% calculate receursion plot and metrics
     
     # Recursion plot settings
-    ED = 2 # embedding dimensions
-    TD = 2 # time delay
-    RA = 0.01 # neigborhood radius
+    ED = 1# embedding dimensions
+    TD = 1# time delay
+    RA = 1 # neigborhood radius
     
     # Calculate recursion plot and metrix
-    res, mat = Calculate_RQA(timeseries,ED,TD,RA)
+    res, mat = Calculate_RQA(trend,ED,TD,RA)
+    #res, mat = Calculate_RQA(timeseries,ED,TD,RA)
     
     #%% show recursion plot and save figure
     
     # set correct names and plot title
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_2/Plots/')
     FIGNAME = "recplot_" + key
-    TITLE = "Screen events / hourly Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
+    TITLE = "Call events trend / daily Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     #%%
@@ -101,9 +116,9 @@ def process_call_logs(df,key):
     
     #%% Plot timeseries and save figure
     FIGNAME = "timeseries_scatter_" + key
-    show_timeseries_scatter(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_scatter(pd_series,"Call events / daily binned totals","time","Level",FIGPATH,FIGNAME)
     FIGNAME = "timeseries_line_" + key
-    show_timeseries_line(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_line(pd_series,"Call events / daily binned totals","time","Level",FIGPATH,FIGNAME)
     FIGNAME = "timeseries_features_" + key
-    show_features(pd_series,"Conversation","xlab","ylab",48,1,'right',False,FIGPATH,FIGNAME)
+    show_features(pd_series,"Call events / daily binned totals","xlab","ylab",48,1,'right',False,FIGPATH,FIGNAME)
     

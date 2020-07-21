@@ -10,7 +10,7 @@ from pyrqa.time_series import TimeSeries
 from pyrqa.settings import Settings
 from pyrqa.analysis_type import Classic
 from pyrqa.neighbourhood import FixedRadius
-from pyrqa.metric import EuclideanMetric
+from pyrqa.metric import EuclideanMetric,MaximumMetric,TaxicabMetric
 from pyrqa.computation import RQAComputation
 from pyrqa.computation import RPComputation
 

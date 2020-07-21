@@ -37,32 +37,40 @@ from interpolate_missing import interpolate_missing
 
 def process_ESM(df):
     
+    GROUP_LABEL_CSV_PATH = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/esm_groups.csv/')
+    df = assign_groups(df,GROUP_LABEL_CSV_PATH)
+    
     #%% Recursion plot settings
-    ED = 2 # embedding dimensions
-    TD = 2 # time delay
+    ED = 1 # embedding dimensions
+    TD = 1 # time delay
     RA = 0.15 # neigborhood radius
     
     #%%
+    
+   
     mask1 = df["type"] == 1
     mask2 = df["type"] == 2
     mask3 = df["type"] == 3
     mask6 = df["type"] == 6
     df['Scaled_answer'] = 0
     
-    df.loc[mask1,"answer"] = df.loc[mask1,"answer"].map(decode_string)
-    df.loc[mask2,"answer"] = df.loc[mask2,"answer"].map(decode_string)
-    df.loc[mask3,"answer"] = df.loc[mask3,"answer"].map(decode_string_3)
+    # fill nan's
+    df.loc[mask6,'scaled_answer'] = df.loc[mask6,'answer'].fillna(np.round((df.loc[mask6,'answer'].astype(float).mean())))
     
-    df.loc[mask1,"Scaled_answer"] = df.loc[mask1,"answer"] 
-    df.loc[mask2,"Scaled_answer"] = df.loc[mask2,"answer"] 
-    df.loc[mask3,"Scaled_answer"] = normalize_values(df.loc[mask3,"answer"].values.astype(float))
-    df.loc[mask6,"Scaled_answer"] = normalize_values(df.loc[mask6,"answer"].values.astype(float))
+    df.loc[mask1,"scaled_answer"] = df.loc[mask1,"answer"].map(decode_string)
+    df.loc[mask2,"scaled_answer"] = df.loc[mask2,"answer"].map(decode_string)
+    df.loc[mask3,"scaled_answer"] = df.loc[mask3,"answer"].map(decode_string_3)
+    
+    #df.loc[mask1,"Scaled_answer"] = df.loc[mask1,"answer"] 
+    #df.loc[mask2,"Scaled_answer"] = df.loc[mask2,"answer"] 
+    #df.loc[mask3,"Scaled_answer"] = normalize_values(df.loc[mask3,"answer"].values.astype(float))
+    #df.loc[mask6,"Scaled_answer"] = normalize_values(df.loc[mask6,"answer"].values.astype(float))
     
     #%%
     #df_filt = df.filter(["time","Scaled_answer",])
-    df_filt = df.filter(["time","answer",])
+    df_filt = df.filter(["time","scaled_answer",])
     #df_filt = df_filt["Scaled_answer"].astype(int)
-    df_filt = df_filt["answer"].astype(int)
+    df_filt = df_filt["scaled_answer"].astype(int)
     resampled = df_filt.resample("D").apply(custom_resampler)
     
     #%%
@@ -73,7 +81,7 @@ def process_ESM(df):
     #%% calculate receursion plot and metrics
     # similarity
     sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim,L=2)
+    nov = compute_novelty_SSM(sim,L=7)
     sim[sim >= 0.11] = 1
     Plot_similarity(sim,nov)
     #%% Calculate recursion plot and metrix

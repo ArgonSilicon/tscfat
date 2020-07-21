@@ -17,7 +17,7 @@ def show_features(timeseries,
                   title,
                   xlab,
                   ylab,
-                  window = 48,
+                  window = 7,
                   mp = 1,
                   cl = "right",
                   interpolation = False,
@@ -28,7 +28,7 @@ def show_features(timeseries,
     # TODO: write assertions here
     # TODO: write docstrings
     
-    features_to_calculate = [np.std]
+    features_to_calculate = [np.var]
     
     if interpolation:
         
@@ -38,46 +38,36 @@ def show_features(timeseries,
     
     #print(timeseries)
     
-    rolling_ts = timeseries.rolling(window = 48,
+    rolling_ts = timeseries.rolling(window,
                                     min_periods = 1, 
                                     closed = 'right')
     
    
     features = rolling_ts.aggregate(features_to_calculate)
+    features['autocorr'] = timeseries.rolling(window).apply(autocorr)
     
-      
-    plt.figure(figsize=(15,15))
-    features.plot()
-    plt.title(title)
-    plt.xlabel('Day')
+    title = "Timeseries decomposition" + title
+    
+    fig = plt.figure(figsize=(15,15))
+    
+    plt.suptitle(title,fontsize=20)
+    
+    plt.subplot(2,1,1)
+    features.iloc[:,0].plot()
+    plt.title('STD',fontsize=16)
+    plt.xlabel('Time')
     plt.ylabel("Value")
     plt.xticks(rotation=45)
-    plt.legend()
-    
-    if not all((savename,savepath)):
-        plt.show()
-      
-    elif all((savename,savepath)):
-        
-        assert isinstance(savename,str), "Invalid savename type."
-        savename1 = savename + "std"
-        if savepath.exists():
-            with open(savepath / (savename1 + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.") 
-    
-    
-    features['autocorr'] = timeseries.rolling(window=48).apply(autocorr)
-    
-    plt.figure(figsize=(15,15))
-    features['autocorr'].plot()
-    plt.title(title)
-    plt.xlabel('Day')
+                
+    plt.subplot(2,1,2)
+    features.iloc[:,1].plot()
+    plt.title('Autocorrelation',fontsize=16)
+    plt.xlabel('Time')
     plt.ylabel("Value")
     plt.xticks(rotation=45)
+     
+    fig.tight_layout(pad=4.0)
+    plt.grid(True)
     plt.legend()
     
     if not all((savename,savepath)):
@@ -86,7 +76,7 @@ def show_features(timeseries,
     elif all((savename,savepath)):
 
         assert isinstance(savename,str), "Invalid savename type."
-        savename2 = savename + "autocorr"
+        savename2 = savename + "_features"
         
         if savepath.exists():
             with open(savepath / (savename2 + ".png"), mode="wb") as outfile:
@@ -132,7 +122,14 @@ def show_timeseries_scatter(series,
         DESCRIPTION.
 
     Returns
-    -------
+    -------    #%% show features
+     #%% Plot timeseries and save figure
+    FIGNAME = "timeseries_scatter_" + key
+    show_timeseries_scatter(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    FIGNAME = "timeseries_line_" + key
+    show_timeseries_line(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    FIGNAME = "timeseries_features_" + key
+    show_features(pd_series,"Conversation","xlab","ylab",48,1,'right',False,FIGPATH,FIGNAME)
     None.
 
     """
@@ -154,10 +151,11 @@ def show_timeseries_scatter(series,
     elif all((savename,savepath)):
         
         assert isinstance(savename,str), "Invalid savename type."
-        
+              
         if savepath.exists():
             with open(savepath / (savename + ".png"), mode="wb") as outfile:
                 plt.savefig(outfile, format="png")
+                
         else:
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:

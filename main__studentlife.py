@@ -27,6 +27,7 @@ plt.rcParams.update({'figure.max_open_warning': 0})
 from csv_load import load_all_subjects
 from process_conversation import process_conversation
 from process_call_logs import process_call_logs
+from process_sms import process_sms
 
 
 if __name__ == "__main__":
@@ -46,15 +47,28 @@ if __name__ == "__main__":
         process_conversation(csv,key)
         
    
-    #%% oad call logs data
+    #%% load call logs data
     DATA_FOLDER = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/StudentLife/dataset/call_log/')
     csv_dict = load_all_subjects(DATA_FOLDER)
     dict_keys = list(csv_dict.keys()) # the order of keys is probably different
     
-    # df = csv_dict[dict_keys[10]]
+    # df = csv_dict[dict_keys[15]]
     
     #%% 
     for k in dict_keys:
         df = csv_dict[k]
         key = k[-3:]
-        process_conversation(df,key)
+        process_call_logs(df,key)
+        
+    #%% load call logs data
+    DATA_FOLDER = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/StudentLife/dataset/sms/')
+    csv_dict = load_all_subjects(DATA_FOLDER)
+    dict_keys = list(csv_dict.keys()) # the order of keys is probably different
+    
+    # df = csv_dict[dict_keys[15]]
+    
+    #%% 
+    for k in dict_keys:
+        df = csv_dict[k]
+        key = k[-3:]
+        process_sms(df,key)

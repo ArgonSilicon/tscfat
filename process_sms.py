@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jul 10 11:54:37 2020
+Created on Tue Jul 14 15:17:17 2020
 
 @author: ikaheia1
 """
+
 # standard library imports
 import os
 from pathlib import Path
@@ -35,31 +36,31 @@ from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_
 from binned_conversation import calculate_binned_conversation
 from decompose_timeseries import STL_decomposition
 
-def process_conversation(df,key):
+def process_sms(df,key):
     
-    df.rename(columns={' end_timestamp':'end_timestamp'}, inplace=True)
-    df['start_timestamp'] = convert_to_datetime(df['start_timestamp'],units='s')
-    df['end_timestamp'] = convert_to_datetime(df['end_timestamp'],units='s')
-    df['duration'] = df.end_timestamp - df.start_timestamp 
-    df['duration_s'] = df['duration'].dt.total_seconds()
+    df["count"] = 1
+    df_filt = df.filter(items=['count',])
+    resampled = df_filt.resample("H").apply(np.sum)
+    timeseries = resampled['count'].values.reshape(-1,1)
     
-   
-    #%%
-    timesum,tr = calculate_binned_conversation(df)
-    timeseries = timesum.reshape(-1,1)
-    
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL/Timeseries/')
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Timeseries/')
     
     with open(FIGPATH / (key +".npy"), mode="wb") as outfile:
         np.save(outfile,timeseries)
-
-    pd_series = pd.Series(timesum,index=tr)       
+       
+    #%% decomposition
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Decomposition/')
+    FIGNAME = "decomposition_" + key
+    decomp = STL_decomposition(timeseries,FIGPATH,FIGNAME)
+    # get trend from decomposition
+    trend = decomp.trend.reshape(-1,1)
+    
     
     #%% calculate SSM and Novelty
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL/Similarity/')
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Similarity/')
     FIGNAME = "similarity_" + key    
-    sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim,L=48)
+    sim = calculate_similarity(trend,'euclidean')
+    nov = compute_novelty_SSM(sim,L=24)
     Plot_similarity(sim,nov,"Similarity and novelty",FIGPATH,FIGNAME)
     
     #%% calculate receursion plot and metrics
@@ -70,32 +71,33 @@ def process_conversation(df,key):
     RA = 0.15 # neigborhood radius
     
     # Calculate recursion plot and metrix
-    res, mat = Calculate_RQA(timeseries,ED,TD,RA)
+    res, mat = Calculate_RQA(trend,ED,TD,RA)
     
     #%% show recursion plot and save figure
     
     # set correct names and plot title
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL/Plots/')
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Plots/')
     FIGNAME = "recplot_" + key
-    TITLE = "Screen events / hourly Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
+    TITLE = "SMS / hourly Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     #%%
     # set correct names and save metrics as json 
-    RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL/Metrics/')
+    RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Metrics/')
     RESNAME = "metrics_" + key + ".json"
     dump_to_json(res,RESPATH,RESNAME)          
     
     #%%
     # save the timeseries
-    TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL/Timeseries/')
+    TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/SL_3/Timeseries/')
     TSNAME = "timeseries_" + key + ".mat"
     save2mat(timeseries,TSPATH,TSNAME)
     
     #%% Plot timeseries and save figure
     FIGNAME = "timeseries_scatter_" + key
-    show_timeseries_scatter(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_scatter(resampled,"SMS / hourly binned count","time","Level",FIGPATH,FIGNAME)
     FIGNAME = "timeseries_line_" + key
-    show_timeseries_line(pd_series,"Conversation / hourly binned seconds","time","Level",FIGPATH,FIGNAME)
+    show_timeseries_line(resampled,"SMS / hourly binned count","time","Level",FIGPATH,FIGNAME)
     FIGNAME = "timeseries_features_" + key
-    show_features(pd_series,"Conversation","xlab","ylab",48,1,'right',False,FIGPATH,FIGNAME)
+    show_features(resampled,"SMS","xlab","ylab",24,1,'right',False,FIGPATH,FIGNAME)
+    
