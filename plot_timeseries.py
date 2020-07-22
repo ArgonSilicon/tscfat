@@ -12,6 +12,7 @@ plt.rcParams.update({'figure.max_open_warning': 0})
 import seaborn as sns
 from interpolate_missing import interpolate_missing
 from arma import arma, autocorr
+from scipy.signal import find_peaks
 
 def show_features(timeseries,               
                   title,
@@ -46,7 +47,10 @@ def show_features(timeseries,
     features = rolling_ts.aggregate(features_to_calculate)
     features['autocorr'] = timeseries.rolling(window).apply(autocorr)
     
-    title = "Timeseries decomposition" + title
+    
+    #%%
+    
+    title = "Extracted features" + title
     
     fig = plt.figure(figsize=(15,15))
     

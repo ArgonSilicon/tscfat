@@ -67,7 +67,10 @@ def process_battery(df):
 
     #win = np.sinc(x).reshape(-1,1)
     
-    win = signal.hann(50).reshape(-1,1)
+    #win = signal.hann(51).reshape(-1,1)
+    
+    win = signal.gaussian(51,std=7).reshape(-1,1)
+    #win_xx = np.diff(win, 2,axis=0)
     
     win = np.gradient(win,axis=0)
     
@@ -97,13 +100,6 @@ def process_battery(df):
     
     neg_peaks = bottoms[neg_indices]
 
-    #plt.plot(x)
-
-    #plt.plot(peaks, x[peaks], "x")
-
-    #plt.plot(np.zeros_like(x), "--", color="gray")
-
-    #plt.show()
 
 
 
@@ -112,14 +108,20 @@ def process_battery(df):
     fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True)
 
     ax_orig.plot(sig)
+    
+    ax_orig.set_ylabel('Battery level')
+    
+    
 
-    ax_orig.set_title('Original pulse')
+    ax_orig.set_title('Original timeseries')
 
     ax_orig.margins(0, 0.1)
 
     ax_win.plot(win)
 
-    ax_win.set_title('Filter impulse response')
+    ax_win.set_title('Gaussian filter / 1\'st derivative')
+    
+    ax_win.set_ylabel('Filter level')
 
     ax_win.margins(0, 0.1)
 
@@ -135,8 +137,12 @@ def process_battery(df):
     
     #plt.vlines(x = 954, ymin=-1, ymax=1, color = "C1")
 
-    ax_filt.set_title('Filtered signal')
+    ax_filt.set_title('Filtered timeseries')
+    
+    ax_filt.set_ylabel('Filtered level')
 
+    ax_filt.set_xlabel('Time / Hours')
+    
     ax_filt.margins(0, 0.1)
 
     fig.tight_layout()

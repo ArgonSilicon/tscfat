@@ -48,27 +48,35 @@ def STL_decomposition(series,
                  low_pass_jump=1).fit()
 
 
-    fig = plt.figure(figsize=(15,15))
+    fig1 = plt.figure(figsize=(15,15))
     
     plt.suptitle('Timeseries decomposition',fontsize=20)
     
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
     plt.title('Observations',fontsize=16)
+    plt.ylabel("Battery Level")
+    plt.xlabel("Time / hours")
                 
     plt.subplot(4,1,2)
     plt.plot(Result.trend)
     plt.title('Trend',fontsize=16)
+    plt.ylabel("Battery Level")
+    plt.xlabel("Time / hours")
      
     plt.subplot(4,1,3)
     plt.plot(Result.seasonal)
     plt.title('Seasonal',fontsize=16)
+    plt.ylabel("Battery Level")
+    plt.xlabel("Time / hours")
      
     plt.subplot(4,1,4)
     plt.plot(Result.resid)
     plt.title('Residuals',fontsize=16)
+    plt.ylabel("Battery Level")
+    plt.xlabel("Time / hours")
     
-    fig.tight_layout(pad=4.0)
+    fig1.tight_layout(pad=4.0)
     
     if not all((savename,savepath)):
         plt.show()
@@ -85,5 +93,52 @@ def STL_decomposition(series,
     else:
         raise Exception("Arguments were not given correctly.")
             
+        
+    fig2 = plt.figure(figsize=(20,15))
+    
+    plt.suptitle('Timeseries decomposition / histograms',fontsize=20)
+    
+    plt.subplot(2,2,1)
+    plt.hist(Result.observed)
+    plt.title('Observations',fontsize=16)
+    plt.xlabel("Battery Level")
+    plt.ylabel("Count")
+                
+    plt.subplot(2,2,2)
+    plt.hist(Result.trend)
+    plt.title('Trend',fontsize=16)
+    plt.xlabel("Battery Level")
+    plt.ylabel("Count")
+    
+    plt.subplot(2,2,3)
+    plt.hist(Result.seasonal)
+    plt.title('Seasonal',fontsize=16)
+    plt.xlabel("Battery Level")
+    plt.ylabel("Count")
+     
+    plt.subplot(2,2,4)
+    plt.hist(Result.resid)
+    plt.title('Residuals',fontsize=16)
+    plt.xlabel("Battery Level")
+    plt.ylabel("Count")
+     
+    fig2.tight_layout(pad=4.0)
+    
+    if not all((savename,savepath)):
+        plt.show()
+      
+    elif all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + "_hist" + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+        
+        
     return Result
     

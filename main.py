@@ -18,6 +18,11 @@ import re
 WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
 os.chdir(WORK_DIR)
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr, spearmanr
+
 # Local application imports
 from csv_load import load_all_subjects
 import process_apps, process_ESM, process_battery, process_screen_events, process_location
@@ -51,9 +56,11 @@ for k in dict_keys:
 #%% Process Battery level
 df1_r = process_battery.process_battery(df1)
 
+df1_rs = df1_r.resample('H').mean()
+battery_diff = df1_rs['battery_level'].diff()
 ###############################################################################
 #%% Process ESM data
-df2_r = process_ESM.process_ESM(df2)
+df2_r, ts_2 = process_ESM.process_ESM(df2)
 
 ##############################################################################
 #%% Location / daily
@@ -65,6 +72,34 @@ df4_r = process_screen_events.process_screen_events(df4)
 
 ###############################################################################
 #%% Process App notfications
-df_r, ts = process_apps.process_apps(df5,df1,df4)
+df5_r, ts_5 = process_apps.process_apps(df5,df1,df4)
 
+#%%
+df5_a = df5_r[df5_r['is_active'] == True]
 
+df5_f = df5_a.filter(['Communication', 'Entertainment', 'Other', 'Shop', 'Social_media',
+       'Sports', 'Travel', 'Work/Study'])
+
+df5_d = df5_f.resample('D').sum()
+
+#%% combine dataframes
+
+comb = pd.concat([df2_r,df5_d], axis=1)
+
+#%%
+def corrfunc(x,y, ax=None, **kws):
+    """Plot the correlation coefficient in the top left hand corner of a plot."""
+    r, _ = spearmanr(x, y)
+    ax = ax or plt.gca()
+    # Unicode for lowercase rho (ρ)
+    rho = '\u03C1'
+    ax.annotate(f'{rho} = {r:.2f}', xy=(.1, .9), xycoords=ax.transAxes)
+    
+g = sns.pairplot(comb,kind="reg")
+g.map_lower(corrfunc)
+g.fig.suptitle("ESM data pairplots and Spearman correlation", y=1.02,fontsize=20)
+
+#%%
+corr_p = comb.corr(method ='pearson') 
+corr_s = comb.corr(method ='spearman')
+corr_k = comb.corr(method ='kendall')
