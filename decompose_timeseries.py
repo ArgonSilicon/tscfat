@@ -6,8 +6,12 @@ Created on Wed Jul  1 14:40:46 2020
 @author: arsi
 """
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import seasonal_decompose,STL
+from scipy import signal
+from scipy.signal import find_peaks
+from scipy.special import expit, logit
 
 
 def STL_decomposition(series,
@@ -141,4 +145,98 @@ def STL_decomposition(series,
         
         
     return Result
+
+
+
+def detect_steps(timeseries,
+                 title,
+                 xlabel,
+                 savename = False,
+                 savepath = False,
+                 ):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlabel : TYPE
+        DESCRIPTION.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    # signal
+    sig = timeseries.values.reshape(-1,1)
+    
+    # window / kernel
+    win = signal.gaussian(51,std=2).reshape(-1,1)
+    win = np.gradient(win,axis=0)
+    win = win - win.mean()
+    win = win / win.max()
+    
+    
+    # convolution
+    filtered = signal.convolve(sig, win, mode='same') / sum(win)
+    
+    # find peaks / low points 
+    peaks, properties = find_peaks(filtered.reshape(-1), height=0)
+    bottoms, properties_b = find_peaks(-filtered.reshape(-1),height=0)
+    heights = properties['peak_heights']
+    lows = properties_b['peak_heights']
+    
+    # find top / low indices and values
+    top_indices = heights.argsort()[-5:][::-1]
+    top_peaks = peaks[top_indices]
+    neg_indices = (lows).argsort()[-5:][::-1]
+    neg_peaks = bottoms[neg_indices]
+
+    # plot
+    fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True)
+    plt.suptitle(title, fontsize=20)
+    ax_orig.plot(sig)    
+    ax_orig.set_ylabel('Original value')
+    ax_orig.set_title('Original timeseries')
+    ax_orig.margins(0, 0.1)
+    ax_win.plot(win)
+    ax_win.set_title('Gaussian filter / 1\'st derivative')    
+    ax_win.set_ylabel('Filter level')
+    ax_win.margins(0, 0.1)
+    ax_filt.plot(filtered)
+    ax_filt.plot(neg_peaks, filtered[neg_peaks], "x", color="blue")    
+    ax_filt.plot(top_peaks, filtered[top_peaks], "x", color="red")    
+    ax_filt.set_title('Filtered timeseries')    
+    ax_filt.set_ylabel('Filtered level')
+    ax_filt.set_xlabel(xlabel)    
+    ax_filt.margins(0, 0.1)
+    fig.tight_layout()
+    
+    if not all((savename,savepath)):
+        plt.show()
+      
+    elif all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + "_peaks" + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+    
+    return peaks, bottoms, top_indices, neg_indices
+    
     
