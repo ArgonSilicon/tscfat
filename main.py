@@ -56,8 +56,6 @@ for k in dict_keys:
 #%% Process Battery level
 df1_r = process_battery.process_battery(df1)
 
-df1_rs = df1_r.resample('H').mean()
-battery_diff = df1_rs['battery_level'].diff()
 ###############################################################################
 #%% Process ESM data
 df2_r, ts_2 = process_ESM.process_ESM(df2)
