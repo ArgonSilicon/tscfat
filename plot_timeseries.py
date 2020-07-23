@@ -14,6 +14,168 @@ from interpolate_missing import interpolate_missing
 from arma import arma, autocorr
 from scipy.signal import find_peaks
 
+def grouped_histograms(timeseries,
+                       title,
+                       xlabel,
+                       ylabel,
+                       savepath = False,
+                       savename = False,
+                       ):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlabel : TYPE
+        DESCRIPTION.
+    ylabel : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    title = "Distributions by the groups: " + title
+    
+    fig1 = plt.figure(figsize=(24,12))
+    
+    plt.suptitle(title,y=0.9,fontsize=20)
+          
+    for ind, val in zip(timeseries.index,timeseries.values): 
+        plt.subplot(4,6,(ind+1))
+        plt.hist(val,density=True,label=("hour: {}\n mean: {:.2f}".format(ind,np.mean(val))))
+        plt.axvline(np.mean(val), color='r', linestyle='dashed', linewidth=2)
+        if ind >= 18:
+            plt.xlabel(xlabel)
+        if ind%6 == 0:
+            plt.ylabel(ylabel)
+        plt.legend(loc='upper left')
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_group_distribution"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+        
+    averages = [np.mean(val) for val in timeseries.values]
+    
+    fig2 = plt.figure(figsize=(14,7))
+    plt.bar(timeseries.index,averages)
+    plt.title(title +"_averages")
+    plt.xlabel('Time / Hours')
+    plt.ylabel('Percentage')
+    plt.ylim(0,100)
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_group_averages"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+
+
+def plot_differences(timeseries,
+                     column_name,
+                     title,
+                     xlab,
+                     ylab,
+                     savepath = False,
+                     savename = False,
+                     ):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlab : TYPE
+        DESCRIPTION.
+    ylab : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    timeseries_diff = timeseries.diff()
+    stdev = timeseries_diff.std()
+    print(stdev)
+    #print(timeseries_diff)
+    lowest = timeseries_diff[column_name].nsmallest(5, keep='all')
+    
+    fig = plt.figure(figsize=(15,10))
+    timeseries_diff.plot()
+    #plt.axvline(x=stdev,color='r')
+    #plt.axvline(x=-stdev,color='r')
+    plt.title(title,fontsize=16)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
+    plt.xticks(rotation=45)
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_difference"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+    
+    return lowest
+
 def show_features(timeseries,               
                   title,
                   xlab,
