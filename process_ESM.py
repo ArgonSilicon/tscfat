@@ -84,6 +84,9 @@ def process_ESM(df):
     #%%
     grouped = df_filt.groupby('group').resample('D').sum()
     
+    grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
+    
+    
     ts1 = grouped.scaled_answer[grouped.index.isin(['1'], level=0)]
     ts2 = grouped.scaled_answer[grouped.index.isin(['2'], level=0)]
     ts3 = grouped.scaled_answer[grouped.index.isin(['3'], level=0)]
