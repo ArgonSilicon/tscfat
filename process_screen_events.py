@@ -109,6 +109,6 @@ def process_screen_events(df):
     show_timeseries_scatter(df_filt_3.screen_status,"Screen events / hourly binned","time","Level",FIGPATH,FIGNAME)
     show_features(resampled_3['screen_status'],"Screen_events","xlab","ylab")
     
-    return resampled
+    return resampled, resampled_3
 if __name__ == "__main__":
     pass

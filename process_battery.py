@@ -63,10 +63,10 @@ def process_battery(df):
     high_ts = resampled_interpolated.index[peaks[top_indices]]    
     low_ts = resampled_interpolated.index[bottoms[neg_indices]]
     print("Differencing: ")
-    print("Highest battery comsumption: \n",lowest.index)
+    print("Highest battery comsumption:\n",lowest.index)
     print("Gaussian kernel convolution: ")
-    print("Highest peaks in battery charge: \n", high_ts)
-    print("Highest battery consumption: \n",low_ts)
+    print("Highest peaks in battery charge:\n", high_ts)
+    print("Highest battery consumption:\n",low_ts)
     #%% timeseries decompostition
     
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Decomposition/')

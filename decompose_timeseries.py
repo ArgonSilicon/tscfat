@@ -181,7 +181,7 @@ def detect_steps(timeseries,
     sig = timeseries.values.reshape(-1,1)
     
     # window / kernel
-    win = signal.gaussian(51,std=2).reshape(-1,1)
+    win = signal.gaussian(51,std=5).reshape(-1,1)
     win = np.gradient(win,axis=0)
     win = win - win.mean()
     win = win / win.max()

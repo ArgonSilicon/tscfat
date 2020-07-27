@@ -52,7 +52,7 @@ def Plot_similarity(sim,
     # plot it
     fig = plt.figure(figsize=(10,10)) 
     
-    gs = gridspec.GridSpec(2, 1, height_ratios=[6,1]) 
+    gs = gridspec.GridSpec(2, 1, height_ratios=[8,1]) 
     
     ax0 = plt.subplot(gs[0])
     ax0.imshow(sim, cmap='binary', origin='lower')

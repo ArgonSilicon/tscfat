@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -84,8 +85,11 @@ def process_ESM(df):
     #%%
     grouped = df_filt.groupby('group').resample('D').sum()
     
-    grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
-    
+    grouped_agg = df_filt.groupby('group').resample('D').agg(lambda x: x.tolist())
+    #grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
+    positives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['2'], level=0)].to_numpy())
+    negatives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['3'], level=0)].to_numpy())
+    rho, pval = spearmanr(positives,negatives,axis=0)
     
     ts1 = grouped.scaled_answer[grouped.index.isin(['1'], level=0)]
     ts2 = grouped.scaled_answer[grouped.index.isin(['2'], level=0)]

@@ -54,12 +54,13 @@ def grouped_histograms(timeseries,
           
     for ind, val in zip(timeseries.index,timeseries.values): 
         plt.subplot(4,6,(ind+1))
-        plt.hist(val,density=True,label=("hour: {}\n mean: {:.2f}".format(ind,np.mean(val))))
+        plt.hist(val,density=True,label=("hour: {}\nmean: {:.2f}".format(ind,np.mean(val))))
         plt.axvline(np.mean(val), color='r', linestyle='dashed', linewidth=2)
         if ind >= 18:
             plt.xlabel(xlabel)
         if ind%6 == 0:
             plt.ylabel(ylabel)
+        plt.ylim(0,0.08)
         plt.legend(loc='upper left')
     
     if not all((savename,savepath)):
