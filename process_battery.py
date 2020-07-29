@@ -50,6 +50,9 @@ def process_battery(df):
     resampled = df_filt.resample("H").mean()
     resampled_interpolated, _ = interpolate_missing(resampled,'linear')
     timeseries = resampled_interpolated.values
+    # for similarity
+    resampled_day = resampled_interpolated.resample('D').apply(list)
+    data = np.stack(resampled_day.battery_level.values[1:-1])
     
     #%% plot histograms
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Distributions/')
@@ -92,8 +95,8 @@ def process_battery(df):
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     #%% calculate similarity and novelty
-    sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim,L=24)
+    sim = calculate_similarity(data,'cosine')
+    nov = compute_novelty_SSM(sim,L=7)
     Plot_similarity(sim,nov)
     
     # set correct names and save metrics as json 

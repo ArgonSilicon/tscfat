@@ -53,7 +53,6 @@ def process_ESM(df):
     
     #%%
     
-   
     mask1 = df["type"] == 1
     mask2 = df["type"] == 2
     mask3 = df["type"] == 3
@@ -210,12 +209,13 @@ def process_ESM(df):
     #print(timeseries.shape)
     
     timeseries = combined_df.to_numpy()
+    timeseries_2 = scaled_df.to_numpy()
     #%% calculate receursion plot and metrics
     # similarity
-    sim = calculate_similarity(timeseries,'euclidean')
+    sim = calculate_similarity(timeseries_2,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
-    sim[sim >= 0.11] = 1
-    Plot_similarity(sim,nov)
+    #sim[sim >= 0.11] = 1
+    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0)
     
     #%% Calculate recursion plot and metrix
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)

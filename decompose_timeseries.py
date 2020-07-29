@@ -181,10 +181,14 @@ def detect_steps(timeseries,
     sig = timeseries.values.reshape(-1,1)
     
     # window / kernel
+    '''
     win = signal.gaussian(51,std=5).reshape(-1,1)
     win = np.gradient(win,axis=0)
     win = win - win.mean()
     win = win / win.max()
+    '''
+    # stepfunction
+    win = -(np.array([0]*24+[1]*24).reshape(-1,1))
     
     
     # convolution
@@ -203,19 +207,20 @@ def detect_steps(timeseries,
     neg_peaks = bottoms[neg_indices]
 
     # plot
-    fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True)
+    fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True,figsize=(15,10))
     plt.suptitle(title, fontsize=20)
     ax_orig.plot(sig)    
     ax_orig.set_ylabel('Original value')
     ax_orig.set_title('Original timeseries')
     ax_orig.margins(0, 0.1)
     ax_win.plot(win)
-    ax_win.set_title('Gaussian filter / 1\'st derivative')    
+    ax_win.set_title('Kernel / filter')    
     ax_win.set_ylabel('Filter level')
     ax_win.margins(0, 0.1)
     ax_filt.plot(filtered)
-    ax_filt.plot(neg_peaks, filtered[neg_peaks], "x", color="blue")    
-    ax_filt.plot(top_peaks, filtered[top_peaks], "x", color="red")    
+    ax_filt.set_ylim(30,90)
+    ax_filt.plot(neg_peaks, filtered[neg_peaks], "x", markersize=15, color="blue")    
+    ax_filt.plot(top_peaks, filtered[top_peaks], "x", markersize=15, color="red")    
     ax_filt.set_title('Filtered timeseries')    
     ax_filt.set_ylabel('Filtered level')
     ax_filt.set_xlabel(xlabel)    

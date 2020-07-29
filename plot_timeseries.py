@@ -48,7 +48,7 @@ def grouped_histograms(timeseries,
     """
     title = "Distributions by the groups: " + title
     
-    fig1 = plt.figure(figsize=(24,12))
+    fig1 = plt.figure(figsize=(24,16))
     
     plt.suptitle(title,y=0.9,fontsize=20)
           
@@ -150,7 +150,7 @@ def plot_differences(timeseries,
     #print(timeseries_diff)
     lowest = timeseries_diff[column_name].nsmallest(5, keep='all')
     
-    fig = plt.figure(figsize=(15,10))
+    fig = plt.figure(figsize=(20,10))
     timeseries_diff.plot()
     #plt.axvline(x=stdev,color='r')
     #plt.axvline(x=-stdev,color='r')
@@ -215,7 +215,7 @@ def show_features(timeseries,
     
     title = "Extracted features" + title
     
-    fig = plt.figure(figsize=(15,15))
+    fig = plt.figure(figsize=(15,8))
     
     plt.suptitle(title,fontsize=20)
     
@@ -304,7 +304,7 @@ def show_timeseries_scatter(series,
     # TODO: Insert assertions!
     # TODO: add legend
     
-    plt.figure(figsize=(15,15))
+    plt.figure(figsize=(20,8))
     #plt.scatter(x_name, y_name)
     series.plot(style='.')
     plt.title(title)
@@ -371,7 +371,7 @@ def show_timeseries_line(series,
     
     # TODO: Insert assertions!
     
-    plt.figure(figsize=(15,15))
+    plt.figure(figsize=(20,8))
     series.plot()
     plt.title(title)
     plt.xlabel(xlab)

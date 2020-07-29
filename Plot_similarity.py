@@ -19,7 +19,10 @@ def Plot_similarity(sim,
                     nov,
                     title="Similarity and novelty",
                     savepath = False, 
-                    savename = False):
+                    savename = False,
+                    ylim = (0,0.05),
+                    threshold = 0,
+                    ):
     
     """
     TODO: fix these!
@@ -48,25 +51,31 @@ def Plot_similarity(sim,
     assert isinstance(sim,np.ndarray), "Recurrence matrix type is not np.ndarray."
     assert isinstance(nov,np.ndarray), "Recurrence matrix type is not np.ndarray."
 
-   
+    sim[sim < threshold] = 0
     # plot it
-    fig = plt.figure(figsize=(10,10)) 
+    fig, ax = plt.subplots(4,3,figsize=(10,12),sharex=True) 
+    gridsize = (4,3)
+    ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
+    ax2 = plt.subplot2grid(gridsize, (3,0), colspan=3)
     
+    '''
     gs = gridspec.GridSpec(2, 1, height_ratios=[8,1]) 
-    
     ax0 = plt.subplot(gs[0])
-    ax0.imshow(sim, cmap='binary', origin='lower')
-    plt.title("Similarity matrix", fontsize=14)
-    plt.xlabel('$m = {}$'.format(sim.shape[0]))
-    plt.ylabel('$n = {}$'.format(sim.shape[1]))
+    '''
+    ax1.imshow(sim,cmap="Blues", origin='lower')
+    ax1.set_title("Similarity matrix", fontsize=14)
+    ax1.set_xlabel('$m = {}$'.format(sim.shape[0]))
+    ax1.set_ylabel('$n = {}$'.format(sim.shape[1]))
     
-    ax1 = plt.subplot(gs[1])
-    ax1.plot(nov)
+    #ax1 = plt.subplot(gs[1])
+    ax2.plot(nov)
+    ax2.set_title("Novelty score", fontsize=14)
+    ax2.set_xlabel('Time')
+    ax2.set_ylabel('Novelty')
+    ax2.set_ylim(ylim)
+    
+    plt.suptitle(title + " daily patterns\ncosine similarity and novelty score",fontsize=20,y=1.02)
     plt.grid(True)
-    plt.title("Novelty score", fontsize=14)
-    plt.xlabel('Time')
-    plt.ylabel('Novelty')
-    
     plt.tight_layout(pad=2.0)
     
     

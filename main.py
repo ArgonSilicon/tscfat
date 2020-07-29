@@ -30,7 +30,8 @@ from sklearn.manifold import TSNE
 # Local application imports
 from csv_load import load_all_subjects
 import process_apps, process_ESM, process_battery, process_screen_events, process_location
-from cluster_timeseries import cluster_timeseries
+from cluster_timeseries import cluster_timeseries, gaussian_MM
+from interpolate_missing import interpolate_missing
 
 ###############################################################################
 #%% Load the data
@@ -56,14 +57,53 @@ for k in dict_keys:
         df5 = csv_dict[k]
         
     else:
-        raise Exception("Dictionary key unknown.") 
+        pass
+        #raise Exception("Dictionary key unknown.") 
 ###############################################################################
 #%% Process Battery level
 df1_r = process_battery.process_battery(df1)
 #%%
 df1_bl = df1['battery_level']
+df1_re = df1_bl.resample('H').mean()
+df1_re, _ = interpolate_missing(df1_re,'linear')
 
-df1_clustered, labels, model, Y = cluster_timeseries(df1_bl)
+df_grouped = df1_re.groupby(df1_re.index.floor('d')).apply(list)
+data = np.stack(df_grouped.values[1:-1])
+
+bic = []
+aic = []
+for i in range(2,20):
+    model, Y = gaussian_MM(data,i,1000)
+    aic.append(model.aic(data))
+    bic.append(model.bic(data))
+
+xmin = np.min(bic)
+ix_min = np.argmin(bic)
+ymin = bic[ix_min]
+
+fig, ax = plt.subplots(1,2,figsize=(15,7))
+
+ax[0].plot(np.arange(2,20),bic,'o:')
+ax[0].plot(ix_min+2,ymin,'X',c="red",markersize=14)
+ax[0].set_title('BIC score / number of clusters')
+ax[0].set_xlabel('Number of clusters')
+ax[0].set_ylabel('BIC score')
+ax[0].set_xticks(np.arange(2,20))
+
+xmin = np.min(aic)
+ix_min = np.argmin(aic)
+ymin = aic[ix_min]
+
+ax[1].plot(np.arange(2,20),aic,'o:')
+ax[1].plot(ix_min+2,ymin,'X',c="red",markersize=14)
+ax[1].set_title('AIC score / number of clusters')
+ax[1].set_xlabel('Number of clusters')
+ax[1].set_ylabel('AIC score')
+ax[1].set_xticks(np.arange(2,20))
+
+plt.show()
+
+model, Y = cluster_timeseries(df1_bl)
 
 
 #%% show some sample days
@@ -122,10 +162,132 @@ corr_s = df_stack.corr(method="spearman")
 ##############################################################################
 #%% Screen events
 df4_r, df4_unlocked = process_screen_events.process_screen_events(df4)
+
+#%%
+df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
+data = np.stack(df_grouped.values[1:-1])
+
+bic = []
+aic = []
+for i in range(2,20):
+    model, Y = gaussian_MM(data,i,100)
+    aic.append(model.aic(data))
+    bic.append(model.bic(data))
+
+xmin = np.min(bic)
+ix_min = np.argmin(bic)
+ymin = bic[ix_min]
+
+fig = plt.figure(figsize=(15,10))
+plt.plot(np.arange(2,20),bic,'o:')
+plt.plot(ix_min+2,ymin,'X',c="red",markersize=14)
+plt.title('BIC score / number of clusters')
+plt.xlabel('Number of clusters')
+plt.ylabel('BIC score')
+plt.xticks(np.arange(2,20))
+plt.show()
+
+xmin = np.min(aic)
+ix_min = np.argmin(aic)
+ymin = aic[ix_min]
+
+fig = plt.figure(figsize=(15,10))
+plt.plot(np.arange(2,20),aic,'o:')
+plt.plot(ix_min+2,ymin,'X',c="red",markersize=14)
+plt.title('AIC score / number of clusters')
+plt.xlabel('Number of clusters')
+plt.ylabel('AIC score')
+plt.xticks(np.arange(2,20))
+plt.show()
+
+#%%    
+model, Y = gaussian_MM(data,7,1000)  
+  
+df_grouped = df_grouped.drop(df_grouped.index[0])
+df_grouped = df_grouped.drop(df_grouped.index[-1])
+clustered_data = df_grouped.to_frame()
+clustered_data.columns = ['Screen_events']
+clustered_data['cluster'] = Y + 1
+print("Daily screen events patterns clustered: ")
+print(clustered_data.cluster.value_counts())
+
+#%% some plotting, remove this!!
+val0 = np.stack(clustered_data[clustered_data['cluster'] == 1]['Screen_events'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster'] == 2]['Screen_events'].values)
+val2 = np.stack(clustered_data[clustered_data['cluster'] == 3]['Screen_events'].values)
+val3 = np.stack(clustered_data[clustered_data['cluster'] == 4]['Screen_events'].values)
+val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['Screen_events'].values)
+val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['Screen_events'].values)
+val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['Screen_events'].values)
+
+
+for i in range(len(val0)):
+    plt.plot(val0[i],':')
+    plt.title('Clusters: 1')
+    plt.ylim(0,30)
+plt.plot(val0.mean(axis=0),c='black')
+plt.show()
+
+for i in range(len(val1)):
+    plt.plot(val1[i],':')
+    plt.title('Cluster: 2')
+    plt.ylim(0,30)
+plt.plot(val1.mean(axis=0),c='black')
+plt.show()
+
+for i in range(len(val2)):
+    plt.plot(val2[i],':')
+    plt.title('Cluster: 3')
+    plt.ylim(0,30)
+plt.plot(val2.mean(axis=0),c='black')
+plt.show()
+
+for i in range(len(val3)):
+    plt.plot(val3[i],':')
+    plt.title('Cluster: 4')
+    plt.ylim(0,30)
+plt.plot(val3.mean(axis=0),c='black')
+plt.show()
+
+for i in range(len(val4)):
+    plt.plot(val4[i],':')
+    plt.title('Cluster: 5')
+    plt.ylim(0,30)
+plt.plot(val4.mean(axis=0),c='black')
+plt.show()
+
+
+for i in range(len(val5)):
+    plt.plot(val5[i],':')
+    plt.title('Cluster: 6')
+    plt.ylim(0,30)
+plt.plot(val5.mean(axis=0),c='black')
+plt.show()
+
+
+for i in range(len(val6)):
+    plt.plot(val6[i],':')
+    plt.title('Cluster: 7')
+    plt.ylim(0,30)
+plt.plot(val6.mean(axis=0),c='black')
+plt.show()
+
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+clustered_data['cluster'].plot(style='o:')
+ax.set_title('Screen events daily patterns clustered')
+ax.set_yticks(np.arange(7))
+ax.set_ylabel('Cluster no.')
+ax.set_xlabel('Time (day)')
+ax.set_ylim(0.8,7.2)
+ax.set_xlim('2020-06-01','2020-07-17')
+plt.show()
+
 #%% check corrrelations
 df4_res = df4_unlocked.resample('D').sum()
 df_stack = pd.concat([df_stack,df4_res[1:-1]],axis=1)
 corr_s = df_stack.corr(method="spearman")
+
 ###############################################################################
 #%% Process App notfications
 df5_r, ts_5 = process_apps.process_apps(df5,df1,df4)
@@ -202,7 +364,7 @@ diff['mean'] = diff.mean(axis=1)
 diff['var'] = diff.var(axis=1)
 
 #%% trying to visualize days
-data.drop(data.columns[0], axis=1, inplace=True)
+data.drop(data.columns[18], axis=1, inplace=True)
 X_embedded = TSNE(n_components=2).fit_transform(data)
 data['tsne1'] = X_embedded[:,0]
 data['tsne2'] = X_embedded[:,1]
@@ -212,7 +374,7 @@ cmap = ListedColormap(colors)
 
 fig = plt.figure(figsize=(13,13))
 
-plt.scatter(data['tsne1'],data['tsne2'], c=labels)
+plt.scatter(data['tsne1'],data['tsne2'])
 plt.plot(data['tsne1'],data['tsne2'],':')
 
 # zip joins x and y coordinates in pairs

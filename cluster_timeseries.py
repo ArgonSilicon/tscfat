@@ -20,36 +20,13 @@ def cluster_timeseries(df):
     df_grouped = resampled_interpolated.groupby(resampled_interpolated.index.floor('d')).apply(list)
     data = np.stack(df_grouped.values[1:-1])
     
-    # clustering
-    for i in range(2,10):
-        km = TimeSeriesKMeans(n_clusters = int(i), metric="softdtw", max_iter=50,
-                              max_iter_barycenter=50,
-                              metric_params={"gamma": .5},
-                              random_state=0).fit(data)
+    model, Y =  gaussian_MM(data,7,10000)
     
-        labels = km.fit_predict(data)
-        sc = silhouette_score(data, labels, metric="softdtw")
-        print('No. clusters: {} Silhouette score: {:.4f}'.format(i,sc))
-        
+    df_grouped = df_grouped.drop(df_grouped.index[0])
+    df_grouped = df_grouped.drop(df_grouped.index[-1])
+    clustered_data = df_grouped.to_frame()
     
-    km = TimeSeriesKMeans(n_clusters = 5, metric="softdtw", max_iter=50,
-                              max_iter_barycenter=50,
-                              metric_params={"gamma": .9},
-                              random_state=0,
-                              n_jobs = -1,
-                              verbose = 1).fit(data)
-    
-    labels = km.fit_predict(data)
-    dfp = df_grouped.drop(df_grouped.index[0])
-    dfp = dfp.drop(dfp.index[-1])
-    clustered_data = dfp.to_frame()
-    
-    clustered_data['cluster'] = labels + 1
-    cntr = Counter(clustered_data['cluster'].values)
-    print(cntr.most_common())
-    
-    
-    
+    clustered_data['cluster'] = Y + 1
     #%% do some plotting
     
     val0 = np.stack(clustered_data[clustered_data['cluster'] == 1]['battery_level'].values)
@@ -57,102 +34,92 @@ def cluster_timeseries(df):
     val2 = np.stack(clustered_data[clustered_data['cluster'] == 3]['battery_level'].values)
     val3 = np.stack(clustered_data[clustered_data['cluster'] == 4]['battery_level'].values)
     val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['battery_level'].values)
+    val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['battery_level'].values)
+    val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['battery_level'].values)
     
-    
+    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
     
     for i in range(len(val0)):
-        plt.plot(val0[i])
-        plt.title('Clusters: 1')
-    plt.show()
+        ax[0,0].plot(val0[i],':',alpha=0.7)
+    ax[0,0].set_title('Clusters: 1',fontsize=16)
+    ax[0,0].set_xlabel('Time (hour)')
+    ax[0,0].set_ylabel('Battery level (%)')
+    ax[0,0].set_xlim(0,100)
+    ax[0,0].set_xlim(0,23)
+    ax[0,0].plot(val0.mean(axis=0),c='black')
+    #plt.show()
     
     for i in range(len(val1)):
-        plt.plot(val1[i])
-        plt.title('Cluster: 2')
-    plt.show()
+        ax[0,1].plot(val1[i],':',alpha=0.7)
+    ax[0,1].set_title('Cluster: 2',fontsize=16)
+    ax[0,1].set_xlabel('Time (hour)')
+    ax[0,1].set_ylabel('Battery level (%)')
+    ax[0,1].set_xlim(0,100)
+    ax[0,1].set_xlim(0,23)
+    ax[0,1].plot(val1.mean(axis=0),c='black')
+    #plt.show()
     
     for i in range(len(val2)):
-        plt.plot(val2[i])
-        plt.title('Cluster: 3')
-    plt.show()
+        ax[1,0].plot(val2[i],':',alpha=0.7)
+    ax[1,0].set_title('Cluster: 3',fontsize=16)
+    ax[1,0].set_xlabel('Time (hour)')
+    ax[1,0].set_ylabel('Battery level (%)')
+    ax[1,0].plot(val2.mean(axis=0),c='black')
+    #plt.show()
     
     for i in range(len(val3)):
-        plt.plot(val3[i])
-        plt.title('Cluster: 4')
-    plt.show()
+        ax[1,1].plot(val3[i],':',alpha=0.7)
+    ax[1,1].set_title('Cluster: 4',fontsize=16)
+    ax[1,1].set_xlabel('Time (hour)')
+    ax[1,1].set_ylabel('Battery level (%)')
+    ax[1,1].plot(val3.mean(axis=0),c='black')
+    #plt.show()
     
     for i in range(len(val4)):
-        plt.plot(val4[i])
-        plt.title('Cluster: 5')
+        ax[2,0].plot(val4[i],':',alpha=0.7)
+    ax[2,0].set_title('Cluster: 5',fontsize=16)
+    ax[2,0].set_xlabel('Time (hour)')
+    ax[2,0].set_ylabel('Battery level (%)')
+    ax[2,0].plot(val4.mean(axis=0),c='black')
+    #plt.show()
+    
+    for i in range(len(val5)):
+        ax[2,1].plot(val5[i],':',alpha=0.7)
+    ax[2,1].set_title('Cluster: 6',fontsize=16)
+    ax[2,1].set_xlabel('Time (hour)')
+    ax[2,1].set_ylabel('Battery level (%)')
+    ax[2,1].plot(val5.mean(axis=0),c='black')
+    #plt.show()
+    
+    for i in range(len(val6)):
+        ax[3,0].plot(val6[i],':',alpha=0.7)
+    ax[3,0].set_title('Cluster: 7',fontsize=16)
+    ax[3,0].set_xlabel('Time (hour)')
+    ax[3,0].set_ylabel('Battery level (%)')
+    ax[3,0].plot(val6.mean(axis=0),c='black')
+    
+    fig.tight_layout(pad=1.0)
     plt.show()
     
     fig = plt.figure()
     ax = fig.add_axes([0,0,1,1])
     clustered_data['cluster'].plot(style='o:')
     ax.set_title('Battery level daily development clustered')
-    ax.set_yticks(np.arange(6))
+    ax.set_yticks(np.arange(8))
     ax.set_ylabel('Cluster no.')
     ax.set_xlabel('Time / day')
-    ax.set_ylim(0.8,5.2)
+    ax.set_ylim(0.8,7.2)
     ax.set_xlim('2020-06-01','2020-07-17')
     plt.show()
     
-    model, Y =  gaussian_MM(data)
     
-    clustered_data['cluster_2'] = Y + 1
-    #%% do some plotting
-    
-    val0 = np.stack(clustered_data[clustered_data['cluster_2'] == 1]['battery_level'].values)
-    val1 = np.stack(clustered_data[clustered_data['cluster_2'] == 2]['battery_level'].values)
-    val2 = np.stack(clustered_data[clustered_data['cluster_2'] == 3]['battery_level'].values)
-    val3 = np.stack(clustered_data[clustered_data['cluster_2'] == 4]['battery_level'].values)
-    val4 = np.stack(clustered_data[clustered_data['cluster_2'] == 5]['battery_level'].values)
-    
-    
-    
-    for i in range(len(val0)):
-        plt.plot(val0[i])
-        plt.title('Clusters: 1')
-    plt.show()
-    
-    for i in range(len(val1)):
-        plt.plot(val1[i])
-        plt.title('Cluster: 2')
-    plt.show()
-    
-    for i in range(len(val2)):
-        plt.plot(val2[i])
-        plt.title('Cluster: 3')
-    plt.show()
-    
-    for i in range(len(val3)):
-        plt.plot(val3[i])
-        plt.title('Cluster: 4')
-    plt.show()
-    
-    for i in range(len(val4)):
-        plt.plot(val4[i])
-        plt.title('Cluster: 5')
-    plt.show()
-    
-    fig = plt.figure()
-    ax = fig.add_axes([0,0,1,1])
-    clustered_data['cluster_2'].plot(style='o:')
-    ax.set_title('Battery level daily development clustered')
-    ax.set_yticks(np.arange(6))
-    ax.set_ylabel('Cluster no.')
-    ax.set_xlabel('Time / day')
-    ax.set_ylim(0.8,5.2)
-    ax.set_xlim('2020-06-01','2020-07-17')
-    plt.show()
-    
-    #%%
-    
-    return clustered_data,labels, model, Y
+    return model, Y
 
-def gaussian_MM(data):
+def gaussian_MM(data,K=5,n=10):
+    
     # fit model
-    K = 5
-    model = GaussianMixture(n_components=K)
+    model = GaussianMixture(n_components=K,n_init=n,covariance_type="full")
     model.fit(data)
     # model properties
     Y = model.predict(data)

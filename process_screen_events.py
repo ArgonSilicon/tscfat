@@ -44,6 +44,10 @@ def process_screen_events(df):
     resampled = df_filt.resample("H").count()
     resampled_3 = df_filt_3.resample("H").count()
     
+    # for similarity
+    resampled_day = resampled.resample('D').apply(list)
+    data = np.stack(resampled_day.screen_status.values[1:-1])
+    
     timeseries = resampled.values
     timeseries_3 = resampled_3.values
     
@@ -55,10 +59,10 @@ def process_screen_events(df):
     
     
     #%% calculate SSM and Novelty
-    
-    sim = calculate_similarity(timeseries,'euclidean')
+    print(data)
+    sim = calculate_similarity(data,'cosine')
     nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov)
+    Plot_similarity(sim,nov,"Screen events",False,False,(0,0.05),0)
     
     #%% calculate SSM and Novelty 3
     
