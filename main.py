@@ -13,7 +13,6 @@ This is main file
 import os
 from pathlib import Path
 import re
-from collections import Counter
 
 # change correct working directory
 WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
@@ -24,13 +23,13 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-from scipy.stats import pearsonr, spearmanr
+from scipy.stats import spearmanr
 from sklearn.manifold import TSNE
 
 # Local application imports
 from csv_load import load_all_subjects
 import process_apps, process_ESM, process_battery, process_screen_events, process_location
-from cluster_timeseries import cluster_timeseries, gaussian_MM
+from cluster_timeseries import cluster_timeseries, gaussian_MM, Agg_Clustering
 from interpolate_missing import interpolate_missing
 
 ###############################################################################
@@ -105,13 +104,109 @@ plt.show()
 
 model, Y = cluster_timeseries(df1_bl)
 
+#%% agg clust
+clustering = Agg_Clustering(data)
+print(clustering)
 
+#%%
+df_grouped = df_grouped.drop(df_grouped.index[0])
+df_grouped = df_grouped.drop(df_grouped.index[-1])
+clustered_data = df_grouped.to_frame()
+
+clustered_data['cluster'] = clustering + 1
+#%% do some plotting
+
+val0 = np.stack(clustered_data[clustered_data['cluster'] == 1]['battery_level'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster'] == 2]['battery_level'].values)
+val2 = np.stack(clustered_data[clustered_data['cluster'] == 3]['battery_level'].values)
+val3 = np.stack(clustered_data[clustered_data['cluster'] == 4]['battery_level'].values)
+val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['battery_level'].values)
+val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['battery_level'].values)
+val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['battery_level'].values)
+
+fig,ax = plt.subplots(4,2,figsize=(12,15))
+fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
+
+for i in range(len(val0)):
+    ax[0,0].plot(val0[i],':',alpha=0.7)
+ax[0,0].set_title('Clusters: 1',fontsize=16)
+ax[0,0].set_xlabel('Time (hour)')
+ax[0,0].set_ylabel('Battery level (%)')
+ax[0,0].set_xlim(0,100)
+ax[0,0].set_xlim(0,23)
+ax[0,0].plot(val0.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val1)):
+    ax[0,1].plot(val1[i],':',alpha=0.7)
+ax[0,1].set_title('Cluster: 2',fontsize=16)
+ax[0,1].set_xlabel('Time (hour)')
+ax[0,1].set_ylabel('Battery level (%)')
+ax[0,1].set_xlim(0,100)
+ax[0,1].set_xlim(0,23)
+ax[0,1].plot(val1.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val2)):
+    ax[1,0].plot(val2[i],':',alpha=0.7)
+ax[1,0].set_title('Cluster: 3',fontsize=16)
+ax[1,0].set_xlabel('Time (hour)')
+ax[1,0].set_ylabel('Battery level (%)')
+ax[1,0].plot(val2.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val3)):
+    ax[1,1].plot(val3[i],':',alpha=0.7)
+ax[1,1].set_title('Cluster: 4',fontsize=16)
+ax[1,1].set_xlabel('Time (hour)')
+ax[1,1].set_ylabel('Battery level (%)')
+ax[1,1].plot(val3.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val4)):
+    ax[2,0].plot(val4[i],':',alpha=0.7)
+ax[2,0].set_title('Cluster: 5',fontsize=16)
+ax[2,0].set_xlabel('Time (hour)')
+ax[2,0].set_ylabel('Battery level (%)')
+ax[2,0].plot(val4.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val5)):
+    ax[2,1].plot(val5[i],':',alpha=0.7)
+ax[2,1].set_title('Cluster: 6',fontsize=16)
+ax[2,1].set_xlabel('Time (hour)')
+ax[2,1].set_ylabel('Battery level (%)')
+ax[2,1].plot(val5.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val6)):
+    ax[3,0].plot(val6[i],':',alpha=0.7)
+ax[3,0].set_title('Cluster: 7',fontsize=16)
+ax[3,0].set_xlabel('Time (hour)')
+ax[3,0].set_ylabel('Battery level (%)')
+ax[3,0].plot(val6.mean(axis=0),c='black')
+
+fig.tight_layout(pad=1.0)
+plt.show()
+
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+clustered_data['cluster'].plot(style='o:')
+ax.set_title('Battery level daily development clustered')
+ax.set_yticks(np.arange(8))
+ax.set_ylabel('Cluster no.')
+ax.set_xlabel('Time / day')
+ax.set_ylim(0.8,7.2)
+ax.set_xlim('2020-06-01','2020-07-17')
+plt.show()
 #%% show some sample days
 g = df1.groupby(df1.index.floor('d'))
-my_day = pd.Timestamp('2020-06-25')
-my_day_2 = pd.Timestamp('2020-06-30')
+my_day = pd.Timestamp('2020-07-13')
+my_day_2 = pd.Timestamp('2020-07-14')
+my_day_3 = pd.Timestamp('2020-07-15')
 df_slice = g.get_group(my_day)
 df_slice_2 = g.get_group(my_day_2)
+df_slice_3 = g.get_group(my_day_3)
 #%%
 df_slice.battery_level.plot()
 plt.xlabel("Time / hours")
@@ -120,14 +215,21 @@ plt.title("Battery level {}".format(my_day.date()))
 plt.ylim(0,105)
 plt.show()
 
-#%%
 df_slice_2.battery_level.plot()
 plt.xlabel("Time / hours")
 plt.ylabel("Battery_level")
 plt.title("Battery level {}".format(my_day_2.date()))
 plt.ylim(0,105)
 plt.show()
+
+df_slice_3.battery_level.plot()
+plt.xlabel("Time / hours")
+plt.ylabel("Battery_level")
+plt.title("Battery level {}".format(my_day_3.date()))
+plt.ylim(0,105)
+plt.show()
 #%%
+'''
 df_slice_r = df_slice.resample("H").mean()
 df_slice_r.index = np.arange(24)
 df_slice_r.battery_level.plot.bar(rot=0)
@@ -146,7 +248,7 @@ plt.ylabel("Battery_level")
 plt.title("Battery level / averages {}".format(my_day_2.date()))
 plt.ylim(0,105)
 plt.show()
-
+'''
 ###############################################################################
 #%% Process ESM data
 df2_r, ts_2 = process_ESM.process_ESM(df2)

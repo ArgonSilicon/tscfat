@@ -35,6 +35,7 @@ from calculate_novelty import compute_novelty_SSM
 from decompose_timeseries import STL_decomposition, detect_steps
 from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
+from calculate_DTW import DTW_distance
 
 
 def process_battery(df):
@@ -46,23 +47,29 @@ def process_battery(df):
     
     #%% filter dataframe and resample hourly means
     df_filt = df.filter(["time","battery_level",])
-    df_grouped_lists = df_filt.battery_level.groupby(df_filt.index.hour).apply(list)
+    df_grouped_lists = df_filt.battery_level.groupby(df_filt.index.hour).apply(list) # -> for grouped_histograms()
     resampled = df_filt.resample("H").mean()
     resampled_interpolated, _ = interpolate_missing(resampled,'linear')
     timeseries = resampled_interpolated.values
-    # for similarity
+    
+    # daily / hours for similarity calulation
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
     
     #%% plot histograms
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Distributions/')
     FIGNAME = "Battery_level" 
-    grouped_histograms(df_grouped_lists,'Battery level','Percentage','Proportion')
-    
-    
+    grouped_histograms(df_grouped_lists,'Battery level','Percentage','Proportion',FIGPATH,FIGNAME)
+       
     #%% plot differences and detect steps
-    lowest = plot_differences(resampled_interpolated, "battery_level","Battery level change in time", "Time / Hours", "Difference")
-    peaks, bottoms, top_indices, neg_indices = detect_steps(resampled_interpolated, "Battery level peaks and bottoms", "Time / Hours")
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Differences/')
+    FIGNAME = "Battery_level"
+    lowest, diff, pct = plot_differences(resampled_interpolated, "battery_level","Battery level change in time", "Time (h)", "Difference",FIGPATH,FIGNAME)
+    #%%
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Decomposition/')
+    FIGNAME = "Steps"
+    peaks, bottoms, top_indices, neg_indices = detect_steps(resampled_interpolated, "Battery level peaks and bottoms", "Time (h)",FIGPATH,FIGNAME)
+    #%%
     high_ts = resampled_interpolated.index[peaks[top_indices]]    
     low_ts = resampled_interpolated.index[bottoms[neg_indices]]
     print("Differencing: ")
@@ -73,56 +80,52 @@ def process_battery(df):
     #%% timeseries decompostition
     
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Decomposition/')
-    FIGNAME = "decomposition" 
-    decomp = STL_decomposition(timeseries,FIGPATH,FIGNAME)
-    
-    #%% detect steps
-    
+    FIGNAME = "Battery_level_decomposition" 
+    decomp = STL_decomposition(timeseries,"Battery level timeseries decomposition", FIGPATH,FIGNAME)
+        
     #%% calculate receursion plot and metrics
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
         
     #%% show recursion plot and save figure
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Plots/')
-    FIGNAME = "recplot_1"
+    FIGNAME = "Battery_level_RP"
     TITLE = "Battery level Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-    Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
-   
-    #%% Recursion on trend
-    res, mat = Calculate_RQA(decomp.trend.reshape(-1,1), ED,TD,RA)
-    
-    FIGNAME = "recplot_1_trend"
-    TITLE = "Battery level Recurrence Plot / Trend \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-    Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
+    Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)   
     
     #%% calculate similarity and novelty
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Similarity/')
+    FIGNAME = "Battery_level_similarity"
     sim = calculate_similarity(data,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
-    Plot_similarity(sim,nov)
+    Plot_similarity(sim,nov,"Battery level",FIGPATH,FIGNAME)
     
-    # set correct names and save metrics as json 
+    #%% set correct names and save metrics as json 
     RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
-    RESNAME = "metrics_1.json"
+    RESNAME = "Battery_level_RP_metrics.json"
     dump_to_json(res,RESPATH,RESNAME)   
     
     # save the timeseries
     TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
-    TSNAME = "timeseries_1.mat"
+    TSNAME = "Battery_level_ts.mat"
     save2mat(timeseries,TSPATH,TSNAME)
     
-    NPNAME = "timeseries_1.npy"
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
+    NPNAME = "Battery_level_ts.npy"
     with open(FIGPATH / NPNAME, mode="wb") as outfile:
         np.save(outfile,timeseries)       
     
     #%% Plot timeseries and save figure
-    FIGNAME = "timeseries_1_scatter"
+    FIGNAME = "Battery_level_ts_scatter"
     show_timeseries_scatter(resampled_interpolated['battery_level'],"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-    FIGNAME = "timeseries_1_line"
+    FIGNAME = "Battery_level_ts_line"
     show_timeseries_line(resampled_interpolated['battery_level'],"Battery level / hourly mean","time","Level",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save
-    show_features(resampled_interpolated['battery_level'],"Battery level","xlab","ylab",window=24)
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Features/')
+    FIGNAME = "Battery_level_features"
+    show_features(resampled_interpolated['battery_level'],"Battery level","Time (d)","Value",24,1,"right",False,FIGPATH,FIGNAME)
     
 
-
+    #%%
     return df
 
 if __name__ == "__main__":

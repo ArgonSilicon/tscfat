@@ -46,11 +46,14 @@ def grouped_histograms(timeseries,
     None.
 
     """
-    title = "Distributions by the groups: " + title
+    
+    #TODO: docstrings
+    
+    title = "Hourly distributions: " + title
     
     fig1 = plt.figure(figsize=(24,16))
     
-    plt.suptitle(title,y=0.9,fontsize=20)
+    plt.suptitle(title,y=0.95,fontsize=24)
           
     for ind, val in zip(timeseries.index,timeseries.values): 
         plt.subplot(4,6,(ind+1))
@@ -83,9 +86,9 @@ def grouped_histograms(timeseries,
     
     fig2 = plt.figure(figsize=(14,7))
     plt.bar(timeseries.index,averages)
-    plt.title(title +"_averages")
-    plt.xlabel('Time / Hours')
-    plt.ylabel('Percentage')
+    plt.title(title +" averages")
+    plt.xlabel('Time (h)')
+    plt.ylabel('Percentage (%)')
     plt.ylim(0,100)
     
     if not all((savename,savepath)):
@@ -143,21 +146,33 @@ def plot_differences(timeseries,
     None.
 
     """
+    #TODO: docstings
     
     timeseries_diff = timeseries.diff()
-    stdev = timeseries_diff.std()
-    print(stdev)
+    timeseries_pct  = timeseries.pct_change()
+    #stdev = timeseries_diff.std()
+    #print(stdev)
     #print(timeseries_diff)
     lowest = timeseries_diff[column_name].nsmallest(5, keep='all')
     
-    fig = plt.figure(figsize=(20,10))
-    timeseries_diff.plot()
+    fig, ax = plt.subplots(2,1,figsize=(25,15))
+    
+    ax[0].plot(timeseries_diff.values)
+    #timeseries_diff.plot()
     #plt.axvline(x=stdev,color='r')
     #plt.axvline(x=-stdev,color='r')
-    plt.title(title,fontsize=16)
-    plt.xlabel(xlab)
-    plt.ylabel(ylab)
-    plt.xticks(rotation=45)
+    ax[0].set_title(title + ': difference(1)',fontsize=16)
+    ax[0].set_xlabel(xlab)
+    ax[0].set_ylabel(ylab)
+    #ax[0].set_xticks(rotation=45)
+       
+    ax[1].plot(timeseries_pct.values*100)
+    ax[1].set_title(title + ': pct_change(1)',fontsize=16)
+    ax[1].set_xlabel(xlab)
+    ax[1].set_ylabel(ylab + ' (%)')
+    ax[1].set_ylim(-100,400)
+    #ax[1].set_xticks(rotation=45)
+    
     
     if not all((savename,savepath)):
         plt.show()
@@ -165,7 +180,7 @@ def plot_differences(timeseries,
     elif all((savename,savepath)):
 
         assert isinstance(savename,str), "Invalid savename type."
-        savename = savename + "_difference"
+        savename = savename + "_differences"
         
         if savepath.exists():
             with open(savepath / (savename + ".png"), mode="wb") as outfile:
@@ -175,7 +190,7 @@ def plot_differences(timeseries,
     else:
         raise Exception("Arguments were not given correctly.")
     
-    return lowest
+    return lowest, timeseries_diff, timeseries_pct
 
 def show_features(timeseries,               
                   title,
@@ -213,7 +228,7 @@ def show_features(timeseries,
     
     #%%
     
-    title = "Extracted features" + title
+    title = title +"extracted features"
     
     fig = plt.figure(figsize=(15,8))
     
@@ -222,15 +237,15 @@ def show_features(timeseries,
     plt.subplot(2,1,1)
     features.iloc[:,0].plot()
     plt.title('STD',fontsize=16)
-    plt.xlabel('Time')
-    plt.ylabel("Value")
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
     plt.xticks(rotation=45)
                 
     plt.subplot(2,1,2)
     features.iloc[:,1].plot()
-    plt.title('Autocorrelation',fontsize=16)
-    plt.xlabel('Time')
-    plt.ylabel("Value")
+    plt.title('Autocorrelation(1)',fontsize=16)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
     plt.xticks(rotation=45)
      
     fig.tight_layout(pad=4.0)

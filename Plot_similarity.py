@@ -58,10 +58,6 @@ def Plot_similarity(sim,
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
     ax2 = plt.subplot2grid(gridsize, (3,0), colspan=3)
     
-    '''
-    gs = gridspec.GridSpec(2, 1, height_ratios=[8,1]) 
-    ax0 = plt.subplot(gs[0])
-    '''
     ax1.imshow(sim,cmap="Blues", origin='lower')
     ax1.set_title("Similarity matrix", fontsize=14)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]))
@@ -70,13 +66,13 @@ def Plot_similarity(sim,
     #ax1 = plt.subplot(gs[1])
     ax2.plot(nov)
     ax2.set_title("Novelty score", fontsize=14)
-    ax2.set_xlabel('Time')
+    ax2.set_xlabel('Time (d)')
     ax2.set_ylabel('Novelty')
     ax2.set_ylim(ylim)
     
-    plt.suptitle(title + " daily patterns\ncosine similarity and novelty score",fontsize=20,y=1.02)
+    plt.suptitle(title + " daily patterns",fontsize=20,y=1.01)
     plt.grid(True)
-    plt.tight_layout(pad=2.0)
+    plt.tight_layout(pad=1.0)
     
     
     if not savename and not savepath:
@@ -88,7 +84,7 @@ def Plot_similarity(sim,
         
         if savepath.exists():
             with open(savepath / (savename + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
+                plt.savefig(outfile, format="png",bbox_inches = 'tight')
         else:
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:

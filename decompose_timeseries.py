@@ -15,6 +15,7 @@ from scipy.special import expit, logit
 
 
 def STL_decomposition(series,
+                      title,
                       savepath = False,
                       savename = False):
     """
@@ -54,31 +55,31 @@ def STL_decomposition(series,
 
     fig1 = plt.figure(figsize=(15,15))
     
-    plt.suptitle('Timeseries decomposition',fontsize=20)
+    plt.suptitle(title,fontsize=20)
     
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
     plt.title('Observations',fontsize=16)
-    plt.ylabel("Battery Level")
-    plt.xlabel("Time / hours")
+    plt.ylabel("Battery Level (%)")
+    plt.xlabel("Time (h)")
                 
     plt.subplot(4,1,2)
     plt.plot(Result.trend)
     plt.title('Trend',fontsize=16)
-    plt.ylabel("Battery Level")
-    plt.xlabel("Time / hours")
+    plt.ylabel("Battery Level (%)")
+    plt.xlabel("Time (h)")
      
     plt.subplot(4,1,3)
     plt.plot(Result.seasonal)
     plt.title('Seasonal',fontsize=16)
-    plt.ylabel("Battery Level")
-    plt.xlabel("Time / hours")
+    plt.ylabel("Battery Level (%)")
+    plt.xlabel("Time (h)")
      
     plt.subplot(4,1,4)
     plt.plot(Result.resid)
     plt.title('Residuals',fontsize=16)
-    plt.ylabel("Battery Level")
-    plt.xlabel("Time / hours")
+    plt.ylabel("Battery Level (%)")
+    plt.xlabel("Time (h)")
     
     fig1.tight_layout(pad=4.0)
     
@@ -100,30 +101,30 @@ def STL_decomposition(series,
         
     fig2 = plt.figure(figsize=(20,15))
     
-    plt.suptitle('Timeseries decomposition / histograms',fontsize=20)
+    plt.suptitle(title +" / histograms",fontsize=20)
     
     plt.subplot(2,2,1)
     plt.hist(Result.observed)
     plt.title('Observations',fontsize=16)
-    plt.xlabel("Battery Level")
+    plt.xlabel("Battery Level (%)")
     plt.ylabel("Count")
                 
     plt.subplot(2,2,2)
     plt.hist(Result.trend)
     plt.title('Trend',fontsize=16)
-    plt.xlabel("Battery Level")
+    plt.xlabel("Battery Level (%)")
     plt.ylabel("Count")
     
     plt.subplot(2,2,3)
     plt.hist(Result.seasonal)
     plt.title('Seasonal',fontsize=16)
-    plt.xlabel("Battery Level")
+    plt.xlabel("Battery Level (%)")
     plt.ylabel("Count")
      
     plt.subplot(2,2,4)
     plt.hist(Result.resid)
     plt.title('Residuals',fontsize=16)
-    plt.xlabel("Battery Level")
+    plt.xlabel("Battery Level (%)")
     plt.ylabel("Count")
      
     fig2.tight_layout(pad=4.0)
@@ -151,8 +152,8 @@ def STL_decomposition(series,
 def detect_steps(timeseries,
                  title,
                  xlabel,
-                 savename = False,
                  savepath = False,
+                 savename = False,
                  ):
     """
     
@@ -207,8 +208,8 @@ def detect_steps(timeseries,
     neg_peaks = bottoms[neg_indices]
 
     # plot
-    fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True,figsize=(15,10))
-    plt.suptitle(title, fontsize=20)
+    fig, (ax_orig, ax_win, ax_filt) = plt.subplots(3, 1, sharex=True,figsize=(20,10))
+    plt.suptitle(title, y=1.05,fontsize=20)
     ax_orig.plot(sig)    
     ax_orig.set_ylabel('Original value')
     ax_orig.set_title('Original timeseries')
@@ -231,11 +232,11 @@ def detect_steps(timeseries,
         plt.show()
       
     elif all((savename,savepath)):
-        
+       
         assert isinstance(savename,str), "Invalid savename type."
         
         if savepath.exists():
-            with open(savepath / (savename + "_peaks" + ".png"), mode="wb") as outfile:
+            with open(savepath / (savename + "_filtered_peaks" + ".png"), mode="wb") as outfile:
                 plt.savefig(outfile, format="png")
         else:
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")

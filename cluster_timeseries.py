@@ -12,6 +12,33 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.mixture import GaussianMixture
+from calculate_similarity import calculate_distance
+from calculate_DTW import DTW_distance
+
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram
+
+def plot_dendrogram(model, **kwargs):
+    # Create linkage matrix and then plot the dendrogram
+
+    # create the counts of samples under each node
+    counts = np.zeros(model.children_.shape[0])
+    n_samples = len(model.labels_)
+    for i, merge in enumerate(model.children_):
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                current_count += 1  # leaf node
+            else:
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
+
+    linkage_matrix = np.column_stack([model.children_, model.distances_,
+                                      counts]).astype(float)
+
+    # Plot the corresponding dendrogram
+    dendrogram(linkage_matrix, **kwargs)
+    d_dict = dendrogram(linkage_matrix,truncate_mode='level', p=7)
 
 def cluster_timeseries(df):
     resampled = df.resample("H").mean()
@@ -37,7 +64,7 @@ def cluster_timeseries(df):
     val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['battery_level'].values)
     val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['battery_level'].values)
     
-    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig,ax = plt.subplots(4,2,figsize=(15,15))
     fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
     
     for i in range(len(val0)):
@@ -112,8 +139,7 @@ def cluster_timeseries(df):
     ax.set_ylim(0.8,7.2)
     ax.set_xlim('2020-06-01','2020-07-17')
     plt.show()
-    
-    
+       
     return model, Y
 
 def gaussian_MM(data,K=5,n=10):
@@ -129,3 +155,33 @@ def gaussian_MM(data,K=5,n=10):
     model_cov = model.covariances_
     print(model_cov)
     return model, Y
+
+def Agg_Clustering(timeseries):
+    metric = DTW_distance
+    #dist = calculate_distance(timeseries,metric)
+    dist = calculate_distance(timeseries,"cosine")
+
+    clustering = AgglomerativeClustering(n_clusters=2,
+                                         affinity='precomputed',
+                                         memory=None,
+                                         connectivity=None,
+                                         compute_full_tree='auto',
+                                         linkage='complete',
+                                         distance_threshold=None).fit(dist)
+    
+    """
+    model = AgglomerativeClustering(distance_threshold=0,affinity="precomputed",linkage='complete', n_clusters=None)
+    model = model.fit(dist)
+    fig = plt.figure(figsize=(10,10))
+    
+    plt.title('Hierarchical Clustering Dendrogram')
+    # plot the top three levels of the dendrogram
+    plot_dendrogram(clustering, truncate_mode='level', p=7)
+    plt.xlabel("Number of points in node (or index of point if no parenthesis).")
+    plt.xticks(rotate=45)
+    plt.show()
+    """
+    
+    return clustering.labels_    
+
+

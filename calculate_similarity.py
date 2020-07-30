@@ -9,13 +9,46 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 def calculate_similarity(X,metric):
+    
+    """
+    
+
+    Parameters
+    ----------
+    X : TYPE
+        DESCRIPTION.
+    metric : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    Y_sim : TYPE
+        DESCRIPTION.
+
+    """
     Y = pdist(X,metric)
     Y_square = squareform(Y)
     Y_sim = 1 / (1+Y_square)
     return Y_sim
+
+def calculate_distance(X,metric):
     
-def EDM(A,B):
-    p1 = np.sum(A**2, axis=1)[:,np.newaxis]
-    p2 = np.sum(B**2,axis=1)
-    p3 = -2 * np.dot(A,B.T)
-    return np.round(np.sqrt(p1+p2+p3),2)
+    """
+    
+    Parameters
+    ----------
+    X : TYPE
+        DESCRIPTION.
+    metric : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    Y_square : TYPE
+        DESCRIPTION.
+
+    """
+    Y = pdist(X,metric)
+    Y_square = squareform(Y)
+    return Y_square
+
