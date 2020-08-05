@@ -105,24 +105,27 @@ plt.show()
 model, Y = cluster_timeseries(df1_bl)
 
 #%% agg clust
-clustering = Agg_Clustering(data)
+clustering = Agg_Clustering(data,7)
+clustering_2 = Agg_Clustering(data,2)
 print(clustering)
+print(clustering_2)
 
 #%%
 df_grouped = df_grouped.drop(df_grouped.index[0])
 df_grouped = df_grouped.drop(df_grouped.index[-1])
 clustered_data = df_grouped.to_frame()
 
-clustered_data['cluster'] = clustering + 1
+clustered_data['cluster_7'] = clustering + 1
+clustered_data['cluster_2'] = clustering_2 + 1
 #%% do some plotting
 
-val0 = np.stack(clustered_data[clustered_data['cluster'] == 1]['battery_level'].values)
-val1 = np.stack(clustered_data[clustered_data['cluster'] == 2]['battery_level'].values)
-val2 = np.stack(clustered_data[clustered_data['cluster'] == 3]['battery_level'].values)
-val3 = np.stack(clustered_data[clustered_data['cluster'] == 4]['battery_level'].values)
-val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['battery_level'].values)
-val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['battery_level'].values)
-val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['battery_level'].values)
+val0 = np.stack(clustered_data[clustered_data['cluster_7'] == 1]['battery_level'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster_7'] == 2]['battery_level'].values)
+val2 = np.stack(clustered_data[clustered_data['cluster_7'] == 3]['battery_level'].values)
+val3 = np.stack(clustered_data[clustered_data['cluster_7'] == 4]['battery_level'].values)
+val4 = np.stack(clustered_data[clustered_data['cluster_7'] == 5]['battery_level'].values)
+val5 = np.stack(clustered_data[clustered_data['cluster_7'] == 6]['battery_level'].values)
+val6 = np.stack(clustered_data[clustered_data['cluster_7'] == 7]['battery_level'].values)
 
 fig,ax = plt.subplots(4,2,figsize=(12,15))
 fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
@@ -191,14 +194,55 @@ plt.show()
 
 fig = plt.figure()
 ax = fig.add_axes([0,0,1,1])
-clustered_data['cluster'].plot(style='o:')
-ax.set_title('Battery level daily development clustered')
+clustered_data['cluster_7'].plot(style='o:')
+ax.set_title('Battery level daily development clustered / DTW, 7 clusters')
 ax.set_yticks(np.arange(8))
 ax.set_ylabel('Cluster no.')
 ax.set_xlabel('Time / day')
 ax.set_ylim(0.8,7.2)
 ax.set_xlim('2020-06-01','2020-07-17')
 plt.show()
+
+#%%
+val0 = np.stack(clustered_data[clustered_data['cluster_2'] == 1]['battery_level'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster_2'] == 2]['battery_level'].values)
+
+fig, (ax1, ax2) = plt.subplots(1,2,figsize=(12,6))
+fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
+
+for i in range(len(val0)):
+    ax1.plot(val0[i],':',alpha=0.7)
+ax1.set_title('Clusters: 1',fontsize=16)
+ax1.set_xlabel('Time (hour)')
+ax1.set_ylabel('Battery level (%)')
+ax1.set_xlim(0,100)
+ax1.set_xlim(0,23)
+ax1.plot(val0.mean(axis=0),c='black')
+#plt.show()
+
+for i in range(len(val1)):
+    ax2.plot(val1[i],':',alpha=0.7)
+ax2.set_title('Cluster: 2',fontsize=16)
+ax2.set_xlabel('Time (hour)')
+ax2.set_ylabel('Battery level (%)')
+ax2.set_xlim(0,100)
+ax2.set_xlim(0,23)
+ax2.plot(val1.mean(axis=0),c='black')
+
+fig.tight_layout(pad=1.0)
+plt.show()
+
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+clustered_data['cluster_2'].plot(style='o:')
+ax.set_title('Battery level daily development clustered / DTW, 2 clusters')
+ax.set_yticks(np.arange(8))
+ax.set_ylabel('Cluster no.')
+ax.set_xlabel('Time / day')
+ax.set_ylim(0.8,7.2)
+ax.set_xlim('2020-06-01','2020-07-17')
+plt.show()
+
 #%% show some sample days
 g = df1.groupby(df1.index.floor('d'))
 my_day = pd.Timestamp('2020-07-13')
@@ -229,7 +273,7 @@ plt.title("Battery level {}".format(my_day_3.date()))
 plt.ylim(0,105)
 plt.show()
 #%%
-'''
+
 df_slice_r = df_slice.resample("H").mean()
 df_slice_r.index = np.arange(24)
 df_slice_r.battery_level.plot.bar(rot=0)
@@ -248,7 +292,9 @@ plt.ylabel("Battery_level")
 plt.title("Battery level / averages {}".format(my_day_2.date()))
 plt.ylim(0,105)
 plt.show()
-'''
+
+#%% for ESM
+days_of_interest = clustered_data[clustered_data['cluster_2'] == 1]
 ###############################################################################
 #%% Process ESM data
 df2_r, ts_2 = process_ESM.process_ESM(df2)
@@ -265,10 +311,24 @@ corr_s = df_stack.corr(method="spearman")
 #%% Screen events
 df4_r, df4_unlocked = process_screen_events.process_screen_events(df4)
 
-#%%
+#%%'
 df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
+df_daily_sums = df4_unlocked.resample('D').sum()
 data = np.stack(df_grouped.values[1:-1])
 
+#%% means
+houry_means = data.mean()
+#plt.step(np.arange(24),hourly_means)
+
+hourly_sums = data.sum(axis=0)
+hourly_sums = hourly_sums / data.sum()
+
+plt.step(np.arange(24),hourly_sums*100)
+plt.title("Screen Event Distribution Over Daily Hours")
+plt.xlabel("Time (h)")
+plt.ylabel("Proportion (%)")
+plt.show()
+#%% clustering
 bic = []
 aic = []
 for i in range(2,20):
@@ -313,49 +373,63 @@ clustered_data['cluster'] = Y + 1
 print("Daily screen events patterns clustered: ")
 print(clustered_data.cluster.value_counts())
 
+#%%
+clustering = Agg_Clustering(data,7)
+clustering_2 = Agg_Clustering(data,2)
+print(clustering)
+print(clustering_2)
+
+#%%
+clustered_data['cluster_7'] = clustering + 1
+clustered_data['cluster_2'] = clustering_2 + 1
+
 #%% some plotting, remove this!!
-val0 = np.stack(clustered_data[clustered_data['cluster'] == 1]['Screen_events'].values)
-val1 = np.stack(clustered_data[clustered_data['cluster'] == 2]['Screen_events'].values)
-val2 = np.stack(clustered_data[clustered_data['cluster'] == 3]['Screen_events'].values)
-val3 = np.stack(clustered_data[clustered_data['cluster'] == 4]['Screen_events'].values)
-val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['Screen_events'].values)
-val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['Screen_events'].values)
-val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['Screen_events'].values)
+val0 = np.stack(clustered_data[clustered_data['cluster_7'] == 1]['Screen_events'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster_7'] == 2]['Screen_events'].values)
+val2 = np.stack(clustered_data[clustered_data['cluster_7'] == 3]['Screen_events'].values)
+val3 = np.stack(clustered_data[clustered_data['cluster_7'] == 4]['Screen_events'].values)
+val4 = np.stack(clustered_data[clustered_data['cluster_7'] == 5]['Screen_events'].values)
+val5 = np.stack(clustered_data[clustered_data['cluster_7'] == 6]['Screen_events'].values)
+val6 = np.stack(clustered_data[clustered_data['cluster_7'] == 7]['Screen_events'].values)
 
 
 for i in range(len(val0)):
     plt.plot(val0[i],':')
     plt.title('Clusters: 1')
     plt.ylim(0,30)
-plt.plot(val0.mean(axis=0),c='black')
+plt.step(np.arange(24),val0.mean(axis=0),c='black')
 plt.show()
 
 for i in range(len(val1)):
     plt.plot(val1[i],':')
     plt.title('Cluster: 2')
     plt.ylim(0,30)
-plt.plot(val1.mean(axis=0),c='black')
+#plt.plot(val1.mean(axis=0),c='black')
+plt.step(np.arange(24),val1.mean(axis=0),c='black')
 plt.show()
 
 for i in range(len(val2)):
     plt.plot(val2[i],':')
     plt.title('Cluster: 3')
     plt.ylim(0,30)
-plt.plot(val2.mean(axis=0),c='black')
+#plt.plot(val2.mean(axis=0),c='black')
+plt.step(np.arange(24),val2.mean(axis=0),c='black')
 plt.show()
 
 for i in range(len(val3)):
     plt.plot(val3[i],':')
     plt.title('Cluster: 4')
     plt.ylim(0,30)
-plt.plot(val3.mean(axis=0),c='black')
+#plt.plot(val3.mean(axis=0),c='black')
+plt.step(np.arange(24),val3.mean(axis=0),c='black')
 plt.show()
 
 for i in range(len(val4)):
     plt.plot(val4[i],':')
     plt.title('Cluster: 5')
     plt.ylim(0,30)
-plt.plot(val4.mean(axis=0),c='black')
+#plt.plot(val4.mean(axis=0),c='black')
+plt.step(np.arange(24),val4.mean(axis=0),c='black')
 plt.show()
 
 
@@ -363,7 +437,8 @@ for i in range(len(val5)):
     plt.plot(val5[i],':')
     plt.title('Cluster: 6')
     plt.ylim(0,30)
-plt.plot(val5.mean(axis=0),c='black')
+#plt.plot(val5.mean(axis=0),c='black')
+plt.step(np.arange(24),val5.mean(axis=0),c='black')
 plt.show()
 
 
@@ -371,9 +446,10 @@ for i in range(len(val6)):
     plt.plot(val6[i],':')
     plt.title('Cluster: 7')
     plt.ylim(0,30)
-plt.plot(val6.mean(axis=0),c='black')
+#plt.plot(val6.mean(axis=0),c='black')
+plt.step(np.arange(24),val6.mean(axis=0),c='black')
 plt.show()
-
+#%%
 fig = plt.figure()
 ax = fig.add_axes([0,0,1,1])
 clustered_data['cluster'].plot(style='o:')
@@ -395,7 +471,7 @@ corr_s = df_stack.corr(method="spearman")
 df5_r, ts_5 = process_apps.process_apps(df5,df1,df4)
 
 #%%'
-df5_a = df5_r[df5_r['is_active'] == True]
+df5_a = df5_r[df5_r['is_active'] == True]corr_s = df_stack.corr(method="spearman")
 
 df5_f = df5_a.filter(['Communication', 'Entertainment', 'Other', 'Shop', 'Social_media',
        'Sports', 'Travel', 'Work/Study'])
@@ -436,7 +512,7 @@ from calculate_RQA import Calculate_RQA
 from plot_recurrence import Show_recurrence_plot
 #%% preoare data
 ts = df_stack.values
-ts[:,18] = 0
+ts[:,20] = 0
 ts = np.delete(ts, [8,9],axis=1)
 #%% similairty and novelty
 scaler = MinMaxScaler()
@@ -452,7 +528,7 @@ Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
 
 #sim = calculate_similarity(ts,'cityblock')
 nov = compute_novelty_SSM(mat,L=7,exclude=False)
-Plot_similarity(mat,nov)
+Plot_similarity(mat,nov,"Full data",False,False,(0,0.2))
 nov = np.hstack([0, nov, 0])
 df_stack['novelty'] = nov
 corr_s = df_stack.corr(method="spearman")
@@ -492,7 +568,7 @@ for x,y,i in zip(data['tsne1'],data['tsne2'],data.index):
                  size=10, 
                  ha='center') # horizontal alignment can be left, right or center
     
-plt.title('Days visualized in TSNE space')
+plt.title('Day similarity visualized in TSNE space')
 plt.xlabel("Feature_1")
 plt.ylabel("Feature_2")
 

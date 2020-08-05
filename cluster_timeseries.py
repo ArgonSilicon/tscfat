@@ -156,12 +156,12 @@ def gaussian_MM(data,K=5,n=10):
     print(model_cov)
     return model, Y
 
-def Agg_Clustering(timeseries):
+def Agg_Clustering(timeseries,n_clusters=7):
     metric = DTW_distance
-    #dist = calculate_distance(timeseries,metric)
-    dist = calculate_distance(timeseries,"cosine")
+    dist = calculate_distance(timeseries,metric)
+    #dist = calculate_distance(timeseries,"cosine")
 
-    clustering = AgglomerativeClustering(n_clusters=2,
+    clustering = AgglomerativeClustering(n_clusters,
                                          affinity='precomputed',
                                          memory=None,
                                          connectivity=None,

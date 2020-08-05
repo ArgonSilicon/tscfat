@@ -21,6 +21,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
+from matplotlib.dates import DateFormatter
+import nolds
+from arma import arma, autocorr
 
 # Local application import
 
@@ -67,7 +70,8 @@ def process_ESM(df):
     df.loc[mask3,"scaled_answer"] = df.loc[mask3,"answer"].map(decode_string_3)
     
     sequence = zip(df['scaled_answer'].values,df['negate_value'].values)
-    df['scaled_answer'] = [-i if neg == True else i for i,neg in sequence]
+    x = lambda i : 0 if i == 1 else 1
+    df['scaled_answer'] = [x(i) if neg == True else i for i,neg in sequence]
     
     #df.loc[mask1,"Scaled_answer"] = df.loc[mask1,"answer"] 
     #df.loc[mask2,"Scaled_answer"] = df.loc[mask2,"answer"] 
@@ -81,8 +85,563 @@ def process_ESM(df):
     df_filt['scaled_answer'] = df_filt["scaled_answer"].astype(int)
     #resampled = df_filt.resample("D").apply(custom_resampler)
     
+    #%% Positive and negative affects
+    
+    # Positive
+    df_temp = df[df['title'] == 'Right now I feel Active']
+    df_temp = df_temp['scaled_answer'].astype('int64')
+    active = df_temp.resample('D').mean()
+    
+    df_temp = df[df['title'] == 'Right now I feel Determined']
+    df_temp = df_temp['scaled_answer'].astype('int64')
+    determined = df_temp.resample('D').mean()
+    
+    df_temp = df[df['title'] == 'Right now I feel Attentive']
+    df_temp = df_temp['scaled_answer'].astype('int64')
+    attentive = df_temp.resample('D').mean()
+    
+    df_temp = df[df['title'] == 'Right now I feel Inspired']
+    df_temp = df_temp['scaled_answer'].astype('int64')
+    inspired = df_temp.resample('D').mean()
+    
+    df_temp = df[df['title'] == 'Right now I feel Alert']
+    df_temp = df_temp['scaled_answer'].astype('int64')
+    alert = df_temp.resample('D').mean()
+    
+    # Negative
+    df_temp2 = df[df['title'] == 'Right now I feel Afraid']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    afraid = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Nervous']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    nervous = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Upset']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    upset = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Hostile']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    hostile = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Ashamed']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    ashamed = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Stressed']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    stressed = df_temp2.resample('D').mean()
+    
+    df_temp2 = df[df['title'] == 'Right now I feel Distracted']
+    df_temp2 = df_temp2['scaled_answer'].astype('int64')
+    distracted = df_temp2.resample('D').mean()
+    #%%
+    affections = pd.concat([active,determined,attentive,inspired,alert,afraid,nervous,upset,hostile,ashamed,stressed,distracted],axis=1)
+    affections.columns=['active','determined','attentive','inspired','alert','afraid','nervous','upset','hostile',
+                                  'ashamed','stressed','distracted']
+    
+    #%% correlation
+    corr_s = affections.corr(method="spearman")
+    f, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax)
+    ax.set_title('Affections spearman correlation')
+
+    #%% plot affections
+    date_form = DateFormatter("%m-%d")
+       
+    fig,ax = plt.subplots(3,2,figsize=(12,15))
+    fig.suptitle("Positive affections / daily averages",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affections.iloc[:,0])
+    ax[0,0].set_title('Active',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(1,6)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affections.iloc[:,1])
+    ax[0,1].set_title('Determined',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(1,6)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affections.iloc[:,2])
+    ax[1,0].set_title('Attentive',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(1,6)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affections.iloc[:,3])
+    ax[1,1].set_title('Inspired',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(1,6)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affections.iloc[:,4])
+    ax[2,0].set_title('Alert',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(1,6)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%% plot affections
+        
+    affect_rolls = affections.rolling(window=7).var()
+    affect_autocorr = affections.rolling(window=7).apply(autocorr)
+    affect_mean = affections.rolling(window=7).mean()    
+         
+    fig,ax = plt.subplots(3,2,figsize=(12,15))
+    fig.suptitle("Positive affections rolling window(7) variance",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_rolls.iloc[:,0])
+    ax[0,0].set_title('Active',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(0,0.7)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_rolls.iloc[:,1])
+    ax[0,1].set_title('Determined',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(0,0.7)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_rolls.iloc[:,2])
+    ax[1,0].set_title('Attentive',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(0,0.7)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_rolls.iloc[:,3])
+    ax[1,1].set_title('Inspired',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(0,0.7)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_rolls.iloc[:,4])
+    ax[2,0].set_title('Alert',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(0,0.7)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%%
+    fig,ax = plt.subplots(3,2,figsize=(12,15))
+    fig.suptitle("Positive affections rolling window(7) autocorrelation(1)",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_autocorr.iloc[:,0])
+    ax[0,0].set_title('Active',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(-1,1)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_autocorr.iloc[:,1])
+    ax[0,1].set_title('Determined',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(-1,1)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_autocorr.iloc[:,2])
+    ax[1,0].set_title('Attentive',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(-1,1)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_autocorr.iloc[:,3])
+    ax[1,1].set_title('Inspired',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(-1,1)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_autocorr.iloc[:,4])
+    ax[2,0].set_title('Alert',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(-1,1)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%%
+    #%%
+    fig,ax = plt.subplots(3,2,figsize=(12,15))
+    fig.suptitle("Positive affections rolling window(7) mean",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_mean.iloc[:,0])
+    ax[0,0].set_title('Active',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(1,4)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_mean.iloc[:,1])
+    ax[0,1].set_title('Determined',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(1,4)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_mean.iloc[:,2])
+    ax[1,0].set_title('Attentive',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(1,4)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_mean.iloc[:,3])
+    ax[1,1].set_title('Inspired',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(1,4)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_mean.iloc[:,4])
+    ax[2,0].set_title('Alert',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(1,4)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%% negative affections
+    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig.suptitle("Negative affections rolling daily averages",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affections.iloc[:,5])
+    ax[0,0].set_title('Afraid',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(0,4)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affections.iloc[:,6])
+    ax[0,1].set_title('Nervous',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(0,4)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affections.iloc[:,7])
+    ax[1,0].set_title('Upset',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(0,4)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affections.iloc[:,8])
+    ax[1,1].set_title('Hostile',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(0,4)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affections.iloc[:,9])
+    ax[2,0].set_title('Ashamed',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(0,4)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    ax[2,1].plot(affections.iloc[:,10])
+    ax[2,1].set_title('Stressed',fontsize=16)
+    ax[2,1].set_xlabel('Time (d)')
+    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_ylim(0,4)
+    ax[2,1].xaxis.set_major_formatter(date_form)
+    
+    ax[3,0].plot(affections.iloc[:,11])
+    ax[3,0].set_title('Distracted',fontsize=16)
+    ax[3,0].set_xlabel('Time (d)')
+    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_ylim(0,4)
+    ax[3,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%% negative affections
+    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig.suptitle("Negative affections rolling window(7) variance",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_rolls.iloc[:,5])
+    ax[0,0].set_title('Afraid',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(0,1)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_rolls.iloc[:,6])
+    ax[0,1].set_title('Nervous',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(0,1)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_rolls.iloc[:,7])
+    ax[1,0].set_title('Upset',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(0,1)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_rolls.iloc[:,8])
+    ax[1,1].set_title('Hostile',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(0,1)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_rolls.iloc[:,9])
+    ax[2,0].set_title('Ashamed',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(0,1)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    ax[2,1].plot(affect_rolls.iloc[:,10])
+    ax[2,1].set_title('Stressed',fontsize=16)
+    ax[2,1].set_xlabel('Time (d)')
+    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_ylim(0,1)
+    ax[2,1].xaxis.set_major_formatter(date_form)
+    
+    ax[3,0].plot(affect_rolls.iloc[:,11])
+    ax[3,0].set_title('Distracted',fontsize=16)
+    ax[3,0].set_xlabel('Time (d)')
+    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_ylim(0,1)
+    ax[3,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%% negative affections
+    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig.suptitle("Negative affections rolling window(7) mean",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_mean.iloc[:,5])
+    ax[0,0].set_title('Afraid',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(1,3)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_mean.iloc[:,6])
+    ax[0,1].set_title('Nervous',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(1,3)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_mean.iloc[:,7])
+    ax[1,0].set_title('Upset',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(1,3)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_mean.iloc[:,8])
+    ax[1,1].set_title('Hostile',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(1,3)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_mean.iloc[:,9])
+    ax[2,0].set_title('Ashamed',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(1,3)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    ax[2,1].plot(affect_mean.iloc[:,10])
+    ax[2,1].set_title('Stressed',fontsize=16)
+    ax[2,1].set_xlabel('Time (d)')
+    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_ylim(1,3)
+    ax[2,1].xaxis.set_major_formatter(date_form)
+    
+    ax[3,0].plot(affect_mean.iloc[:,11])
+    ax[3,0].set_title('Distracted',fontsize=16)
+    ax[3,0].set_xlabel('Time (d)')
+    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_ylim(1,3)
+    ax[3,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    
+    #%% negative affections
+    fig,ax = plt.subplots(4,2,figsize=(12,15))
+    fig.suptitle("Negative affections rolling window(7) autocorrelation(1)",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(affect_autocorr.iloc[:,5])
+    ax[0,0].set_title('Afraid',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(-1,1)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(affect_autocorr.iloc[:,6])
+    ax[0,1].set_title('Nervous',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(-1,1)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(affect_autocorr.iloc[:,7])
+    ax[1,0].set_title('Upset',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(-1,1)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(affect_autocorr.iloc[:,8])
+    ax[1,1].set_title('Hostile',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(-1,1)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(affect_autocorr.iloc[:,9])
+    ax[2,0].set_title('Ashamed',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(-1,1)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    ax[2,1].plot(affect_autocorr.iloc[:,10])
+    ax[2,1].set_title('Stressed',fontsize=16)
+    ax[2,1].set_xlabel('Time (d)')
+    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_ylim(-1,1)
+    ax[2,1].xaxis.set_major_formatter(date_form)
+    
+    ax[3,0].plot(affect_autocorr.iloc[:,11])
+    ax[3,0].set_title('Distracted',fontsize=16)
+    ax[3,0].set_xlabel('Time (d)')
+    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_ylim(-1,1)
+    ax[3,0].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
+    #%% DFA
+    dfa_rolls = affections.rolling(window=14).apply(nolds.dfa)
+    
+    #%% negative affections
+    fig,ax = plt.subplots(6,2,figsize=(16,20))
+    fig.suptitle("Affections DFA window(10)",fontsize=20,y=1.02)
+    
+    ax[0,0].plot(dfa_rolls.iloc[:,0])
+    ax[0,0].set_title('Active',fontsize=16)
+    ax[0,0].set_xlabel('Time (d)')
+    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_ylim(-1,3)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+       
+    ax[0,1].plot(dfa_rolls.iloc[:,1])
+    ax[0,1].set_title('Determined',fontsize=16)
+    ax[0,1].set_xlabel('Time (d)')
+    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_ylim(-1,3)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    
+    ax[1,0].plot(dfa_rolls.iloc[:,2])
+    ax[1,0].set_title('Attentive',fontsize=16)
+    ax[1,0].set_xlabel('Time (d)')
+    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_ylim(-1,3)
+    ax[1,0].xaxis.set_major_formatter(date_form)
+    
+    ax[1,1].plot(dfa_rolls.iloc[:,3])
+    ax[1,1].set_title('Inspired',fontsize=16)
+    ax[1,1].set_xlabel('Time (d)')
+    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_ylim(-1,3)
+    ax[1,1].xaxis.set_major_formatter(date_form)
+    
+    ax[2,0].plot(dfa_rolls.iloc[:,4])
+    ax[2,0].set_title('Alert',fontsize=16)
+    ax[2,0].set_xlabel('Time (d)')
+    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_ylim(-1,3)
+    ax[2,0].xaxis.set_major_formatter(date_form)
+    
+    ax[2,1].plot(dfa_rolls.iloc[:,5])
+    ax[2,1].set_title('Afraid',fontsize=16)
+    ax[2,1].set_xlabel('Time (d)')
+    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_ylim(-1,3)
+    ax[2,1].xaxis.set_major_formatter(date_form)
+          
+    ax[3,0].plot(dfa_rolls.iloc[:,7])
+    ax[3,0].set_title('Upset',fontsize=16)
+    ax[3,0].set_xlabel('Time (d)')
+    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_ylim(-1,3)
+    ax[3,0].xaxis.set_major_formatter(date_form)
+    
+    ax[3,1].plot(dfa_rolls.iloc[:,8])
+    ax[3,1].set_title('Hostile',fontsize=16)
+    ax[3,1].set_xlabel('Time (d)')
+    ax[3,1].set_ylabel('Value')
+    ax[3,1].set_ylim(-1,3)
+    ax[3,1].xaxis.set_major_formatter(date_form)
+    
+    ax[4,0].plot(dfa_rolls.iloc[:,9])
+    ax[4,0].set_title('Ashamed',fontsize=16)
+    ax[4,0].set_xlabel('Time (d)')
+    ax[4,0].set_ylabel('Value')
+    ax[4,0].set_ylim(-1,3)
+    ax[4,0].xaxis.set_major_formatter(date_form)
+    
+    ax[4,1].plot(dfa_rolls.iloc[:,10])
+    ax[4,1].set_title('Stressed',fontsize=16)
+    ax[4,1].set_xlabel('Time (d)')
+    ax[4,1].set_ylabel('Value')
+    ax[4,1].set_ylim(-1,3)
+    ax[4,1].xaxis.set_major_formatter(date_form)
+    
+    ax[5,0].plot(dfa_rolls.iloc[:,11])
+    ax[5,0].set_title('Distracted',fontsize=16)
+    ax[5,0].set_xlabel('Time (d)')
+    ax[5,0].set_ylabel('Value')
+    ax[5,0].set_ylim(-1,3)
+    ax[5,0].xaxis.set_major_formatter(date_form)
+    
+    ax[5,1].plot(dfa_rolls.iloc[:,6])
+    ax[5,1].set_title('Nervous',fontsize=16)
+    ax[5,1].set_xlabel('Time (d)')
+    ax[5,1].set_ylabel('Value')
+    ax[5,1].set_ylim(-1,3)
+    ax[5,1].xaxis.set_major_formatter(date_form)
+    
+    fig.tight_layout(pad=1.0)
+    plt.show()
     #%%
     grouped = df_filt.groupby('group').resample('D').sum()
+    #grouped = df_filt.groupby('group').resample('D').mean()
     
     grouped_agg = df_filt.groupby('group').resample('D').agg(lambda x: x.tolist())
     #grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
@@ -215,22 +774,14 @@ def process_ESM(df):
     sim = calculate_similarity(timeseries_2,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
     #sim[sim >= 0.11] = 1
-    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0)
+    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0.85)
     
     #%% Calculate recursion plot and metrix
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
     
     #%%
     #%% Recursion plot settings
-    '''
-    ED = 1 # embedding dimensions
-    TD = 1 # time delay
-    RA = 0.50 # neigborhood radius
-    
-    res_1, mat_1 = Calculate_JRQA(timeseries[:,0],timeseries[:,1])
-    TITLE = "ESM Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-    Show_recurrence_plot(mat_1,TITLE,FIGPATH,FIGNAME)
-    '''
+
     #%% show recursion plot and save figure
     
     # set correct names and plot title
@@ -240,30 +791,33 @@ def process_ESM(df):
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     #%% Decomposition
-    decomposition_1 = STL_decomposition(combined_df['Sleep'])
-    decomposition_2 = STL_decomposition(combined_df['Positive_mood'])
-    decomposition_3 = STL_decomposition(combined_df['Negative_mood'])
-    decomposition_4 = STL_decomposition(combined_df['Social_interaction'])
-    decomposition_5 = STL_decomposition(combined_df['Difficulty_comp'])
-    decomposition_6 = STL_decomposition(combined_df['Explanatory'])
-    decomposition_7 = STL_decomposition(combined_df['Substances'])
-    decomposition_8 = STL_decomposition(combined_df['Exercise'])
+    decomposition_1 = STL_decomposition(combined_df['Sleep'],"Sleep")
+    decomposition_2 = STL_decomposition(combined_df['Positive_mood'],"Positive mood")
+    decomposition_3 = STL_decomposition(combined_df['Negative_mood'],"Negative mood")
+    decomposition_4 = STL_decomposition(combined_df['Social_interaction'],"Social interaction")
+    decomposition_5 = STL_decomposition(combined_df['Difficulty_comp'],"Difficulty to complete")
+    decomposition_6 = STL_decomposition(combined_df['Explanatory'],"Explanatory")
+    decomposition_7 = STL_decomposition(combined_df['Substances'],"Substances")
+    decomposition_8 = STL_decomposition(combined_df['Exercise'],"Exercise")
     
     #%% plot pos and negative valences
     scaled_df['Negative_negative'] = scaled_df['Negative_mood']*(-1)
     scaled_df['Valence_diff'] = scaled_df['Positive_mood'] - scaled_df['Negative_mood']
+    cors = scaled_df.filter(['Positive_mood','Negative_mood']).rolling(7).corr().unstack()
     
     plt.figure(figsize=(20,10))
-    plt.suptitle('ESM: Negative and postive valence',y=0.98,fontsize=20)
+    plt.suptitle('ESM: Negative and positive valence',y=0.98,fontsize=20)
     scaled_df['Positive_mood'].plot(style=[':'])
-    scaled_df['Negative_negative'].plot(style=[':'])
-    scaled_df['Valence_diff'].plot(style=['black'])
+    scaled_df['Negative_negative'].plot(style=[':'],label="Negative_mood")
+    #scaled_df['Negative_mood'].plot(style=[':'],label="Negative_mood")
+    scaled_df['Valence_diff'].plot(color='gray',style=[':'])
+    cors.iloc[:,0].plot(style=['black'],label="Correlation")
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
-                     where=(scaled_df['Valence_diff'] < 0), alpha=0.3, color='Firebrick', interpolate=True)
+                     where=(scaled_df['Valence_diff'] < 0), alpha=0.15, color='Firebrick', interpolate=True)
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
-                     where=(scaled_df['Valence_diff'] > 0), alpha=0.3, color='Steelblue', interpolate=True)
+                     where=(scaled_df['Valence_diff'] > 0), alpha=0.15, color='Steelblue', interpolate=True)
     
     plt.xlabel('Time / Days')
     plt.ylabel('Value')
@@ -287,7 +841,16 @@ def process_ESM(df):
     #show_timeseries(resampled.index,resampled.battery_level,"ESM","time","Level",FIGPATH,FIGNAME)
     #&& how about features???
     #%% Extract features from timeseries, plot, and save
-    #show_features(timeseries,"ESM","xlab","ylab")
+    #%% Extract features from timeseries, plot, and save
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Features/')
+    FIGNAME = "ESM_features"
+
+    
+    show_features(scaled_df['Positive_mood'],"Positive mood ","Time (d)","Value",7,1,"right",False,FIGPATH,FIGNAME)
+    show_features(scaled_df['Negative_mood'],"Negative mood ","Time (d)","Value",7,1,"right",False,FIGPATH,FIGNAME)
+    
+
+    #%%
     return combined_df, timeseries
     
 if __name__ == "__main__":

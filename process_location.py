@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 # Local application import
 
@@ -34,17 +35,21 @@ def process_location(df):
     #%% calculate receursion plot and metrics
 
     # Recursion plot settings
-    ED = 2 # embedding dimensions
-    TD = 2 # time delay
-    RA = 0.25 # neigborhood radius
+    ED = 1 # embedding dimensions
+    TD = 1 # time delay
+    RA = 0.05 # neigborhood radius
     
-    timeseries = df['totdist'].values.reshape(-1,1)
+    df = df.drop(columns=['user','device','diameter'])
     
+    scaler = MinMaxScaler()
+    scaled_df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns, index = df.index)   
+    timeseries = scaled_df.to_numpy()
     # Calculate recursion plot and metrix
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
-    sim = calculate_similarity(timeseries,'euclidean')
+        
+    sim = calculate_similarity(timeseries,'cosine')
     nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov)
+    Plot_similarity(sim,nov,"Location",False,False,(0,0.1),0.93)
     
     #%% show recursion plot and save figure
     

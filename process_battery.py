@@ -97,7 +97,7 @@ def process_battery(df):
     FIGNAME = "Battery_level_similarity"
     sim = calculate_similarity(data,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
-    Plot_similarity(sim,nov,"Battery level",FIGPATH,FIGNAME)
+    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME)
     
     #%% set correct names and save metrics as json 
     RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
@@ -122,7 +122,7 @@ def process_battery(df):
     #%% Extract features from timeseries, plot, and save
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Features/')
     FIGNAME = "Battery_level_features"
-    show_features(resampled_interpolated['battery_level'],"Battery level","Time (d)","Value",24,1,"right",False,FIGPATH,FIGNAME)
+    show_features(resampled_interpolated['battery_level'],"Battery level ","Time (d)","Value",24,1,"right",False,FIGPATH,FIGNAME)
     
 
     #%%
