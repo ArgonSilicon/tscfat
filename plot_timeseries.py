@@ -12,6 +12,185 @@ plt.rcParams.update({'figure.max_open_warning': 0})
 import seaborn as sns
 from interpolate_missing import interpolate_missing
 from arma import arma, autocorr
+from scipy.signal import find_peaks
+
+def grouped_histograms(timeseries,
+                       title,
+                       xlabel,
+                       ylabel,
+                       savepath = False,
+                       savename = False,
+                       ):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlabel : TYPE
+        DESCRIPTION.
+    ylabel : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    #TODO: docstrings
+    
+    title = "Hourly distributions: " + title
+    
+    fig1 = plt.figure(figsize=(24,16))
+    
+    plt.suptitle(title,y=0.95,fontsize=24)
+          
+    for ind, val in zip(timeseries.index,timeseries.values): 
+        plt.subplot(4,6,(ind+1))
+        plt.hist(val,density=True,label=("hour: {}\nmean: {:.2f}".format(ind,np.mean(val))))
+        plt.axvline(np.mean(val), color='r', linestyle='dashed', linewidth=2)
+        if ind >= 18:
+            plt.xlabel(xlabel)
+        if ind%6 == 0:
+            plt.ylabel(ylabel)
+        plt.ylim(0,0.08)
+        plt.legend(loc='upper left')
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_group_distribution"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+        
+    averages = [np.mean(val) for val in timeseries.values]
+    
+    fig2 = plt.figure(figsize=(14,7))
+    plt.bar(timeseries.index,averages)
+    plt.title(title +" averages")
+    plt.xlabel('Time (h)')
+    plt.ylabel('Percentage (%)')
+    plt.ylim(0,100)
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_group_averages"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+
+
+def plot_differences(timeseries,
+                     column_name,
+                     title,
+                     xlab,
+                     ylab,
+                     savepath = False,
+                     savename = False,
+                     ):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlab : TYPE
+        DESCRIPTION.
+    ylab : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    #TODO: docstings
+    
+    timeseries_diff = timeseries.diff()
+    timeseries_pct  = timeseries.pct_change()
+    #stdev = timeseries_diff.std()
+    #print(stdev)
+    #print(timeseries_diff)
+    lowest = timeseries_diff[column_name].nsmallest(5, keep='all')
+    
+    fig, ax = plt.subplots(2,1,figsize=(25,15))
+    
+    ax[0].plot(timeseries_diff.values)
+    #timeseries_diff.plot()
+    #plt.axvline(x=stdev,color='r')
+    #plt.axvline(x=-stdev,color='r')
+    ax[0].set_title(title + ': difference(1)',fontsize=16)
+    ax[0].set_xlabel(xlab)
+    ax[0].set_ylabel(ylab)
+    #ax[0].set_xticks(rotation=45)
+       
+    ax[1].plot(timeseries_pct.values*100)
+    ax[1].set_title(title + ': pct_change(1)',fontsize=16)
+    ax[1].set_xlabel(xlab)
+    ax[1].set_ylabel(ylab + ' (%)')
+    ax[1].set_ylim(-100,400)
+    #ax[1].set_xticks(rotation=45)
+    
+    
+    if not all((savename,savepath)):
+        plt.show()
+
+    elif all((savename,savepath)):
+
+        assert isinstance(savename,str), "Invalid savename type."
+        savename = savename + "_differences"
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+    
+    return lowest, timeseries_diff, timeseries_pct
 
 def show_features(timeseries,               
                   title,
@@ -46,24 +225,27 @@ def show_features(timeseries,
     features = rolling_ts.aggregate(features_to_calculate)
     features['autocorr'] = timeseries.rolling(window).apply(autocorr)
     
-    title = "Timeseries decomposition" + title
     
-    fig = plt.figure(figsize=(15,15))
+    #%%
+    
+    title = title +"extracted features"
+    
+    fig = plt.figure(figsize=(15,8))
     
     plt.suptitle(title,fontsize=20)
     
     plt.subplot(2,1,1)
     features.iloc[:,0].plot()
     plt.title('STD',fontsize=16)
-    plt.xlabel('Time')
-    plt.ylabel("Value")
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
     plt.xticks(rotation=45)
                 
     plt.subplot(2,1,2)
     features.iloc[:,1].plot()
-    plt.title('Autocorrelation',fontsize=16)
-    plt.xlabel('Time')
-    plt.ylabel("Value")
+    plt.title('Autocorrelation(1)',fontsize=16)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
     plt.xticks(rotation=45)
      
     fig.tight_layout(pad=4.0)
@@ -137,7 +319,7 @@ def show_timeseries_scatter(series,
     # TODO: Insert assertions!
     # TODO: add legend
     
-    plt.figure(figsize=(15,15))
+    plt.figure(figsize=(20,8))
     #plt.scatter(x_name, y_name)
     series.plot(style='.')
     plt.title(title)
@@ -204,7 +386,7 @@ def show_timeseries_line(series,
     
     # TODO: Insert assertions!
     
-    plt.figure(figsize=(15,15))
+    plt.figure(figsize=(20,8))
     series.plot()
     plt.title(title)
     plt.xlabel(xlab)

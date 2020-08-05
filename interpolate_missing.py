@@ -11,6 +11,24 @@ import numpy as np
 
 def interpolate_missing(ts, interpolation):
     
+    """
+
+    Parameters
+    ----------
+    ts : TYPE
+        DESCRIPTION.
+    interpolation : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    interpolated_ts : TYPE
+        DESCRIPTION.
+    missing_values : TYPE
+        DESCRIPTION.
+
+    """
+    
     missing_values = ts.isna()
     
     interpolated_ts = ts.interpolate(interpolation)    

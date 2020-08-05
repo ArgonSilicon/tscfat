@@ -41,7 +41,7 @@ def process_apps(df, df_b, df_s):
     # parameters for RQA
     ED = 1 # embedding dimensions
     TD = 1 # time delay
-    RA = 0.5 # neigborhood radius
+    RA = 0.05 # neigborhood radius
        
     # Load dictionary for app labels
     DICT_PATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
@@ -77,17 +77,31 @@ def process_apps(df, df_b, df_s):
     #df_filt = df.filter(["time",*Colnames])
     df_filt = df[df['is_active'] == True]
     #print(df_filt.shape)
+    df_filt = df_filt.filter(['Communication','Entertainment','Other','Shop','Social_media','Sports','Travel','Work/Study',])
     resampled = df_filt.resample("H").sum()
     #resampled = resampled.drop(columns='Other')
+    # daily / hours for similarity calulation
+    resampled_day = resampled.resample('D').apply(list)
+    res = resampled_day[1:-1]
+    
+    temp = np.zeros((43,8,24))
+    for i in range(res.shape[0]):
+        temp[i] = np.stack(res.iloc[i].values)
+    
+    data = temp.reshape(43,-1)
     
     #timeseries = resampled['Encoded_group'].values.reshape(-1,1) # to_numpy() if an array is needed
     timeseries = resampled.filter(['time',*Colnames]).to_numpy()
     
     #%%
-    res, mat = Calculate_RQA(timeseries,ED,TD,RA)
-    sim = calculate_similarity(timeseries,'euclidean')
-    nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov)
+    #res, mat = Calculate_RQA(timeseries,ED,TD,RA)
+    res, mat = Calculate_RQA(data,ED,TD,RA)
+    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Similarity/')
+    FIGNAME = "Application_usage_similarity"
+    sim = calculate_similarity(data,'cosine')
+    nov = compute_novelty_SSM(sim,L=7)
+    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0.02,0.06),0.55)
+   
 
     #%% show recursion plot and save figure
     # set correct names and plot title
@@ -107,9 +121,9 @@ def process_apps(df, df_b, df_s):
     save2mat(df['Encoded'].values,TSPATH,TSNAME)        
     
     #% Plot timeseries and save figureShow_recurrence_plot(sim2)
-    FIGNAME = "timeseries_0_scatter"
+    #FIGNAME = "timeseries_0_scatter"
     #show_timeseries_scatter(df_filt.index,df_filt.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
-    show_timeseries_scatter(df_filt.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
+    #show_timeseries_scatter(df_filt.Encoded_group,"Application usage","time","Applications",FIGPATH,FIGNAME)
     #%% Extract features from timeseries, plot, and save
     
     #FIGNAME = "features_0"

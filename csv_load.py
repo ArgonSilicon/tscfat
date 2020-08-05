@@ -115,8 +115,8 @@ def load_all_subjects(foldername):
     
     for filename in file_list:
         open_name = foldername / filename
-        print(open_name)
-        print(open_name.suffix)
+        #print(open_name)
+        #print(open_name.suffix)
         assert open_name.suffix == ".csv", "Trying to load incorrect file format."
         file_name, csv_file = load_one_subject(open_name)
         csv_dict[file_name] = csv_file
