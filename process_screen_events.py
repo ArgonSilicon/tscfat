@@ -137,7 +137,7 @@ def process_screen_events(df):
     ax[0,0].set_title('Daily Screen Event counts',fontsize=16)
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Event Count')
-    ax[0,0].set_ylim(0,140)
+    #ax[0,0].set_ylim(0,200)
     ax[0,0].axvspan(datetime(2020,7,6),datetime(2020,7,13),facecolor="red",alpha=0.20,label="Days of interest")
     ax[0,0].xaxis.set_major_formatter(date_form)
     ax[0,0].legend()

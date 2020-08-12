@@ -54,6 +54,13 @@ def process_ESM(df):
     TD = 1 # time delay
     RA = 0.15 # neigborhood radius
     
+    #%% Check NaN's
+    #df_nans = df.groupby[]
+    df.isna().sum().plot(kind='bar')  
+    plt.show()
+    print(df.isna().any())
+    # df.dropna() / df.fillna(0)
+    
     #%%
     
     mask1 = df["type"] == 1
@@ -331,49 +338,49 @@ def process_ESM(df):
     ax[0,0].set_title('Afraid',fontsize=16)
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Value')
-    ax[0,0].set_ylim(0,4)
+    ax[0,0].set_ylim(0.8,3.2)
     ax[0,0].xaxis.set_major_formatter(date_form)
        
     ax[0,1].plot(affections.iloc[:,6])
     ax[0,1].set_title('Nervous',fontsize=16)
     ax[0,1].set_xlabel('Time (d)')
     ax[0,1].set_ylabel('Value')
-    ax[0,1].set_ylim(0,4)
+    ax[0,1].set_ylim(0.8,3.2)
     ax[0,1].xaxis.set_major_formatter(date_form)
     
     ax[1,0].plot(affections.iloc[:,7])
     ax[1,0].set_title('Upset',fontsize=16)
     ax[1,0].set_xlabel('Time (d)')
     ax[1,0].set_ylabel('Value')
-    ax[1,0].set_ylim(0,4)
+    ax[1,0].set_ylim(0.8,3.2)
     ax[1,0].xaxis.set_major_formatter(date_form)
     
     ax[1,1].plot(affections.iloc[:,8])
     ax[1,1].set_title('Hostile',fontsize=16)
     ax[1,1].set_xlabel('Time (d)')
     ax[1,1].set_ylabel('Value')
-    ax[1,1].set_ylim(0,4)
+    ax[1,1].set_ylim(0.8,3.2)
     ax[1,1].xaxis.set_major_formatter(date_form)
     
     ax[2,0].plot(affections.iloc[:,9])
     ax[2,0].set_title('Ashamed',fontsize=16)
     ax[2,0].set_xlabel('Time (d)')
     ax[2,0].set_ylabel('Value')
-    ax[2,0].set_ylim(0,4)
+    ax[2,0].set_ylim(0.8,3.2)
     ax[2,0].xaxis.set_major_formatter(date_form)
     
     ax[2,1].plot(affections.iloc[:,10])
     ax[2,1].set_title('Stressed',fontsize=16)
     ax[2,1].set_xlabel('Time (d)')
     ax[2,1].set_ylabel('Value')
-    ax[2,1].set_ylim(0,4)
+    ax[2,1].set_ylim(0.8,3.2)
     ax[2,1].xaxis.set_major_formatter(date_form)
     
     ax[3,0].plot(affections.iloc[:,11])
     ax[3,0].set_title('Distracted',fontsize=16)
     ax[3,0].set_xlabel('Time (d)')
     ax[3,0].set_ylabel('Value')
-    ax[3,0].set_ylim(0,4)
+    ax[3,0].set_ylim(0.8,3.2)
     ax[3,0].xaxis.set_major_formatter(date_form)
     
     fig.tight_layout(pad=1.0)
@@ -443,49 +450,49 @@ def process_ESM(df):
     ax[0,0].set_title('Afraid',fontsize=16)
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Value')
-    ax[0,0].set_ylim(1,3)
+    ax[0,0].set_ylim(0.8,2.4)
     ax[0,0].xaxis.set_major_formatter(date_form)
        
     ax[0,1].plot(affect_mean.iloc[:,6])
     ax[0,1].set_title('Nervous',fontsize=16)
     ax[0,1].set_xlabel('Time (d)')
     ax[0,1].set_ylabel('Value')
-    ax[0,1].set_ylim(1,3)
+    ax[0,1].set_ylim(0.8,2.4)
     ax[0,1].xaxis.set_major_formatter(date_form)
     
     ax[1,0].plot(affect_mean.iloc[:,7])
     ax[1,0].set_title('Upset',fontsize=16)
     ax[1,0].set_xlabel('Time (d)')
     ax[1,0].set_ylabel('Value')
-    ax[1,0].set_ylim(1,3)
+    ax[1,0].set_ylim(0.8,2.4)
     ax[1,0].xaxis.set_major_formatter(date_form)
     
     ax[1,1].plot(affect_mean.iloc[:,8])
     ax[1,1].set_title('Hostile',fontsize=16)
     ax[1,1].set_xlabel('Time (d)')
     ax[1,1].set_ylabel('Value')
-    ax[1,1].set_ylim(1,3)
+    ax[1,1].set_ylim(0.8,2.4)
     ax[1,1].xaxis.set_major_formatter(date_form)
     
     ax[2,0].plot(affect_mean.iloc[:,9])
     ax[2,0].set_title('Ashamed',fontsize=16)
     ax[2,0].set_xlabel('Time (d)')
     ax[2,0].set_ylabel('Value')
-    ax[2,0].set_ylim(1,3)
+    ax[2,0].set_ylim(0.8,2.4)
     ax[2,0].xaxis.set_major_formatter(date_form)
     
     ax[2,1].plot(affect_mean.iloc[:,10])
     ax[2,1].set_title('Stressed',fontsize=16)
     ax[2,1].set_xlabel('Time (d)')
     ax[2,1].set_ylabel('Value')
-    ax[2,1].set_ylim(1,3)
+    ax[2,1].set_ylim(0.8,2.4)
     ax[2,1].xaxis.set_major_formatter(date_form)
     
     ax[3,0].plot(affect_mean.iloc[:,11])
     ax[3,0].set_title('Distracted',fontsize=16)
     ax[3,0].set_xlabel('Time (d)')
     ax[3,0].set_ylabel('Value')
-    ax[3,0].set_ylim(1,3)
+    ax[3,0].set_ylim(0.8,2.4)
     ax[3,0].xaxis.set_major_formatter(date_form)
     
     fig.tight_layout(pad=1.0)
@@ -551,7 +558,7 @@ def process_ESM(df):
     
     #%% negative affections
     fig,ax = plt.subplots(6,2,figsize=(16,20))
-    fig.suptitle("Affections DFA window(10)",fontsize=20,y=1.02)
+    fig.suptitle("Affections DFA window(14)",fontsize=20,y=1.02)
     
     ax[0,0].plot(dfa_rolls.iloc[:,0])
     ax[0,0].set_title('Active',fontsize=16)
@@ -644,6 +651,31 @@ def process_ESM(df):
     #grouped = df_filt.groupby('group').resample('D').mean()
     
     grouped_agg = df_filt.groupby('group').resample('D').agg(lambda x: x.tolist())
+    
+    # fill missing values by hand :(
+    grouped_agg.iloc[46,0] = [1,1,1]
+    grouped_agg.iloc[49,0] = [1,1,1]
+    grouped_agg.iloc[46,1] = [False,True,False]
+    grouped_agg.iloc[49,1] = [False,True,False]
+    grouped_agg.iloc[46,2] = [1,1,0]
+    grouped_agg.iloc[49,2] = [1,1,0]
+    
+    grouped_agg.iloc[184,0] = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    grouped_agg.iloc[187,0] = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    grouped_agg.iloc[184,1] = [False]*39
+    grouped_agg.iloc[187,1] = [False]*39
+    grouped_agg.iloc[184,2] = [1,1,1,1,1,1,1] + grouped_agg.iloc[184,2]
+    grouped_agg.iloc[187,2] = [1,1,1,1,1,1,1] + grouped_agg.iloc[187,2]
+    
+    grouped_agg.iloc[115,0] = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+    grouped_agg.iloc[118,0] = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+    grouped_agg.iloc[115,1] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    grouped_agg.iloc[118,1] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    grouped_agg.iloc[115,2] = [2,2,2,2,2] + grouped_agg.iloc[115,2]
+    grouped_agg.iloc[118,2] = [2,2,2,2,2] + grouped_agg.iloc[118,2]
+    
+    
+    
     #grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
     positives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['2'], level=0)].to_numpy())
     negatives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['3'], level=0)].to_numpy())
@@ -774,7 +806,19 @@ def process_ESM(df):
     sim = calculate_similarity(timeseries_2,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
     #sim[sim >= 0.11] = 1
-    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0.85)
+    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0.9)
+    
+    #%% neg sim
+    sim = calculate_similarity(positives,'cosine')
+    nov = compute_novelty_SSM(sim,L=7)
+    #sim[sim >= 0.11] = 1
+    Plot_similarity(sim,nov,"Pos ESM",False,False,(0,0.07),0.95)
+    #%% pos sim
+    sim = calculate_similarity(negatives,'cosine')
+    nov = compute_novelty_SSM(sim,L=7)
+    #sim[sim >= 0.11] = 1
+    Plot_similarity(sim,nov,"Neg ESM",False,False,(0,0.07),0.9)
+    
     
     #%% Calculate recursion plot and metrix
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
@@ -804,21 +848,25 @@ def process_ESM(df):
     scaled_df['Negative_negative'] = scaled_df['Negative_mood']*(-1)
     scaled_df['Valence_diff'] = scaled_df['Positive_mood'] - scaled_df['Negative_mood']
     cors = scaled_df.filter(['Positive_mood','Negative_mood']).rolling(7).corr().unstack()
+    scaled_df['origin'] = 0
     
     plt.figure(figsize=(20,10))
     plt.suptitle('ESM: Negative and positive valence',y=0.98,fontsize=20)
     scaled_df['Positive_mood'].plot(style=[':'])
     scaled_df['Negative_negative'].plot(style=[':'],label="Negative_mood")
     #scaled_df['Negative_mood'].plot(style=[':'],label="Negative_mood")
-    scaled_df['Valence_diff'].plot(color='gray',style=[':'])
     cors.iloc[:,0].plot(style=['black'],label="Correlation")
+    
+    '''
+    scaled_df['Valence_diff'].plot(color='gray',style=[':'])
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
                      where=(scaled_df['Valence_diff'] < 0), alpha=0.15, color='Firebrick', interpolate=True)
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
                      where=(scaled_df['Valence_diff'] > 0), alpha=0.15, color='Steelblue', interpolate=True)
-    
+    '''
+    scaled_df['origin'].plot(style=['--'],label='')
     plt.xlabel('Time / Days')
     plt.ylabel('Value')
     plt.legend()

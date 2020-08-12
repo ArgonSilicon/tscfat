@@ -29,9 +29,28 @@ from calculate_novelty import compute_novelty_SSM
 from json_load import load_one_subject
 from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
+from geopy.distance import lonlat, distance
 
-def process_location(df):
+def process_location(df, df_h):
     
+    #%% df hourly distances
+    # newport_ri_xy = (-71.312796, 41.49008)
+    # cleveland_oh_xy = (-81.695391, 41.499498)
+    # print(distance(lonlat(*newport_ri_xy), lonlat(*cleveland_oh_xy)).miles)
+    df_h = df_h[df_h['provider'] == 'gps']
+    x = df_h['double_latitude'].values
+    y = df_h['double_longitude'].values
+    a = df_h['accuracy'].values
+    
+    dist = [0]
+    for i in range(1,len(x)):
+            dist.append(distance(lonlat(x[i],y[i]),lonlat(x[i-1],y[i-1])).km)
+
+    df_h['distance'] = pd.Series(dist, index=df_h.index)
+    
+    df_hr = df_h.resample('H').sum()
+    df_hr.loc[df_hr['distance'] > 140, 'distance'] = 0 
+
     #%% calculate receursion plot and metrics
 
     # Recursion plot settings
@@ -74,7 +93,7 @@ def process_location(df):
     show_timeseries_scatter(df.totdist,"Total distance travelled / daily binned","time","Level",FIGPATH,FIGNAME)
     
     
-    return df
+    return df, df_hr
 
 if __name__ == "__main__":
     pass
