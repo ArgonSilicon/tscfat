@@ -25,12 +25,16 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from scipy.stats import spearmanr
 from sklearn.manifold import TSNE
+from matplotlib.dates import DateFormatter
+from datetime import datetime
 
 # Local application imports
 from csv_load import load_all_subjects
 import process_apps, process_ESM, process_battery, process_screen_events, process_location
 from cluster_timeseries import cluster_timeseries, gaussian_MM, Agg_Clustering
 from interpolate_missing import interpolate_missing
+from calculate_JRQA import Calculate_JRQA
+from plot_recurrence import Show_recurrence_plot, Show_joint_recurrence_plot
 
 ###############################################################################
 #%% Load the data
@@ -109,9 +113,16 @@ model, Y = cluster_timeseries(df1_bl)
 
 #%% agg clust
 clust_9, clustering = Agg_Clustering(data,9)
+clust_7, clustering_7 = Agg_Clustering(data,7)
+clust_5, clustering_5 = Agg_Clustering(data,5)
+clust_3, clustering_3 = Agg_Clustering(data,3)
 clust_2, clustering_2 = Agg_Clustering(data,2)
 
+
 print(clustering)
+print(clustering_7)
+print(clustering_5)
+print(clustering_3)
 print(clustering_2)
 
 #%%
@@ -120,41 +131,45 @@ df_grouped = df_grouped.drop(df_grouped.index[-1])
 clustered_data = df_grouped.to_frame()
 
 clustered_data['cluster_9'] = clustering + 1
+clustered_data['cluster_7'] = clustering_7 + 1
+clustered_data['cluster_5'] = clustering_5 + 1
 clustered_data['cluster_2'] = clustering_2 + 1
 print("Battery level daily patterns clustered: ")
-print(clustered_data.cluster_9.value_counts())
+print(clustered_data.cluster_7.value_counts())
 #%% do some plotting
+battery_mean = data.mean(axis=0)
+val0 = np.stack(clustered_data[clustered_data['cluster_7'] == 1]['battery_level'].values)
+val1 = np.stack(clustered_data[clustered_data['cluster_7'] == 2]['battery_level'].values)
+val2 = np.stack(clustered_data[clustered_data['cluster_7'] == 3]['battery_level'].values)
+val3 = np.stack(clustered_data[clustered_data['cluster_7'] == 4]['battery_level'].values)
+val4 = np.stack(clustered_data[clustered_data['cluster_7'] == 5]['battery_level'].values)
+val5 = np.stack(clustered_data[clustered_data['cluster_7'] == 6]['battery_level'].values)
+val6 = np.stack(clustered_data[clustered_data['cluster_7'] == 7]['battery_level'].values)
+#val7 = np.stack(clustered_data[clustered_data['cluster_9'] == 8]['battery_level'].values)
+#val8 = np.stack(clustered_data[clustered_data['cluster_9'] == 9]['battery_level'].values)
 
-val0 = np.stack(clustered_data[clustered_data['cluster_9'] == 1]['battery_level'].values)
-val1 = np.stack(clustered_data[clustered_data['cluster_9'] == 2]['battery_level'].values)
-val2 = np.stack(clustered_data[clustered_data['cluster_9'] == 3]['battery_level'].values)
-val3 = np.stack(clustered_data[clustered_data['cluster_9'] == 4]['battery_level'].values)
-val4 = np.stack(clustered_data[clustered_data['cluster_9'] == 5]['battery_level'].values)
-val5 = np.stack(clustered_data[clustered_data['cluster_9'] == 6]['battery_level'].values)
-val6 = np.stack(clustered_data[clustered_data['cluster_9'] == 7]['battery_level'].values)
-val7 = np.stack(clustered_data[clustered_data['cluster_9'] == 8]['battery_level'].values)
-val8 = np.stack(clustered_data[clustered_data['cluster_9'] == 9]['battery_level'].values)
 
-
-fig,ax = plt.subplots(5,2,figsize=(12,15))
-fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
+fig,ax = plt.subplots(4,2,figsize=(12,15))
+fig.suptitle("Battery level daily development clustered / cluster averages",fontsize=20,y=1.02)
 
 for i in range(len(val0)):
     ax[0,0].plot(val0[i],':',alpha=0.7)
 ax[0,0].set_title('Clusters: 1',fontsize=16)
 ax[0,0].set_xlabel('Time (hour)')
 ax[0,0].set_ylabel('Battery level (%)')
-ax[0,0].set_xlim(0,100)
+ax[0,0].set_xlim(-5,105)
 ax[0,0].set_xlim(0,23)
 ax[0,0].plot(val0.mean(axis=0),c='black')
 #plt.show()
 
 for i in range(len(val1)):
     ax[0,1].plot(val1[i],':',alpha=0.7)
+#ax[0,1].patch.set_facecolor('red')
+#ax[0,1].patch.set_alpha(0.15)
 ax[0,1].set_title('Cluster: 2',fontsize=16)
 ax[0,1].set_xlabel('Time (hour)')
 ax[0,1].set_ylabel('Battery level (%)')
-ax[0,1].set_xlim(0,100)
+ax[0,1].set_xlim(-5,105)
 ax[0,1].set_xlim(0,23)
 ax[0,1].plot(val1.mean(axis=0),c='black')
 #plt.show()
@@ -164,6 +179,8 @@ for i in range(len(val2)):
 ax[1,0].set_title('Cluster: 3',fontsize=16)
 ax[1,0].set_xlabel('Time (hour)')
 ax[1,0].set_ylabel('Battery level (%)')
+ax[1,0].set_ylim(-5,105)
+ax[1,0].set_xlim(0,23)
 ax[1,0].plot(val2.mean(axis=0),c='black')
 #plt.show()
 
@@ -172,6 +189,8 @@ for i in range(len(val3)):
 ax[1,1].set_title('Cluster: 4',fontsize=16)
 ax[1,1].set_xlabel('Time (hour)')
 ax[1,1].set_ylabel('Battery level (%)')
+ax[1,1].set_ylim(-5,105)
+ax[1,1].set_xlim(0,23)
 ax[1,1].plot(val3.mean(axis=0),c='black')
 #plt.show()
 
@@ -180,14 +199,19 @@ for i in range(len(val4)):
 ax[2,0].set_title('Cluster: 5',fontsize=16)
 ax[2,0].set_xlabel('Time (hour)')
 ax[2,0].set_ylabel('Battery level (%)')
+ax[2,0].set_ylim(-5,105)
+ax[2,0].set_xlim(0,23)
 ax[2,0].plot(val4.mean(axis=0),c='black')
 #plt.show()
+
 
 for i in range(len(val5)):
     ax[2,1].plot(val5[i],':',alpha=0.7)
 ax[2,1].set_title('Cluster: 6',fontsize=16)
 ax[2,1].set_xlabel('Time (hour)')
 ax[2,1].set_ylabel('Battery level (%)')
+ax[2,1].set_ylim(-5,105)
+ax[2,1].set_xlim(0,23)
 ax[2,1].plot(val5.mean(axis=0),c='black')
 #plt.show()
 
@@ -196,34 +220,46 @@ for i in range(len(val6)):
 ax[3,0].set_title('Cluster: 7',fontsize=16)
 ax[3,0].set_xlabel('Time (hour)')
 ax[3,0].set_ylabel('Battery level (%)')
+ax[3,0].set_ylim(-5,105)
+ax[3,0].set_xlim(0,23)
 ax[3,0].plot(val6.mean(axis=0),c='black')
 
+ax[3,1].set_title('Average hourly battery level / all clusters',fontsize=16)
+ax[3,1].set_xlabel('Time (hour)')
+ax[3,1].set_ylabel('Battery level (%)')
+ax[3,1].set_ylim(-5,105)
+ax[3,1].set_xlim(0,23)
+ax[3,1].plot(battery_mean,c='black')
+
+'''
 for i in range(len(val7)):
     ax[3,1].plot(val7[i],':',alpha=0.7)
 ax[3,1].set_title('Cluster: 8',fontsize=16)
 ax[3,1].set_xlabel('Time (hour)')
 ax[3,1].set_ylabel('Battery level (%)')
-ax[3,1].plot(val6.mean(axis=0),c='black')
+ax[3,1].plot(val7.mean(axis=0),c='black')
 
 for i in range(len(val8)):
     ax[4,0].plot(val8[i],':',alpha=0.7)
 ax[4,0].set_title('Cluster: 9',fontsize=16)
 ax[4,0].set_xlabel('Time (hour)')
 ax[4,0].set_ylabel('Battery level (%)')
-ax[4,0].plot(val6.mean(axis=0),c='black')
+ax[4,0].plot(val8.mean(axis=0),c='black')
+'''
 
 fig.tight_layout(pad=1.0)
 plt.show()
 
 fig = plt.figure()
 ax = fig.add_axes([0,0,1,1])
-clustered_data['cluster_9'].plot(style='o:')
+clustered_data['cluster_7'].plot(style='o:',label="Clustered days")
+ax.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
 ax.set_title('Battery level daily development clustered / DTW, 7 clusters')
-ax.set_yticks(np.arange(9))
 ax.set_ylabel('Cluster no.')
-ax.set_xlabel('Time / day')
-ax.set_ylim(0.5,9.5)
+ax.set_xlabel('Time (d)')
+ax.set_ylim(0.5,7.5)
 ax.set_xlim('2020-06-01','2020-08-10')
+ax.legend()
 plt.show()
 
 #%%
@@ -320,7 +356,7 @@ plt.show()
 days_of_interest = clustered_data[clustered_data['cluster_2'] == 1]
 ###############################################################################
 #%% Process ESM data
-df2_r, ts_2 = process_ESM.process_ESM(df2)
+df2_r, ts_2, affections = process_ESM.process_ESM(df2)
 
 ##############################################################################
 #%% Location / daily
@@ -484,6 +520,19 @@ plt.show()
 df_stack = pd.concat([df2_r,df3_r[:-1]],axis=1)
 sns.pairplot(df_stack,kind="reg")
 corr_s = df_stack.corr(method="spearman")
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##############################################################################
 #%% Screen events
 df4_r, df4_unlocked = process_screen_events.process_screen_events(df4)
@@ -491,7 +540,28 @@ df4_r, df4_unlocked = process_screen_events.process_screen_events(df4)
 #%%'
 df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
 df_daily_sums = df4_unlocked.resample('D').sum()
+df_daily_full = df_daily_sums[1:-1]
 data = np.stack(df_grouped.values[1:-1])
+
+#%% test JRQA
+ED = 1 # embedding dimensions
+TD = 1 # time delay
+RA = 0.15 # neigborhood radius
+#X1 = affections.stressed.values.reshape(-1,1)
+#X2 = df_daily_full.values.reshape(-1,1)
+X1 = affections.stressed.rolling(window=7).mean().values.reshape(-1,1)
+X2 = df_daily_full.rolling(window=7).mean().values.reshape(-1,1) 
+
+#%% Calculate joint recursion plot and metrix
+# JOINT RECURRENCE: recurrence happens at same time in both systems
+res, mat = Calculate_JRQA(X1,X2) #,ED,TD,RA)
+
+#%% show recursion plot and save figure
+FIGPATH = False
+FIGNAME = False
+TITLE = "Stress Level and Screen Events Joint Recursion Plot" 
+AXIS = affections.index.strftime('%m-%d')
+Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X2,"Stress level daily averages","Screen events daily counts","Value","Count",)
 
 #%% means
 houry_means = data.mean()
@@ -656,12 +726,38 @@ df4_res = df4_unlocked.resample('D').sum()
 df_stack = pd.concat([df_stack,df4_res[1:-1]],axis=1)
 corr_s = df_stack.corr(method="spearman")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###############################################################################
 #%% Process App notfications
 app_names = set(df5.application_name.values)
 df5_r, ts_5 = process_apps.process_apps(df5,df1_r,df4_r)
 #df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
+#%% test JRQA
+X1 = affections.stressed.rolling(window=7).mean().values.reshape(-1,1)
+X2 = store[:-1].rolling(window=7).mean().values.reshape(-1,1) 
 
+#%% Calculate joint recursion plot and metrix
+# JOINT RECURRENCE: recurrence happens at same time in both systems
+res, mat = Calculate_JRQA(X1,X2) #,ED,TD,RA)
+
+#%% show recursion plot and save figure
+FIGPATH = False
+FIGNAME = False
+TITLE = "Stress Level and App Notifications Joint Recursion Plot" 
+AXIS = affections.index.strftime('%m-%d')
+Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X2,"Stress level daily averages","App Notifications daily counts","Value","Count",)
 #%%'
 df5_a = df5_r[df5_r['is_active'] == True]
 corr_s = df_stack.corr(method="spearman")
@@ -670,6 +766,7 @@ df5_f = df5_a.filter(['Communication', 'Entertainment', 'Other', 'Shop', 'Social
        'Sports', 'Transportation','Travel', 'Work/Study'])
 
 df5_d = df5_f.resample('D').sum()
+df5_d['Row_sum'] = df5_d.sum(axis=1)
 df5_h = df5_f.resample('H').sum()
 
 df_stack = pd.concat([df_stack,df5_d],axis=1)

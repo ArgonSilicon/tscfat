@@ -90,24 +90,25 @@ def process_apps(df, df_b, df_s):
     resampled_day = resampled.resample('D').apply(list)
     res = resampled_day[1:-1]
     
-    temp = np.zeros((68,9,24))
+    temp2 = np.zeros((68,9,24))
     for i in range(res.shape[0]):
-        temp[i] = np.stack(res.iloc[i].values)
+        temp2[i] = np.stack(res.iloc[i].values)
     
-    data = temp.reshape(68,-1)
+    data = temp2.reshape(68,-1)
     
     #timeseries = resampled['Encoded_group'].values.reshape(-1,1) # to_numpy() if an array is needed
     timeseries = resampled.filter(['time',*Colnames]).to_numpy()
     
     #%%
-    #res, mat = Calculate_RQA(timeseries,ED,TD,RA)
+    res, mat = Calculate_RQA(timeseries,ED,TD,RA)
+    '''
     res, mat = Calculate_RQA(data,ED,TD,RA)
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Similarity/')
     FIGNAME = "Application_usage_similarity"
     sim = calculate_similarity(data,'cosine')
     nov = compute_novelty_SSM(sim,L=7)
     Plot_similarity(sim,nov,"Application usage (cosine distance)",FIGPATH,FIGNAME,(0.02,0.06),0.55)
-   
+    '''
 
     #%% show recursion plot and save figure
     # set correct names and plot title

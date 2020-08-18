@@ -140,14 +140,14 @@ def cluster_timeseries(df):
     ax[3,1].set_title('Cluster: 8',fontsize=16)
     ax[3,1].set_xlabel('Time (hour)')
     ax[3,1].set_ylabel('Battery level (%)')
-    ax[3,1].plot(val6.mean(axis=0),c='black')
+    ax[3,1].plot(val7.mean(axis=0),c='black')
     
     for i in range(len(val8)):
         ax[4,0].plot(val8[i],':',alpha=0.7)
     ax[4,0].set_title('Cluster: 9',fontsize=16)
     ax[4,0].set_xlabel('Time (hour)')
     ax[4,0].set_ylabel('Battery level (%)')
-    ax[4,0].plot(val6.mean(axis=0),c='black')
+    ax[4,0].plot(val8.mean(axis=0),c='black')
     
     fig.tight_layout(pad=1.0)
     plt.show()

@@ -139,6 +139,7 @@ def process_ESM(df):
     df_temp2 = df[df['title'] == 'Right now I feel Stressed']
     df_temp2 = df_temp2['scaled_answer'].astype('int64')
     stressed = df_temp2.resample('D').mean()
+    stressed_max = df_temp2.resample('D').max()
     
     df_temp2 = df[df['title'] == 'Right now I feel Distracted']
     df_temp2 = df_temp2['scaled_answer'].astype('int64')
@@ -150,9 +151,11 @@ def process_ESM(df):
     
     #%% correlation
     corr_s = affections.corr(method="spearman")
-    f, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax)
-    ax.set_title('Affections spearman correlation')
+    f, ax = plt.subplots(figsize=(12, 10))
+    xticks = corr_s.columns
+    sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax,xticklabels=xticks)
+    ax.set_title('Postivie and Negative Affections Spearman Correlation')
+    plt.xticks(rotation=45)
 
     #%% plot affections
     date_form = DateFormatter("%m-%d")
@@ -899,7 +902,7 @@ def process_ESM(df):
     
 
     #%%
-    return combined_df, timeseries
+    return combined_df, timeseries, affections
     
 if __name__ == "__main__":
     pass

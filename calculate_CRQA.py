@@ -10,7 +10,7 @@ from pyrqa.time_series import TimeSeries
 from pyrqa.settings import Settings
 from pyrqa.analysis_type import Cross
 from pyrqa.neighbourhood import FixedRadius
-from pyrqa.metric import EuclideanMetric
+from pyrqa.metric import EuclideanMetric, MaximumMetric, TaxicabMetric
 from pyrqa.computation import RQAComputation
 from pyrqa.computation import RPComputation
 
@@ -36,19 +36,19 @@ def Calculate_CRQA(ts_x,ts_y):
     
     
     time_series_x = TimeSeries(ts_x,
-                               embedding_dimension=2,
+                               embedding_dimension=1,
                                time_delay=1)
     
     time_series_y = TimeSeries(ts_y,
-                               embedding_dimension=2,
-                               time_delay=2)
+                               embedding_dimension=1,
+                               time_delay=1)
     
     time_series = (time_series_x,
                    time_series_y)
     
     settings = Settings(time_series,
                         analysis_type=Cross,
-                        neighbourhood=FixedRadius(0.9),
+                        neighbourhood=FixedRadius(10),
                         similarity_measure=EuclideanMetric,
                         theiler_corrector=0)
     

@@ -86,7 +86,7 @@ def compute_novelty_SSM(S, kernel=None, L=10, var=0.5, exclude=False):
         nov[0:right] = 0
         nov[left:N] = 0
         
-    return nov
+    return nov, kernel
 
 if __name__ == "__main__":
     pass    

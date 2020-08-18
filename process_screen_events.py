@@ -63,16 +63,17 @@ def process_screen_events(df):
     
     #%% calculate SSM and Novelty
     #print(data)
+    AXIS = resampled_day[1:-1].index.strftime('%m-%d')
     sim = calculate_similarity(data,'cosine')
-    nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov,"Screen events",False,False,(0,0.05),0.75)
+    nov, _ = compute_novelty_SSM(sim)
+    Plot_similarity(sim,nov,"Screen events",False,False,(0,0.05),0.75,axis=AXIS,kernel=False)
     
     #%% calculate SSM and Novelty 3
-    
+    '''
     sim_3 = calculate_similarity(timeseries_3,'euclidean')
-    nov_3 = compute_novelty_SSM(sim_3)
-    Plot_similarity(sim_3,nov_3)
-    
+    nov_3, _ = compute_novelty_SSM(sim_3)
+    Plot_similarity(sim_3,nov_3,"Screen events",False,False,(0,0.05),0.75,axis=AXIS,kernel=False)
+    '''
     #%% calculate receursion plot and metrics
     
     # Recursion plot settings
@@ -138,7 +139,7 @@ def process_screen_events(df):
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Event Count')
     #ax[0,0].set_ylim(0,200)
-    ax[0,0].axvspan(datetime(2020,7,6),datetime(2020,7,13),facecolor="red",alpha=0.20,label="Days of interest")
+    ax[0,0].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.20,label="Days of interest")
     ax[0,0].xaxis.set_major_formatter(date_form)
     ax[0,0].legend()
        
@@ -147,7 +148,7 @@ def process_screen_events(df):
     ax[0,1].set_xlabel('Time (d)')
     ax[0,1].set_ylabel('Variance')
     #ax[0,1].set_ylim(0,0.7)
-    ax[0,1].axvspan(datetime(2020,7,6),datetime(2020,7,13),facecolor="red",alpha=0.20,label="Days of interest")
+    ax[0,1].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.20,label="Days of interest")
     ax[0,1].xaxis.set_major_formatter(date_form)
     ax[0,1].legend()
     
@@ -156,7 +157,7 @@ def process_screen_events(df):
     ax[1,0].set_xlabel('Time (d)')
     ax[1,0].set_ylabel('Autocorrelation')
     ax[1,0].set_ylim(-1,1)
-    ax[1,0].axvspan(datetime(2020,7,6),datetime(2020,7,13),facecolor="red",alpha=0.20,label="Days of interest")
+    ax[1,0].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.20,label="Days of interest")
     ax[1,0].xaxis.set_major_formatter(date_form)
     ax[1,0].legend()
     
@@ -165,7 +166,7 @@ def process_screen_events(df):
     ax[1,1].set_xlabel('Time (d)')
     ax[1,1].set_ylabel('Mean Value')
     #ax[1,1].set_ylim(0,0.7)
-    ax[1,1].axvspan(datetime(2020,7,6),datetime(2020,7,13),facecolor="red",alpha=0.20,label="Days of interest")
+    ax[1,1].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.20,label="Days of interest")
     ax[1,1].xaxis.set_major_formatter(date_form)
     ax[1,1].legend()
     

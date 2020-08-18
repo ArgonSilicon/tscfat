@@ -59,7 +59,9 @@ def process_location(df, df_h):
     RA = 0.05 # neigborhood radius
     
     df = df.drop(columns=['user','device','diameter'])
-    
+    #df = df.drop(columns=['user','device']) 
+    df.index = pd.to_datetime(df.index)
+    axis = df.index.strftime('%m-%d')
     scaler = MinMaxScaler()
     scaled_df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns, index = df.index)   
     timeseries = scaled_df.to_numpy()
@@ -67,8 +69,8 @@ def process_location(df, df_h):
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
         
     sim = calculate_similarity(timeseries,'cosine')
-    nov = compute_novelty_SSM(sim)
-    Plot_similarity(sim,nov,"Location",False,False,(0,0.1),0.93)
+    nov,kernel = compute_novelty_SSM(sim)
+    Plot_similarity(sim,nov,"Location Data",False,False,(0,0.065),0,axis,kernel)
     
     #%% show recursion plot and save figure
     

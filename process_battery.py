@@ -95,9 +95,12 @@ def process_battery(df):
     #%% calculate similarity and novelty
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Similarity/')
     FIGNAME = "Battery_level_similarity"
+    AXIS = resampled_day[1:-1].index.strftime('%m-%d')
+    
     sim = calculate_similarity(data,'cosine')
-    nov = compute_novelty_SSM(sim,L=7)
-    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME)
+    nov, _ = compute_novelty_SSM(sim,L=7)
+    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,
+                    ylim = (0,0.05),threshold = 0,axis = AXIS,kernel = False,)
     
     #%% set correct names and save metrics as json 
     RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
