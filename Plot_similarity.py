@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+from datetime import datetime
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -22,6 +23,8 @@ def Plot_similarity(sim,
                     savename = False,
                     ylim = (0,0.05),
                     threshold = 0,
+                    axis = False,
+                    kernel = False,
                     ):
     
     """
@@ -53,26 +56,39 @@ def Plot_similarity(sim,
 
     sim[sim < threshold] = 0
     # plot it
-    fig, ax = plt.subplots(4,3,figsize=(10,12),sharex=True) 
-    gridsize = (4,3)
+    fig, ax = plt.subplots(4,4,figsize=(10,11),sharex=True) 
+    gridsize = (4,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
-    ax2 = plt.subplot2grid(gridsize, (3,0), colspan=3)
+    ax2 = plt.subplot2grid(gridsize, (1,3), colspan=1,rowspan=1)
+    ax3 = plt.subplot2grid(gridsize, (3,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
-    ax1.set_title("Similarity matrix", fontsize=14)
+    ax1.set_title("Similarity matrix (cosine distance)", fontsize=16)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]))
     ax1.set_ylabel('$n = {}$'.format(sim.shape[1]))
     
-    #ax1 = plt.subplot(gs[1])
-    ax2.plot(nov)
-    ax2.set_title("Novelty score", fontsize=14)
-    ax2.set_xlabel('Time (d)')
-    ax2.set_ylabel('Novelty')
-    ax2.set_ylim(ylim)
+    if type(kernel) != bool:
+        ax2.imshow(kernel,cmap='Blues')
+        ax2.set_title('Gaussian Checkerboard \n Kernel',fontsize=16)
     
-    plt.suptitle(title + " daily patterns",fontsize=20,y=1.01)
+    #ax1 = plt.subplot(gs[1])
+    ax3.plot(axis,nov,label="Novelty")
+    ax3.set_title("Novelty score", fontsize=16)
+    ax3.set_xlabel('Time (d)')
+    ax3.set_ylabel('Novelty')
+    ax3.set_xticks(np.arange(len(axis))[::7])
+    ax3.set_xticklabels(axis[::7])
+    #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
+    ax3.legend()
+    ax3.set_ylim(ylim)
+    
+    ax[0,3].set_axis_off()
+    ax[2,3].set_axis_off()
+    
+    plt.suptitle(title + " Daily Patterns",fontsize=24,y=1.01)
     plt.grid(True)
-    plt.tight_layout(pad=1.0)
+    plt.tight_layout(pad=0)
     
     
     if not savename and not savepath:

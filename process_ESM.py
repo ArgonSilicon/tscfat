@@ -24,6 +24,7 @@ from sklearn.preprocessing import MinMaxScaler
 from matplotlib.dates import DateFormatter
 import nolds
 from arma import arma, autocorr
+from datetime import datetime
 
 # Local application import
 
@@ -53,6 +54,13 @@ def process_ESM(df):
     ED = 1 # embedding dimensions
     TD = 1 # time delay
     RA = 0.15 # neigborhood radius
+    
+    #%% Check NaN's
+    #df_nans = df.groupby[]
+    df.isna().sum().plot(kind='bar')  
+    plt.show()
+    print(df.isna().any())
+    # df.dropna() / df.fillna(0)
     
     #%%
     
@@ -132,6 +140,7 @@ def process_ESM(df):
     df_temp2 = df[df['title'] == 'Right now I feel Stressed']
     df_temp2 = df_temp2['scaled_answer'].astype('int64')
     stressed = df_temp2.resample('D').mean()
+    stressed_max = df_temp2.resample('D').max()
     
     df_temp2 = df[df['title'] == 'Right now I feel Distracted']
     df_temp2 = df_temp2['scaled_answer'].astype('int64')
@@ -143,9 +152,11 @@ def process_ESM(df):
     
     #%% correlation
     corr_s = affections.corr(method="spearman")
-    f, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax)
-    ax.set_title('Affections spearman correlation')
+    f, ax = plt.subplots(figsize=(12, 10))
+    xticks = corr_s.columns
+    sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax,xticklabels=xticks)
+    ax.set_title('Postivie and Negative Affections Spearman Correlation')
+    plt.xticks(rotation=45)
 
     #%% plot affections
     date_form = DateFormatter("%m-%d")
@@ -331,49 +342,49 @@ def process_ESM(df):
     ax[0,0].set_title('Afraid',fontsize=16)
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Value')
-    ax[0,0].set_ylim(0,4)
+    ax[0,0].set_ylim(0.8,3.2)
     ax[0,0].xaxis.set_major_formatter(date_form)
        
     ax[0,1].plot(affections.iloc[:,6])
     ax[0,1].set_title('Nervous',fontsize=16)
     ax[0,1].set_xlabel('Time (d)')
     ax[0,1].set_ylabel('Value')
-    ax[0,1].set_ylim(0,4)
+    ax[0,1].set_ylim(0.8,3.2)
     ax[0,1].xaxis.set_major_formatter(date_form)
     
     ax[1,0].plot(affections.iloc[:,7])
     ax[1,0].set_title('Upset',fontsize=16)
     ax[1,0].set_xlabel('Time (d)')
     ax[1,0].set_ylabel('Value')
-    ax[1,0].set_ylim(0,4)
+    ax[1,0].set_ylim(0.8,3.2)
     ax[1,0].xaxis.set_major_formatter(date_form)
     
     ax[1,1].plot(affections.iloc[:,8])
     ax[1,1].set_title('Hostile',fontsize=16)
     ax[1,1].set_xlabel('Time (d)')
     ax[1,1].set_ylabel('Value')
-    ax[1,1].set_ylim(0,4)
+    ax[1,1].set_ylim(0.8,3.2)
     ax[1,1].xaxis.set_major_formatter(date_form)
     
     ax[2,0].plot(affections.iloc[:,9])
     ax[2,0].set_title('Ashamed',fontsize=16)
     ax[2,0].set_xlabel('Time (d)')
     ax[2,0].set_ylabel('Value')
-    ax[2,0].set_ylim(0,4)
+    ax[2,0].set_ylim(0.8,3.2)
     ax[2,0].xaxis.set_major_formatter(date_form)
     
     ax[2,1].plot(affections.iloc[:,10])
     ax[2,1].set_title('Stressed',fontsize=16)
     ax[2,1].set_xlabel('Time (d)')
     ax[2,1].set_ylabel('Value')
-    ax[2,1].set_ylim(0,4)
+    ax[2,1].set_ylim(0.8,3.2)
     ax[2,1].xaxis.set_major_formatter(date_form)
     
     ax[3,0].plot(affections.iloc[:,11])
     ax[3,0].set_title('Distracted',fontsize=16)
     ax[3,0].set_xlabel('Time (d)')
     ax[3,0].set_ylabel('Value')
-    ax[3,0].set_ylim(0,4)
+    ax[3,0].set_ylim(0.8,3.2)
     ax[3,0].xaxis.set_major_formatter(date_form)
     
     fig.tight_layout(pad=1.0)
@@ -443,53 +454,77 @@ def process_ESM(df):
     ax[0,0].set_title('Afraid',fontsize=16)
     ax[0,0].set_xlabel('Time (d)')
     ax[0,0].set_ylabel('Value')
-    ax[0,0].set_ylim(1,3)
+    ax[0,0].set_ylim(0.8,2.4)
     ax[0,0].xaxis.set_major_formatter(date_form)
        
     ax[0,1].plot(affect_mean.iloc[:,6])
     ax[0,1].set_title('Nervous',fontsize=16)
+    ax[0,1].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     ax[0,1].set_xlabel('Time (d)')
     ax[0,1].set_ylabel('Value')
-    ax[0,1].set_ylim(1,3)
+    ax[0,1].set_ylim(0.8,2.4)
     ax[0,1].xaxis.set_major_formatter(date_form)
     
     ax[1,0].plot(affect_mean.iloc[:,7])
     ax[1,0].set_title('Upset',fontsize=16)
     ax[1,0].set_xlabel('Time (d)')
     ax[1,0].set_ylabel('Value')
-    ax[1,0].set_ylim(1,3)
+    ax[1,0].set_ylim(0.8,2.4)
     ax[1,0].xaxis.set_major_formatter(date_form)
     
     ax[1,1].plot(affect_mean.iloc[:,8])
     ax[1,1].set_title('Hostile',fontsize=16)
     ax[1,1].set_xlabel('Time (d)')
     ax[1,1].set_ylabel('Value')
-    ax[1,1].set_ylim(1,3)
+    ax[1,1].set_ylim(0.8,2.4)
     ax[1,1].xaxis.set_major_formatter(date_form)
     
     ax[2,0].plot(affect_mean.iloc[:,9])
     ax[2,0].set_title('Ashamed',fontsize=16)
     ax[2,0].set_xlabel('Time (d)')
     ax[2,0].set_ylabel('Value')
-    ax[2,0].set_ylim(1,3)
+    ax[2,0].set_ylim(0.8,2.4)
     ax[2,0].xaxis.set_major_formatter(date_form)
     
     ax[2,1].plot(affect_mean.iloc[:,10])
     ax[2,1].set_title('Stressed',fontsize=16)
+    ax[2,1].axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     ax[2,1].set_xlabel('Time (d)')
     ax[2,1].set_ylabel('Value')
-    ax[2,1].set_ylim(1,3)
+    ax[2,1].set_ylim(0.8,2.4)
     ax[2,1].xaxis.set_major_formatter(date_form)
     
     ax[3,0].plot(affect_mean.iloc[:,11])
     ax[3,0].set_title('Distracted',fontsize=16)
     ax[3,0].set_xlabel('Time (d)')
     ax[3,0].set_ylabel('Value')
-    ax[3,0].set_ylim(1,3)
+    ax[3,0].set_ylim(0.8,2.4)
     ax[3,0].xaxis.set_major_formatter(date_form)
     
     fig.tight_layout(pad=1.0)
     plt.show()
+    
+    #%% for the report
+    fig, (ax1,ax2) = plt.subplots(1,2,figsize=(15,5))
+    fig.suptitle("Negative affections rolling window(7) mean",fontsize=20,y=1.0)
+    
+    ax1.plot(affect_mean.iloc[:,10])
+    ax1.set_title('Stressed',fontsize=16)
+    ax1.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    ax1.set_xlabel('Time (d)')
+    ax1.set_ylabel('Value')
+    ax1.set_ylim(0.9,2.1)
+    ax1.tick_params(axis='x',labelrotation=45)
+    ax1.xaxis.set_major_formatter(date_form)
+       
+    ax2.plot(affect_mean.iloc[:,6])
+    ax2.set_title('Nervous',fontsize=16)
+    ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    ax2.set_xlabel('Time (d)')
+    ax2.set_ylabel('Value')
+    ax2.set_ylim(0.9,2.1)
+    ax2.tick_params(axis='x',labelrotation=45)
+    ax2.xaxis.set_major_formatter(date_form)
     
     #%% negative affections
     fig,ax = plt.subplots(4,2,figsize=(12,15))
@@ -551,7 +586,7 @@ def process_ESM(df):
     
     #%% negative affections
     fig,ax = plt.subplots(6,2,figsize=(16,20))
-    fig.suptitle("Affections DFA window(10)",fontsize=20,y=1.02)
+    fig.suptitle("Affections DFA window(14)",fontsize=20,y=1.02)
     
     ax[0,0].plot(dfa_rolls.iloc[:,0])
     ax[0,0].set_title('Active',fontsize=16)
@@ -644,6 +679,31 @@ def process_ESM(df):
     #grouped = df_filt.groupby('group').resample('D').mean()
     
     grouped_agg = df_filt.groupby('group').resample('D').agg(lambda x: x.tolist())
+    
+    # fill missing values by hand :(
+    grouped_agg.iloc[46,0] = [1,1,1]
+    grouped_agg.iloc[49,0] = [1,1,1]
+    grouped_agg.iloc[46,1] = [False,True,False]
+    grouped_agg.iloc[49,1] = [False,True,False]
+    grouped_agg.iloc[46,2] = [1,1,0]
+    grouped_agg.iloc[49,2] = [1,1,0]
+    
+    grouped_agg.iloc[184,0] = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    grouped_agg.iloc[187,0] = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    grouped_agg.iloc[184,1] = [False]*39
+    grouped_agg.iloc[187,1] = [False]*39
+    grouped_agg.iloc[184,2] = [1,1,1,1,1,1,1] + grouped_agg.iloc[184,2]
+    grouped_agg.iloc[187,2] = [1,1,1,1,1,1,1] + grouped_agg.iloc[187,2]
+    
+    grouped_agg.iloc[115,0] = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+    grouped_agg.iloc[118,0] = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+    grouped_agg.iloc[115,1] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    grouped_agg.iloc[118,1] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+    grouped_agg.iloc[115,2] = [2,2,2,2,2] + grouped_agg.iloc[115,2]
+    grouped_agg.iloc[118,2] = [2,2,2,2,2] + grouped_agg.iloc[118,2]
+    
+    
+    
     #grouped_agg = grouped.groupby(grouped['id']).agg(lambda x: x.tolist())
     positives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['2'], level=0)].to_numpy())
     negatives = np.stack(grouped_agg.scaled_answer[grouped_agg.index.isin(['3'], level=0)].to_numpy())
@@ -706,6 +766,7 @@ def process_ESM(df):
     
     plt.subplot(4,2,1)
     ts1.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     plt.title('Sleep quality')
     plt.xticks([])
     #plt.show()
@@ -771,10 +832,23 @@ def process_ESM(df):
     timeseries_2 = scaled_df.to_numpy()
     #%% calculate receursion plot and metrics
     # similarity
+    AXIS = scaled_df.index.strftime('%m-%d') 
     sim = calculate_similarity(timeseries_2,'cosine')
-    nov = compute_novelty_SSM(sim,L=7)
+    nov, kernel = compute_novelty_SSM(sim,L=7)
     #sim[sim >= 0.11] = 1
-    Plot_similarity(sim,nov,"ESM",False,False,(0,0.07),0.85)
+    Plot_similarity(sim,nov,"ESM",False,False,(0,0.06),0.95,AXIS,kernel)
+    
+    #%% neg sim
+    sim = calculate_similarity(positives,'cosine')
+    nov, kernel = compute_novelty_SSM(sim,L=7)
+    #sim[sim >= 0.11] = 1
+    Plot_similarity(sim,nov,"Pos ESM",False,False,(0,0.02),0.97,AXIS,kernel)
+    #%% pos sim
+    sim = calculate_similarity(negatives,'cosine')
+    nov, kernel= compute_novelty_SSM(sim,L=7)
+    #sim[sim >= 0.11] = 1
+    Plot_similarity(sim,nov,"Neg ESM",False,False,(0,0.02),0.92,AXIS,kernel)
+    
     
     #%% Calculate recursion plot and metrix
     res, mat = Calculate_RQA(timeseries,ED,TD,RA)
@@ -791,9 +865,12 @@ def process_ESM(df):
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)
     
     #%% Decomposition
+    
+    dates = combined_df.index[6::7]
+    #dates = np.arange(6,len(combined_df.index),7)
     decomposition_1 = STL_decomposition(combined_df['Sleep'],"Sleep")
-    decomposition_2 = STL_decomposition(combined_df['Positive_mood'],"Positive mood")
-    decomposition_3 = STL_decomposition(combined_df['Negative_mood'],"Negative mood")
+    decomposition_2 = STL_decomposition(combined_df['Positive_mood'],"Positive mood Score Daily Sums STL Decomposition",False,False,"Mood Score","Date",dates)
+    decomposition_3 = STL_decomposition(combined_df['Negative_mood'],"Negative Mood Score Daily Sums STL Decomposition",False,False,"Mood Score","Date",dates)
     decomposition_4 = STL_decomposition(combined_df['Social_interaction'],"Social interaction")
     decomposition_5 = STL_decomposition(combined_df['Difficulty_comp'],"Difficulty to complete")
     decomposition_6 = STL_decomposition(combined_df['Explanatory'],"Explanatory")
@@ -804,21 +881,25 @@ def process_ESM(df):
     scaled_df['Negative_negative'] = scaled_df['Negative_mood']*(-1)
     scaled_df['Valence_diff'] = scaled_df['Positive_mood'] - scaled_df['Negative_mood']
     cors = scaled_df.filter(['Positive_mood','Negative_mood']).rolling(7).corr().unstack()
+    scaled_df['origin'] = 0
     
     plt.figure(figsize=(20,10))
     plt.suptitle('ESM: Negative and positive valence',y=0.98,fontsize=20)
     scaled_df['Positive_mood'].plot(style=[':'])
     scaled_df['Negative_negative'].plot(style=[':'],label="Negative_mood")
     #scaled_df['Negative_mood'].plot(style=[':'],label="Negative_mood")
-    scaled_df['Valence_diff'].plot(color='gray',style=[':'])
     cors.iloc[:,0].plot(style=['black'],label="Correlation")
+    
+    '''
+    scaled_df['Valence_diff'].plot(color='gray',style=[':'])
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
                      where=(scaled_df['Valence_diff'] < 0), alpha=0.15, color='Firebrick', interpolate=True)
     
     plt.fill_between(scaled_df.index,scaled_df['Valence_diff'].values, 0, 
                      where=(scaled_df['Valence_diff'] > 0), alpha=0.15, color='Steelblue', interpolate=True)
-    
+    '''
+    scaled_df['origin'].plot(style=['--'],label='')
     plt.xlabel('Time / Days')
     plt.ylabel('Value')
     plt.legend()
@@ -850,8 +931,100 @@ def process_ESM(df):
     show_features(scaled_df['Negative_mood'],"Negative mood ","Time (d)","Value",7,1,"right",False,FIGPATH,FIGNAME)
     
 
+    #%% plot some
+    
+    ts2_roll = ts2.rolling(7).mean()
+    ts3_roll = ts3.rolling(7).mean()
+    
+    ts2_var = ts2.rolling(7).var()
+    ts3_var = ts3.rolling(7).var()
+    
+    ts2_auto = ts2.rolling(7).apply(autocorr)
+    ts3_auto = ts3.rolling(7).apply(autocorr)
+    
     #%%
-    return combined_df, timeseries
+    fig = plt.figure(figsize=(10,10))
+    
+    plt.suptitle('ESM scores and rolling window features',fontsize=20,y=1.01)
+    
+    plt.subplot(4,2,1)
+    ts2.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Positive mood')
+    plt.xlabel('date')
+    plt.ylabel('summed score')
+    #plt.show()
+    
+    plt.subplot(4,2,2)
+    ts3.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+
+    plt.title('Negative mood')
+    plt.xlabel('date')
+    plt.ylabel('summed score')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,3)
+    ts2_roll.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Positive mood rolling(7) mean')
+    plt.xlabel('date')
+    plt.ylabel('summed score')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,4)
+    ts3_roll.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Negative mood rolling(7) mean')
+    plt.xlabel('date')
+    plt.ylabel('summed score')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,5)
+    ts2_var.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Positive mood rolling(7) variance')
+    plt.xlabel('date')
+    plt.ylabel('variance')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,6)
+    ts3_var.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Negative mood rolling(7) variance')
+    plt.xlabel('date')
+    plt.ylabel('variance')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,7)
+    ts2_auto.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Positive mood autocorrelation(1)')
+    plt.xlabel('date')
+    plt.ylabel('autocorrelation')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    plt.subplot(4,2,8)
+    ts3_auto.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title('Negative mood autocorrelation(1)')
+    plt.xlabel('date')
+    plt.ylabel('autocorrelation')
+    #plt.xticks(rotation=45)
+    #plt.show()
+    
+    fig.tight_layout(pad=1.0)
+    
+    
+    
+    #%%
+    return combined_df, timeseries, affections
     
 if __name__ == "__main__":
     pass

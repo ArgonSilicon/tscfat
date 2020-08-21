@@ -47,7 +47,7 @@ def cluster_timeseries(df):
     df_grouped = resampled_interpolated.groupby(resampled_interpolated.index.floor('d')).apply(list)
     data = np.stack(df_grouped.values[1:-1])
     
-    model, Y =  gaussian_MM(data,7,10000)
+    model, Y =  gaussian_MM(data,9,10000)
     
     df_grouped = df_grouped.drop(df_grouped.index[0])
     df_grouped = df_grouped.drop(df_grouped.index[-1])
@@ -63,8 +63,10 @@ def cluster_timeseries(df):
     val4 = np.stack(clustered_data[clustered_data['cluster'] == 5]['battery_level'].values)
     val5 = np.stack(clustered_data[clustered_data['cluster'] == 6]['battery_level'].values)
     val6 = np.stack(clustered_data[clustered_data['cluster'] == 7]['battery_level'].values)
+    val7 = np.stack(clustered_data[clustered_data['cluster'] == 8]['battery_level'].values)
+    val8 = np.stack(clustered_data[clustered_data['cluster'] == 9]['battery_level'].values)
     
-    fig,ax = plt.subplots(4,2,figsize=(15,15))
+    fig,ax = plt.subplots(5,2,figsize=(15,15))
     fig.suptitle("Battery level daily development / cluster averages",fontsize=20,y=1.02)
     
     for i in range(len(val0)):
@@ -126,6 +128,27 @@ def cluster_timeseries(df):
     ax[3,0].set_ylabel('Battery level (%)')
     ax[3,0].plot(val6.mean(axis=0),c='black')
     
+    for i in range(len(val7)):
+        ax[3,1].plot(val7[i],':',alpha=0.7)
+    ax[3,1].set_title('Cluster: 8',fontsize=16)
+    ax[3,1].set_xlabel('Time (hour)')
+    ax[3,1].set_ylabel('Battery level (%)')
+    ax[3,1].plot(val6.mean(axis=0),c='black')
+    
+    for i in range(len(val7)):
+        ax[3,1].plot(val7[i],':',alpha=0.7)
+    ax[3,1].set_title('Cluster: 8',fontsize=16)
+    ax[3,1].set_xlabel('Time (hour)')
+    ax[3,1].set_ylabel('Battery level (%)')
+    ax[3,1].plot(val7.mean(axis=0),c='black')
+    
+    for i in range(len(val8)):
+        ax[4,0].plot(val8[i],':',alpha=0.7)
+    ax[4,0].set_title('Cluster: 9',fontsize=16)
+    ax[4,0].set_xlabel('Time (hour)')
+    ax[4,0].set_ylabel('Battery level (%)')
+    ax[4,0].plot(val8.mean(axis=0),c='black')
+    
     fig.tight_layout(pad=1.0)
     plt.show()
     
@@ -136,8 +159,8 @@ def cluster_timeseries(df):
     ax.set_yticks(np.arange(8))
     ax.set_ylabel('Cluster no.')
     ax.set_xlabel('Time / day')
-    ax.set_ylim(0.8,7.2)
-    ax.set_xlim('2020-06-01','2020-07-17')
+    ax.set_ylim(0.8,9.2)
+    ax.set_xlim('2020-06-01','2020-08-10')
     plt.show()
        
     return model, Y
@@ -182,6 +205,6 @@ def Agg_Clustering(timeseries,n_clusters=7):
     plt.show()
     """
     
-    return clustering.labels_    
+    return clustering, clustering.labels_    
 
 
