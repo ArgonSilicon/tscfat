@@ -36,11 +36,11 @@ def Calculate_CRQA(ts_x,ts_y):
     
     
     time_series_x = TimeSeries(ts_x,
-                               embedding_dimension=1,
+                               embedding_dimension=2,
                                time_delay=1)
     
     time_series_y = TimeSeries(ts_y,
-                               embedding_dimension=1,
+                               embedding_dimension=2,
                                time_delay=1)
     
     time_series = (time_series_x,
@@ -48,8 +48,8 @@ def Calculate_CRQA(ts_x,ts_y):
     
     settings = Settings(time_series,
                         analysis_type=Cross,
-                        neighbourhood=FixedRadius(10),
-                        similarity_measure=EuclideanMetric,
+                        neighbourhood=FixedRadius(0.05),
+                        similarity_measure=MaximumMetric,
                         theiler_corrector=0)
     
     computation = RQAComputation.create(settings,

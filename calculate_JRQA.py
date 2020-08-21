@@ -56,7 +56,7 @@ def Calculate_JRQA(ts_x,ts_y):
     settings_2 = Settings(time_series_2,
                       analysis_type=Classic,
                       neighbourhood=FixedRadius(2),
-                      similarity_measure=EuclideanMetric,
+                      similarity_measure=MaximumMetric,
                       theiler_corrector=0)
 
     joint_settings = JointSettings(settings_1,

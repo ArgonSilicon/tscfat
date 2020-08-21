@@ -20,6 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams.update({'figure.max_open_warning': 0})
 import matplotlib.ticker as ticker
+from datetime import datetime
 
 
 
@@ -150,6 +151,7 @@ def Show_joint_recurrence_plot(recurrence_matrix,
     ax3 = plt.subplot2grid(gridsize, (2,0), colspan=4,rowspan=4)
     
     ax1.plot(axis,X1)
+    ax1.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
     ax1.set_xticks(np.arange(len(axis))[::7])
     ax1.set_xticklabels(axis[::7])
     ax1.set_ylabel(ylab1)
@@ -157,6 +159,7 @@ def Show_joint_recurrence_plot(recurrence_matrix,
     
     
     ax2.plot(axis,X2)
+    ax2.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
     ax2.set_xticks(np.arange(len(axis))[::7])
     ax2.set_xticklabels(axis[::7])
     ax2.set_ylabel(ylab2)

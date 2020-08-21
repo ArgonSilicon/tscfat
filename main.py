@@ -34,6 +34,7 @@ import process_apps, process_ESM, process_battery, process_screen_events, proces
 from cluster_timeseries import cluster_timeseries, gaussian_MM, Agg_Clustering
 from interpolate_missing import interpolate_missing
 from calculate_JRQA import Calculate_JRQA
+from calculate_CRQA import Calculate_CRQA
 from plot_recurrence import Show_recurrence_plot, Show_joint_recurrence_plot
 
 ###############################################################################
@@ -555,6 +556,13 @@ X2 = df_daily_full.rolling(window=7).mean().values.reshape(-1,1)
 #%% Calculate joint recursion plot and metrix
 # JOINT RECURRENCE: recurrence happens at same time in both systems
 res, mat = Calculate_JRQA(X1,X2) #,ED,TD,RA)
+mat[:,:6] = 0
+mat[:6,:] = 0
+
+#%%
+res, mat = Calculate_CRQA(scaled_X1,scaled_X2) #,ED,TD,RA)
+mat[:,:6] = 0
+mat[:6,:] = 0
 
 #%% show recursion plot and save figure
 FIGPATH = False
@@ -609,7 +617,7 @@ plt.xlabel('Number of clusters')
 plt.ylabel('AIC score')
 plt.xticks(np.arange(2,20))
 plt.show()
-clustered_data
+#clustered_data
 #%%    
 model, Y = gaussian_MM(data,8,1000)  
   
@@ -744,6 +752,7 @@ corr_s = df_stack.corr(method="spearman")
 app_names = set(df5.application_name.values)
 df5_r, ts_5 = process_apps.process_apps(df5,df1_r,df4_r)
 #df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
+'''
 #%% test JRQA
 X1 = affections.stressed.rolling(window=7).mean().values.reshape(-1,1)
 X2 = store[:-1].rolling(window=7).mean().values.reshape(-1,1) 
@@ -758,6 +767,7 @@ FIGNAME = False
 TITLE = "Stress Level and App Notifications Joint Recursion Plot" 
 AXIS = affections.index.strftime('%m-%d')
 Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X2,"Stress level daily averages","App Notifications daily counts","Value","Count",)
+'''
 #%%'
 df5_a = df5_r[df5_r['is_active'] == True]
 corr_s = df_stack.corr(method="spearman")

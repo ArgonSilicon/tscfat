@@ -12,12 +12,17 @@ from statsmodels.tsa.seasonal import seasonal_decompose,STL
 from scipy import signal
 from scipy.signal import find_peaks
 from scipy.special import expit, logit
+from datetime import datetime 
 
 
 def STL_decomposition(series,
                       title,
                       savepath = False,
-                      savename = False):
+                      savename = False,
+                      ylabel = "Battery Level (%)",
+                      xlabel  = "Date",
+                      dates = False,
+                      ):
     """
     STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
 
@@ -39,6 +44,7 @@ def STL_decomposition(series,
     # TODO finish docstrings
     # TODO additional arguments?
     
+
     Result = STL(series, 
                  period=24, 
                  seasonal=7, 
@@ -60,26 +66,39 @@ def STL_decomposition(series,
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
     plt.title('Observations',fontsize=16)
-    plt.ylabel("Battery Level (%)")
-    plt.xlabel("Time (h)")
+    if type(dates) != bool:       
+        for d in dates:
+            plt.axvline(x=d,linestyle =":", color ='black')
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    
                 
     plt.subplot(4,1,2)
     plt.plot(Result.trend)
     plt.title('Trend',fontsize=16)
-    plt.ylabel("Battery Level (%)")
-    plt.xlabel("Time (h)")
+    if type(dates) != bool:       
+        for d in dates:
+            plt.axvline(x=d,linestyle =":", color ='black')
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
      
     plt.subplot(4,1,3)
     plt.plot(Result.seasonal)
+    if type(dates) != bool:       
+        for d in dates:
+            plt.axvline(x=d,linestyle =":", color ='black')
     plt.title('Seasonal',fontsize=16)
-    plt.ylabel("Battery Level (%)")
-    plt.xlabel("Time (h)")
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
      
     plt.subplot(4,1,4)
     plt.plot(Result.resid)
+    if type(dates) != bool:       
+        for d in dates:
+            plt.axvline(x=d,linestyle =":", color ='black')
     plt.title('Residuals',fontsize=16)
-    plt.ylabel("Battery Level (%)")
-    plt.xlabel("Time (h)")
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
     
     fig1.tight_layout(pad=4.0)
     

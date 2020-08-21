@@ -246,11 +246,47 @@ def process_apps(df, df_b, df_s):
     plt.xlabel('Date')
     plt.show()
     #%% Plot all apps
-    plt.figure(figsize=(15,10))
-    df_d.sum(axis=1).plot()
-    plt.title("All app notifications")
+    all_sums = df_d.sum(axis=1)
+    all_roll = all_sums.rolling(7).mean()
+    all_var = all_sums.rolling(7).var()
+    all_auto = all_sums.rolling(7).apply(autocorr)
+    
+    #%%
+    
+    fig = plt.figure(figsize=(15,10))
+    
+    plt.suptitle('App notification daily sums and rolling window features',fontsize=20,y=1.03)
+    
+    plt.subplot(2,2,1)
+    
+    all_sums.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")    
+    plt.title("App notificatio total count")
     plt.ylabel("Total count")
-    plt.show()
+    #plt.show()
+    
+    plt.subplot(2,2,2)
+
+    all_roll.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")    
+    plt.title("App notification rolling(7) mean")
+    plt.ylabel("Averaged total count")
+    #plt.show()
+    
+    plt.subplot(2,2,3)
+    all_var.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title("App notification rolling(7) variance")
+    plt.ylabel("Variance")
+    #plt.show()
+    
+    plt.subplot(2,2,4)
+    all_auto.plot()
+    plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    plt.title("App notifation rolling(7) autocorrelation(1)")
+    plt.ylabel("Autocorrelation")
+    
+    fig.tight_layout(pad=1.0)
 
     #%%
     return df, timeseries
