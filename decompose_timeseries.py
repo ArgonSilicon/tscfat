@@ -59,48 +59,48 @@ def STL_decomposition(series,
                  low_pass_jump=1).fit()
 
 
-    fig1 = plt.figure(figsize=(15,15))
+    fig1 = plt.figure(figsize=(9.3,9.3))
     
-    plt.suptitle(title,fontsize=20)
+    plt.suptitle(title,fontsize=22,y=1.05)
     
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
-    plt.title('Observations',fontsize=16)
+    plt.title('Observations',fontsize=18)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
     
                 
     plt.subplot(4,1,2)
     plt.plot(Result.trend)
-    plt.title('Trend',fontsize=16)
+    plt.title('Trend',fontsize=18)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
      
     plt.subplot(4,1,3)
     plt.plot(Result.seasonal)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.title('Seasonal',fontsize=16)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.title('Seasonal',fontsize=18)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
      
     plt.subplot(4,1,4)
     plt.plot(Result.resid)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.title('Residuals',fontsize=16)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.title('Residuals',fontsize=18)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
     
-    fig1.tight_layout(pad=4.0)
+    fig1.tight_layout(pad=2)
     
     if not all((savename,savepath)):
         plt.show()

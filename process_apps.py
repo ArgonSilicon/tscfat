@@ -20,6 +20,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.dates import DateFormatter
+from arma import arma, autocorr
+from datetime import datetime
 
 # Local application import
 
@@ -227,7 +229,7 @@ def process_apps(df, df_b, df_s):
     
     #%% Bar Plots
     
-    fig = plt.figure(figsize=(20,10))
+    fig = plt.figure(figsize=(8.3,5))
     barWidth = 0.95
     r = df_p.index
     # Create green Bars
@@ -240,10 +242,11 @@ def process_apps(df, df_b, df_s):
     plt.bar(r, df_p['Sports'], bottom=[i+j+k for i,j,k in zip(df_p['Communication'],df_p['Entertainment'],df_p['Other'])], color='#ca0020', edgecolor='white', width=barWidth,label="Sports")
     # Create yellow bars
     plt.bar(r, df_p['Work/Study'], bottom=[i+j+k+l for i,j,k,l in zip(df_p['Communication'],df_p['Entertainment'],df_p['Other'],df_p['Sports'])], color='#dddddd', edgecolor='white', width=barWidth,label="Work/Study")
-    plt.legend()
-    plt.title("Application usage proportions")
-    plt.ylabel("Proportion")
-    plt.xlabel('Date')
+    #plt.legend(fontsize=14)
+    plt.legend(title='Legend', bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=14)
+    plt.title("Application usage proportions",fontsize=24,y=1.02)
+    plt.ylabel("Proportion",fontsize=16)
+    plt.xlabel('Time (Date)',fontsize=16)
     plt.show()
     #%% Plot all apps
     all_sums = df_d.sum(axis=1)
@@ -253,16 +256,17 @@ def process_apps(df, df_b, df_s):
     
     #%%
     
-    fig = plt.figure(figsize=(15,10))
+    fig = plt.figure(figsize=(8.3,6))
     
-    plt.suptitle('App notification daily sums and rolling window features',fontsize=20,y=1.03)
+    plt.suptitle('App notification daily sums and extracted features',fontsize=20,y=1.03)
     
     plt.subplot(2,2,1)
     
     all_sums.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")    
-    plt.title("App notificatio total count")
+    plt.title("App notification total count")
     plt.ylabel("Total count")
+    plt.xlabel('')
     #plt.show()
     
     plt.subplot(2,2,2)
@@ -271,6 +275,7 @@ def process_apps(df, df_b, df_s):
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")    
     plt.title("App notification rolling(7) mean")
     plt.ylabel("Averaged total count")
+    plt.xlabel('')
     #plt.show()
     
     plt.subplot(2,2,3)
@@ -278,6 +283,7 @@ def process_apps(df, df_b, df_s):
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     plt.title("App notification rolling(7) variance")
     plt.ylabel("Variance")
+    plt.xlabel("Time (date)")
     #plt.show()
     
     plt.subplot(2,2,4)
@@ -285,8 +291,9 @@ def process_apps(df, df_b, df_s):
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     plt.title("App notifation rolling(7) autocorrelation(1)")
     plt.ylabel("Autocorrelation")
+    plt.xlabel("Time (date)")
     
-    fig.tight_layout(pad=1.0)
+    fig.tight_layout(pad=1.3)
 
     #%%
     return df, timeseries

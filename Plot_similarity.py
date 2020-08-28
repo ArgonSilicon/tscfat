@@ -56,40 +56,52 @@ def Plot_similarity(sim,
 
     sim[sim < threshold] = 0
     # plot it
-    fig, ax = plt.subplots(4,4,figsize=(10,11),sharex=True) 
+    fig, ax = plt.subplots(4,4,figsize=(8.3,9.5),sharex=True)  
     gridsize = (4,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
     ax2 = plt.subplot2grid(gridsize, (1,3), colspan=1,rowspan=1)
     ax3 = plt.subplot2grid(gridsize, (3,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
-    ax1.set_title("Similarity matrix (cosine distance)", fontsize=16)
-    ax1.set_xlabel('$m = {}$'.format(sim.shape[0]))
-    ax1.set_ylabel('$n = {}$'.format(sim.shape[1]))
+    ax1.set_title("Similarity matrix (cosine distance)", fontsize=22)
+    ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
+    ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
+    #ax1.text(-0.1, 1.05, "A", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
+    
     
     if type(kernel) != bool:
         ax2.imshow(kernel,cmap='Blues')
-        ax2.set_title('Gaussian Checkerboard \n Kernel',fontsize=16)
+        ax2.set_title('Kernel',fontsize=22)
+        #ax[1,3].text(-0.1, 1.05, "B", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     #ax1 = plt.subplot(gs[1])
     ax3.plot(axis,nov,label="Novelty")
-    ax3.set_title("Novelty score", fontsize=16)
-    ax3.set_xlabel('Time (d)')
-    ax3.set_ylabel('Novelty')
+    ax3.set_title("Novelty score", fontsize=22)
+    ax3.set_xlabel('Time (date)',fontsize=16)
+    ax3.set_ylabel('Novelty',fontsize=16)
     ax3.set_xticks(np.arange(len(axis))[::7])
     ax3.set_xticklabels(axis[::7])
     #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
     ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
-    ax3.legend()
+    ax3.legend(fontsize=16)
     ax3.set_ylim(ylim)
+    #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     ax[0,3].set_axis_off()
     ax[2,3].set_axis_off()
     
-    plt.suptitle(title + " Daily Patterns",fontsize=24,y=1.01)
+    plt.suptitle(title + " Daily Patterns",fontsize=26,y=1.03)
     plt.grid(True)
     plt.tight_layout(pad=0)
     
+    
+    """
+    # plot letters
+    for i, label in enumerate(('A', 'B', 'C', 'D')):
+        ax = fig.add_subplot(2,2,i+1)
+        ax.text(-0.1, 1.15, label, transform=ax.transAxes,
+                fontsize=16, fontweight='bold', va='top', ha='right')
+    """
     
     if not savename and not savepath:
         plt.show()

@@ -27,6 +27,12 @@ from scipy.stats import spearmanr
 from sklearn.manifold import TSNE
 from matplotlib.dates import DateFormatter
 from datetime import datetime
+from sklearn.preprocessing import MinMaxScaler
+from calculate_similarity import calculate_similarity
+from calculate_novelty import compute_novelty_SSM
+from Plot_similarity import Plot_similarity
+from calculate_RQA import Calculate_RQA
+from plot_recurrence import Show_recurrence_plot
 
 # Local application imports
 from csv_load import load_all_subjects
@@ -68,7 +74,7 @@ for k in dict_keys:
         #raise Exception("Dictionary key unknown.") 
 ###############################################################################
 #%% Process Battery level
-df1_r = process_battery.process_battery(df1)
+df1_r , X5, X6 = process_battery.process_battery(df1)
 #%%
 df1_bl = df1['battery_level']
 df1_re = df1_bl.resample('H').mean()
@@ -149,15 +155,15 @@ val6 = np.stack(clustered_data[clustered_data['cluster_7'] == 7]['battery_level'
 #val7 = np.stack(clustered_data[clustered_data['cluster_9'] == 8]['battery_level'].values)
 #val8 = np.stack(clustered_data[clustered_data['cluster_9'] == 9]['battery_level'].values)
 
-
+#%%
 fig,ax = plt.subplots(4,2,figsize=(12,15))
-fig.suptitle("Battery level daily development clustered / cluster averages",fontsize=20,y=1.02)
+fig.suptitle("Battery level daily development clustered / cluster averages",fontsize=26,y=1.03)
 
 for i in range(len(val0)):
     ax[0,0].plot(val0[i],':',alpha=0.7)
-ax[0,0].set_title('Clusters: 1',fontsize=16)
-ax[0,0].set_xlabel('Time (hour)')
-ax[0,0].set_ylabel('Battery level (%)')
+ax[0,0].set_title('Clusters: 1',fontsize=22)
+ax[0,0].set_xlabel('Time (hour)',fontsize=18)
+ax[0,0].set_ylabel('Battery level (%)',fontsize=18)
 ax[0,0].set_xlim(-5,105)
 ax[0,0].set_xlim(0,23)
 ax[0,0].plot(val0.mean(axis=0),c='black')
@@ -167,9 +173,9 @@ for i in range(len(val1)):
     ax[0,1].plot(val1[i],':',alpha=0.7)
 #ax[0,1].patch.set_facecolor('red')
 #ax[0,1].patch.set_alpha(0.15)
-ax[0,1].set_title('Cluster: 2',fontsize=16)
-ax[0,1].set_xlabel('Time (hour)')
-ax[0,1].set_ylabel('Battery level (%)')
+ax[0,1].set_title('Cluster: 2',fontsize=22)
+ax[0,1].set_xlabel('Time (hour)',fontsize=18)
+ax[0,1].set_ylabel('Battery level (%)',fontsize=18)
 ax[0,1].set_xlim(-5,105)
 ax[0,1].set_xlim(0,23)
 ax[0,1].plot(val1.mean(axis=0),c='black')
@@ -177,9 +183,9 @@ ax[0,1].plot(val1.mean(axis=0),c='black')
 
 for i in range(len(val2)):
     ax[1,0].plot(val2[i],':',alpha=0.7)
-ax[1,0].set_title('Cluster: 3',fontsize=16)
-ax[1,0].set_xlabel('Time (hour)')
-ax[1,0].set_ylabel('Battery level (%)')
+ax[1,0].set_title('Cluster: 3',fontsize=22)
+ax[1,0].set_xlabel('Time (hour)',fontsize=18)
+ax[1,0].set_ylabel('Battery level (%)',fontsize=18)
 ax[1,0].set_ylim(-5,105)
 ax[1,0].set_xlim(0,23)
 ax[1,0].plot(val2.mean(axis=0),c='black')
@@ -187,9 +193,9 @@ ax[1,0].plot(val2.mean(axis=0),c='black')
 
 for i in range(len(val3)):
     ax[1,1].plot(val3[i],':',alpha=0.7)
-ax[1,1].set_title('Cluster: 4',fontsize=16)
-ax[1,1].set_xlabel('Time (hour)')
-ax[1,1].set_ylabel('Battery level (%)')
+ax[1,1].set_title('Cluster: 4',fontsize=22)
+ax[1,1].set_xlabel('Time (hour)',fontsize=18)
+ax[1,1].set_ylabel('Battery level (%)',fontsize=18)
 ax[1,1].set_ylim(-5,105)
 ax[1,1].set_xlim(0,23)
 ax[1,1].plot(val3.mean(axis=0),c='black')
@@ -197,9 +203,9 @@ ax[1,1].plot(val3.mean(axis=0),c='black')
 
 for i in range(len(val4)):
     ax[2,0].plot(val4[i],':',alpha=0.7)
-ax[2,0].set_title('Cluster: 5',fontsize=16)
-ax[2,0].set_xlabel('Time (hour)')
-ax[2,0].set_ylabel('Battery level (%)')
+ax[2,0].set_title('Cluster: 5',fontsize=22)
+ax[2,0].set_xlabel('Time (hour)',fontsize=18)
+ax[2,0].set_ylabel('Battery level (%)',fontsize=18)
 ax[2,0].set_ylim(-5,105)
 ax[2,0].set_xlim(0,23)
 ax[2,0].plot(val4.mean(axis=0),c='black')
@@ -208,9 +214,9 @@ ax[2,0].plot(val4.mean(axis=0),c='black')
 
 for i in range(len(val5)):
     ax[2,1].plot(val5[i],':',alpha=0.7)
-ax[2,1].set_title('Cluster: 6',fontsize=16)
-ax[2,1].set_xlabel('Time (hour)')
-ax[2,1].set_ylabel('Battery level (%)')
+ax[2,1].set_title('Cluster: 6',fontsize=22)
+ax[2,1].set_xlabel('Time (hour)',fontsize=18)
+ax[2,1].set_ylabel('Battery level (%)',fontsize=18)
 ax[2,1].set_ylim(-5,105)
 ax[2,1].set_xlim(0,23)
 ax[2,1].plot(val5.mean(axis=0),c='black')
@@ -218,16 +224,16 @@ ax[2,1].plot(val5.mean(axis=0),c='black')
 
 for i in range(len(val6)):
     ax[3,0].plot(val6[i],':',alpha=0.7)
-ax[3,0].set_title('Cluster: 7',fontsize=16)
-ax[3,0].set_xlabel('Time (hour)')
-ax[3,0].set_ylabel('Battery level (%)')
+ax[3,0].set_title('Cluster: 7',fontsize=22)
+ax[3,0].set_xlabel('Time (hour)',fontsize=18)
+ax[3,0].set_ylabel('Battery level (%)',fontsize=18)
 ax[3,0].set_ylim(-5,105)
 ax[3,0].set_xlim(0,23)
 ax[3,0].plot(val6.mean(axis=0),c='black')
 
-ax[3,1].set_title('Average hourly battery level / all clusters',fontsize=16)
-ax[3,1].set_xlabel('Time (hour)')
-ax[3,1].set_ylabel('Battery level (%)')
+ax[3,1].set_title('All Clusters Average',fontsize=22)
+ax[3,1].set_xlabel('Time (hour)',fontsize=18)
+ax[3,1].set_ylabel('Battery level (%)',fontsize=18)
 ax[3,1].set_ylim(-5,105)
 ax[3,1].set_xlim(0,23)
 ax[3,1].plot(battery_mean,c='black')
@@ -251,16 +257,17 @@ ax[4,0].plot(val8.mean(axis=0),c='black')
 fig.tight_layout(pad=1.0)
 plt.show()
 
-fig = plt.figure()
+#%%
+fig = plt.figure(figsize=(8.3,5))
 ax = fig.add_axes([0,0,1,1])
-clustered_data['cluster_7'].plot(style='o:',label="Clustered days")
-ax.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-ax.set_title('Battery level daily development clustered / DTW, 7 clusters')
-ax.set_ylabel('Cluster no.')
-ax.set_xlabel('Time (d)')
+clustered_data['cluster_7'].plot(style='o:',label="Clustered Day")
+ax.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of Interest")
+ax.set_title('Battery level daily development clusters',fontsize=22,y=1.02)
+ax.set_ylabel('Cluster no.',fontsize=18)
+ax.set_xlabel('Time (date)',fontsize=18)
 ax.set_ylim(0.5,7.5)
 ax.set_xlim('2020-06-01','2020-08-10')
-ax.legend()
+ax.legend(fontsize=18)
 plt.show()
 
 #%%
@@ -552,15 +559,25 @@ RA = 0.15 # neigborhood radius
 #X2 = df_daily_full.values.reshape(-1,1)
 X1 = affections.stressed.rolling(window=7).mean().values.reshape(-1,1)
 X2 = df_daily_full.rolling(window=7).mean().values.reshape(-1,1) 
-
+X3 = data[1:]
 #%% Calculate joint recursion plot and metrix
 # JOINT RECURRENCE: recurrence happens at same time in both systems
-res, mat = Calculate_JRQA(X1,X2) #,ED,TD,RA)
+res, mat = Calculate_JRQA(X1,X3) #,ED,TD,RA)
 mat[:,:6] = 0
 mat[:6,:] = 0
 
 #%%
-res, mat = Calculate_CRQA(scaled_X1,scaled_X2) #,ED,TD,RA)
+
+scaler = MinMaxScaler()
+scaler.fit(X1)
+scaled_X1 = scaler.transform(X1)
+
+scaler.fit(X2)
+scaled_X3 = scaler.transform(X3)
+
+
+#%%
+res, mat = Calculate_CRQA(X1,X3) #,ED,TD,RA)
 mat[:,:6] = 0
 mat[:6,:] = 0
 
@@ -569,7 +586,9 @@ FIGPATH = False
 FIGNAME = False
 TITLE = "Stress Level and Screen Events Joint Recursion Plot" 
 AXIS = affections.index.strftime('%m-%d')
-Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X2,"Stress level daily averages","Screen events daily counts","Value","Count",)
+Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X3,"Stress level daily averages","Daily location data","Value","Value",)
+
+
 
 #%% means
 houry_means = data.mean()
@@ -742,32 +761,28 @@ corr_s = df_stack.corr(method="spearman")
 
 
 
-
-
-
-
-
 ###############################################################################
 #%% Process App notfications
 app_names = set(df5.application_name.values)
 df5_r, ts_5 = process_apps.process_apps(df5,df1_r,df4_r)
 #df_grouped = df4_unlocked.groupby(df4_unlocked.index.floor('d'))['screen_status'].apply(list)
-'''
-#%% test JRQA
-X1 = affections.stressed.rolling(window=7).mean().values.reshape(-1,1)
-X2 = store[:-1].rolling(window=7).mean().values.reshape(-1,1) 
+#%% some more JRP
+# non-smoothed (daily)
+X1 = affections.stressed[1:] # stress
+#X2 = all_sums[:-1] # app notification
+X3 = df_daily_full['screen_status'] # screen events
+X4 = np.stack(df_grouped.values[:-1]) # no battery
 
-#%% Calculate joint recursion plot and metrix
-# JOINT RECURRENCE: recurrence happens at same time in both systems
-res, mat = Calculate_JRQA(X1,X2) #,ED,TD,RA)
+#%% JOINT RECURRENCE: recurrence happens at same time in both systems
+res, mat = Calculate_JRQA(X1,X3[1:]) #,ED,TD,RA)
 
 #%% show recursion plot and save figure
 FIGPATH = False
 FIGNAME = False
 TITLE = "Stress Level and App Notifications Joint Recursion Plot" 
 AXIS = affections.index.strftime('%m-%d')
-Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS,X1,X2,"Stress level daily averages","App Notifications daily counts","Value","Count",)
-'''
+Show_joint_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME,AXIS[1:],X1,X3[1:],"Stress Level Daily Averages","Screen Event Daily Counts","Value","Count",)
+
 #%%'
 df5_a = df5_r[df5_r['is_active'] == True]
 corr_s = df_stack.corr(method="spearman")
@@ -805,12 +820,7 @@ corr_s = comb.corr(method ='spearman')
 corr_k = comb.corr(method ='kendall')
 
 #%%
-from sklearn.preprocessing import MinMaxScaler
-from calculate_similarity import calculate_similarity
-from calculate_novelty import compute_novelty_SSM
-from Plot_similarity import Plot_similarity
-from calculate_RQA import Calculate_RQA
-from plot_recurrence import Show_recurrence_plot
+
 #%% preoare data
 ts = df_stack.values
 ts[:,20] = 0
