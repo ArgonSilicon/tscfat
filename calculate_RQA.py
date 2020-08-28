@@ -4,6 +4,9 @@
 Created on Thu Jun 25 11:45:46 2020
 
 @author: arsi
+
+Plot RP and calulate RQA, using PyRQA library functions.
+Reference_: https://pypi.org/project/PyRQA/
 """
 
 from pyrqa.time_series import TimeSeries

@@ -4,6 +4,8 @@
 Created on Mon Jul  6 14:07:02 2020
 
 @author: arsi
+
+Plot and save similairity matrix
 """
 
 
@@ -26,31 +28,50 @@ def Plot_similarity(sim,
                     axis = False,
                     kernel = False,
                     ):
-    
     """
-    TODO: fix these!
+    Plot the similarity matrix. Optionally save the figure, plot the kernel, 
+    and plot the similarity score.
     
-    Plots given recurrence plot. Optionally, the plot can be saved 
-    on a disk.
-
     Parameters
     ----------
-    recurrence_matrix : numpy array
-        Recurrence plot array of a shape (m,n), where m does not have to be 
-        equal to n
-    title : str (default = "Similarity and novelty")
-        Plot title
-    savename : str (default = False)
-        Name used as plot save name. Has to be a type of str
-    savepath : Path -object (default = False)
-        path where plot is to be saved. Path has to exist before calling this 
-        function.
+    sim : Numpy ndarray
+        m x m array containing similarity values
+    nov : Numpy ndarray
+        m x 1 array containing  novelty scores
+        
+    title : str, optional
+            Similarity plot title. The default is "Similarity and novelty".
+    
+    savepath : Path object, optional
+            Path for figure saving. The default is False.
+    
+    savename : str object, optional
+            Savename for the figure. The default is False.
+    
+    ylim : tuple, optional
+            (float,float) ylimits for the plot. The default is (0,0.05).
+    
+    threshold : float, optional
+            Similarity score threshold for showing in the plot. The default is 0.
+    
+    axis : pandas.core.indexes.base.Index, optional
+            Date range used in the novelty score plot. The default is False.
+    
+    kernel : Numpy ndarray, optional
+            m x m convolution kernel used for novelty score calculation. The default is False.
+
+    Raises
+    ------
+    Exception
+        - Requested save folder does not exist
+        - Savename and/or savename are not given
 
     Returns
     -------
+    None.
 
     """
-    
+     
     assert isinstance(sim,np.ndarray), "Recurrence matrix type is not np.ndarray."
     assert isinstance(nov,np.ndarray), "Recurrence matrix type is not np.ndarray."
 
@@ -94,14 +115,6 @@ def Plot_similarity(sim,
     plt.grid(True)
     plt.tight_layout(pad=0)
     
-    
-    """
-    # plot letters
-    for i, label in enumerate(('A', 'B', 'C', 'D')):
-        ax = fig.add_subplot(2,2,i+1)
-        ax.text(-0.1, 1.15, label, transform=ax.transAxes,
-                fontsize=16, fontweight='bold', va='top', ha='right')
-    """
     
     if not savename and not savepath:
         plt.show()

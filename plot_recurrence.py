@@ -21,10 +21,6 @@ import matplotlib.ticker as ticker
 from datetime import datetime
 
 
-
-
-
-
 def Show_recurrence_plot(recurrence_matrix,
                          title="Recurrence Plot",
                          savepath = False, 

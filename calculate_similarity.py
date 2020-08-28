@@ -4,48 +4,59 @@
 Created on Thu Jul  2 12:28:09 2020
 
 @author: arsi
+
+Functions for distance matrix and similarity matrix calculation.
+
 """
 from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
-def calculate_similarity(X,metric):
-    
+def calculate_similarity(X,metric='Euclidean'):        
     """
-    
+    Calculate similarity matrix. Utilize numpy pdist function. 
+    Full reference: https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
 
     Parameters
     ----------
-    X : TYPE
-        DESCRIPTION.
-    metric : TYPE
-        DESCRIPTION.
+    X : Numpy ndarray
+        An m by n array of m original observations in an n-dimensional space.
+
+        
+    metric : str or function, optional
+            The default is "Euclidean"-
 
     Returns
     -------
-    Y_sim : TYPE
-        DESCRIPTION.
+    Y_sim : Numpy ndarray
+            Returns a similairity matrix Y. 
+            
 
     """
+    
     Y = pdist(X,metric)
     Y_square = squareform(Y)
     Y_sim = 1 / (1+Y_square)
     return Y_sim
 
-def calculate_distance(X,metric):
+def calculate_distance(X,metric="Euclidean"):
     
     """
-    
+    Calculate similarity matrix. Utilize numpy pdist function. 
+    Full reference: https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
+
     Parameters
     ----------
-    X : TYPE
-        DESCRIPTION.
-    metric : TYPE
-        DESCRIPTION.
+    X : Numpy ndarray
+        An m by n array of m original observations in an n-dimensional space.
+
+        
+    metric : str or function, optional
+            The default is "Euclidean"-
 
     Returns
     -------
-    Y_square : TYPE
-        DESCRIPTION.
+    Y_square : Numpy ndarray
+            Returns a condensed distance matrix Y.
 
     """
     Y = pdist(X,metric)

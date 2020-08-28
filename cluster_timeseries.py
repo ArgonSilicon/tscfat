@@ -19,7 +19,21 @@ from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import dendrogram
 
 def plot_dendrogram(model, **kwargs):
-    # Create linkage matrix and then plot the dendrogram
+    """
+    Create linkage matrix and then plot the dendrogram
+
+    Parameters
+    ----------
+    model : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
 
     # create the counts of samples under each node
     counts = np.zeros(model.children_.shape[0])
@@ -41,6 +55,22 @@ def plot_dendrogram(model, **kwargs):
     d_dict = dendrogram(linkage_matrix,truncate_mode='level', p=7)
 
 def cluster_timeseries(df):
+    """
+    
+
+    Parameters
+    ----------
+    df : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    model : TYPE
+        DESCRIPTION.
+    Y : TYPE
+        DESCRIPTION.
+
+    """
     resampled = df.resample("H").mean()
     resampled_interpolated, _ = interpolate_missing(resampled,'linear')
     
@@ -166,6 +196,25 @@ def cluster_timeseries(df):
     return model, Y
 
 def gaussian_MM(data,K=5,n=10):
+    """
+    
+    Parameters
+    ----------
+    data : TYPE
+        DESCRIPTION.
+    K : TYPE, optional
+        DESCRIPTION. The default is 5.
+    n : TYPE, optional
+        DESCRIPTION. The default is 10.
+
+    Returns
+    -------
+    model : TYPE
+        DESCRIPTION.
+    Y : TYPE
+        DESCRIPTION.
+
+    """
     
     # fit model
     model = GaussianMixture(n_components=K,n_init=n,covariance_type="full")
@@ -180,6 +229,24 @@ def gaussian_MM(data,K=5,n=10):
     return model, Y
 
 def Agg_Clustering(timeseries,n_clusters=7):
+    """
+    
+
+    Parameters
+    ----------
+    timeseries : TYPE
+        DESCRIPTION.
+    n_clusters : TYPE, optional
+        DESCRIPTION. The default is 7.
+
+    Returns
+    -------
+    clustering : TYPE
+        DESCRIPTION.
+    TYPE
+        DESCRIPTION.
+
+    """
     metric = DTW_distance
     dist = calculate_distance(timeseries,metric)
     #dist = calculate_distance(timeseries,"cosine")
@@ -191,6 +258,7 @@ def Agg_Clustering(timeseries,n_clusters=7):
                                          compute_full_tree='auto',
                                          linkage='complete',
                                          distance_threshold=None).fit(dist)
+    
     
     """
     model = AgglomerativeClustering(distance_threshold=0,affinity="precomputed",linkage='complete', n_clusters=None)
