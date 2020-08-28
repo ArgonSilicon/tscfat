@@ -7,18 +7,26 @@ Created on Wed Jul  1 14:53:55 2020
 """
 import numpy as np
 import pandas as pd
-from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import adfuller, kpss
+
 
 def test_stationarity(timeseries):
     
     assert isinstance(timeseries,np.ndarray), "Timeseries is of a type: {}, not np.ndarray".format(type(timeseries))
     
-    result = adfuller(timeseries)
+    result = adfuller(timeseries, autolag='AIC')
     print('ADF Statistic: %f' % result[0])
     print('p-value: %f' % result[1])
     print('Critical Values:')
     for key, value in result[4].items():
         print('\t%s: %.3f' % (key, value))
+        
+    result = kpss(timeseries, regression='c')
+    print('\nKPSS Statistic: %f' % result[0])
+    print('p-value: %f' % result[1])
+    for key, value in result[3].items():
+        print('Critial Values:')
+        print(f'   {key}, {value}')
 
 def stationarize_timeseries(ts, method, argument):
     

@@ -26,6 +26,9 @@ import nolds
 from arma import arma, autocorr
 from datetime import datetime
 
+from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
 # Local application import
 
 
@@ -152,11 +155,13 @@ def process_ESM(df):
     
     #%% correlation
     corr_s = affections.corr(method="spearman")
-    f, ax = plt.subplots(figsize=(12, 10))
+    fig, ax = plt.subplots(figsize=(9,8))
     xticks = corr_s.columns
     sns.heatmap(corr_s, annot = True, fmt='.1g',ax=ax,xticklabels=xticks)
-    ax.set_title('Postivie and Negative Affections Spearman Correlation')
-    plt.xticks(rotation=45)
+    ax.set_title('Postivie and Negative Affections \nSpearman Correlation',fontsize=22)
+    plt.xticks(rotation=45,fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.tight_layout(pad=0)
 
     #%% plot affections
     date_form = DateFormatter("%m-%d")
@@ -505,14 +510,14 @@ def process_ESM(df):
     plt.show()
     
     #%% for the report
-    fig, (ax1,ax2) = plt.subplots(1,2,figsize=(15,5))
-    fig.suptitle("Negative affections rolling window(7) mean",fontsize=20,y=1.0)
+    fig, (ax1,ax2) = plt.subplots(1,2,figsize=(12,3.5),dpi=300)
+    fig.suptitle("Negative affections rolling window(7) average",fontsize=20,y=1.05)
     
     ax1.plot(affect_mean.iloc[:,10])
     ax1.set_title('Stressed',fontsize=16)
     ax1.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    ax1.set_xlabel('Time (d)')
-    ax1.set_ylabel('Value')
+    ax1.set_xlabel('Time (date)',fontsize=14)
+    ax1.set_ylabel('Value',fontsize=14)
     ax1.set_ylim(0.9,2.1)
     ax1.tick_params(axis='x',labelrotation=45)
     ax1.xaxis.set_major_formatter(date_form)
@@ -520,8 +525,8 @@ def process_ESM(df):
     ax2.plot(affect_mean.iloc[:,6])
     ax2.set_title('Nervous',fontsize=16)
     ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    ax2.set_xlabel('Time (d)')
-    ax2.set_ylabel('Value')
+    ax2.set_xlabel('Time (date)',fontsize=14)
+    ax2.set_ylabel('Value',fontsize=14)
     ax2.set_ylim(0.9,2.1)
     ax2.tick_params(axis='x',labelrotation=45)
     ax2.xaxis.set_major_formatter(date_form)
@@ -754,7 +759,6 @@ def process_ESM(df):
     plt.show()
     #%% scale the data
     scaler = MinMaxScaler()
-
     scaled_df = pd.DataFrame(scaler.fit_transform(combined_df), columns=combined_df.columns, index = combined_df.index)
     #%%
     #sns.pairplot(df_scaled,kind="reg")
@@ -869,13 +873,61 @@ def process_ESM(df):
     dates = combined_df.index[6::7]
     #dates = np.arange(6,len(combined_df.index),7)
     decomposition_1 = STL_decomposition(combined_df['Sleep'],"Sleep")
-    decomposition_2 = STL_decomposition(combined_df['Positive_mood'],"Positive mood Score Daily Sums STL Decomposition",False,False,"Mood Score","Date",dates)
-    decomposition_3 = STL_decomposition(combined_df['Negative_mood'],"Negative Mood Score Daily Sums STL Decomposition",False,False,"Mood Score","Date",dates)
+    decomposition_2 = STL_decomposition(combined_df['Positive_mood'],"Aggregated Positive Mood Score \n STL Decomposition",False,False,"Score","Time (date)",dates)
+    decomposition_3 = STL_decomposition(combined_df['Negative_mood'],"Aggregated Negative Mood Score \n STL Decomposition",False,False,"Score","Time (date)",dates)
     decomposition_4 = STL_decomposition(combined_df['Social_interaction'],"Social interaction")
     decomposition_5 = STL_decomposition(combined_df['Difficulty_comp'],"Difficulty to complete")
     decomposition_6 = STL_decomposition(combined_df['Explanatory'],"Explanatory")
     decomposition_7 = STL_decomposition(combined_df['Substances'],"Substances")
     decomposition_8 = STL_decomposition(combined_df['Exercise'],"Exercise")
+    
+    #%% ACF and PACF
+    # Calculate ACF and PACF upto 50 lags / POSITIVE MOOD
+    #acf_50 = acf(decomposition_2.seasonal.values, nlags=50)
+    #pacf_50 = pacf(decomposition_2.seasonal.values, nlags=50)
+
+    # Draw Plot
+    fig, ax = plt.subplots(1,2,figsize=(10,5), dpi= 100)
+    plt.suptitle('Mood Score Decomposition Autocorrelation Functions',fontsize=20,y=1.04)
+    plot_acf(decomposition_2.seasonal.values, lags=50, ax = ax[0], title="Positive Mood / Seasonal")
+    ax[0].set_xlabel("Lag",fontsize=14)
+    ax[0].set_ylabel("Autocorrelation",fontsize=14)
+    plot_acf(decomposition_3.seasonal.values, lags=50, ax = ax[1], title="Negative Mood / Seasonal")
+    ax[1].set_xlabel("Lag",fontsize=14)
+    ax[1].set_ylabel("Autocorrelation",fontsize=14)
+    fig.tight_layout(pad=1)
+    
+    '''
+    plot_acf(decomposition_2.trend.values, lags=50, ax = ax[2], title="Positive Mood / Trend")
+    ax[2].set_xlabel("Lag")
+    ax[2].set_ylabel("Autocorrelation")
+    plot_acf(decomposition_3.trend.values, lags=50, ax = ax[3], title="Negative Mood / Trend")
+    ax[3].set_xlabel("Lag")
+    ax[3].set_ylabel("Autocorrelation")
+    
+    plot_acf(decomposition_2.seasonal.values, lags=50, ax = ax[4], title="Positive Mood / Seasonal")
+    ax[4].set_xlabel("Lag")
+    ax[4].set_ylabel("Autocorrelation")
+    plot_acf(decomposition_3.seasonal.values, lags=50, ax = ax[5], title="Negative Mood / Seasonal")
+    ax[5].set_xlabel("Lag")
+    ax[5].set_ylabel("Autocorrelation")
+    
+    plot_acf(decomposition_2.resid.values, lags=50, ax = ax[6], title="Positive Mood / Residual")
+    ax[6].set_xlabel("Lag")
+    ax[6].set_ylabel("Autocorrelation")
+    plot_acf(decomposition_3.resid.values, lags=50, ax = ax[7], title="Negative Mood / Residual")
+    ax[7].set_xlabel("Lag")
+    ax[7].set_ylabel("Autocorrelation")
+    '''
+    
+    # Calculate ACF and PACF upto 50 lags / NEGATIVE MOOD
+    #acf_50 = acf(decomposition_3.seasonal.values, nlags=50)
+    #pacf_50 = pacf(decomposition_3.seasonal.values, nlags=50)
+
+    # Draw Plot
+    #fig, axes = plt.subplots(1,2,figsize=(16,3), dpi= 100)
+    #plot_acf(decomposition_3.seasonal.values, lags=60, ax=axes[0])
+    #plot_pacf(decomposition_3.seasonal.values, lags=60, ax=axes[1])
     
     #%% plot pos and negative valences
     scaled_df['Negative_negative'] = scaled_df['Negative_mood']*(-1)
@@ -943,79 +995,79 @@ def process_ESM(df):
     ts3_auto = ts3.rolling(7).apply(autocorr)
     
     #%%
-    fig = plt.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(13,13))
     
-    plt.suptitle('ESM scores and rolling window features',fontsize=20,y=1.01)
+    plt.suptitle('ESM scores and rolling window features',fontsize=26,y=1.03)
     
     plt.subplot(4,2,1)
     ts2.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Positive mood')
-    plt.xlabel('date')
-    plt.ylabel('summed score')
+    plt.title('Positive mood',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Score',fontsize=18)
     #plt.show()
     
     plt.subplot(4,2,2)
     ts3.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
 
-    plt.title('Negative mood')
-    plt.xlabel('date')
-    plt.ylabel('summed score')
+    plt.title('Negative mood',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Score',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,3)
     ts2_roll.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Positive mood rolling(7) mean')
-    plt.xlabel('date')
-    plt.ylabel('summed score')
+    plt.title('Positive mood rolling(7) mean',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Score',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,4)
     ts3_roll.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Negative mood rolling(7) mean')
-    plt.xlabel('date')
-    plt.ylabel('summed score')
+    plt.title('Negative mood rolling(7) mean',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Score',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,5)
     ts2_var.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Positive mood rolling(7) variance')
-    plt.xlabel('date')
-    plt.ylabel('variance')
+    plt.title('Positive mood rolling(7) variance',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Variance',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,6)
     ts3_var.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Negative mood rolling(7) variance')
-    plt.xlabel('date')
-    plt.ylabel('variance')
+    plt.title('Negative mood rolling(7) variance',fontsize=20)
+    plt.xlabel('')
+    plt.ylabel('Variance',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,7)
     ts2_auto.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Positive mood autocorrelation(1)')
-    plt.xlabel('date')
-    plt.ylabel('autocorrelation')
+    plt.title('Positive mood autocorrelation(1)',fontsize=20)
+    plt.xlabel('Time (date)',fontsize=18)
+    plt.ylabel('Autocorrelation',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     
     plt.subplot(4,2,8)
     ts3_auto.plot()
     plt.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    plt.title('Negative mood autocorrelation(1)')
-    plt.xlabel('date')
-    plt.ylabel('autocorrelation')
+    plt.title('Negative mood autocorrelation(1)',fontsize=20)
+    plt.xlabel('Time (date)',fontsize=18)
+    plt.ylabel('Autocorrelation',fontsize=18)
     #plt.xticks(rotation=45)
     #plt.show()
     

@@ -23,27 +23,40 @@ def STL_decomposition(series,
                       xlabel  = "Date",
                       dates = False,
                       ):
+    
     """
     STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
-
+    Plot the components and their distributions. Optionally save the figure.
+    
     Parameters
     ----------
-    series : TYPE
-        DESCRIPTION.
-    
-    plot : TYPE, optional
-        DESCRIPTION. The default is False.
+    series : Numpy ndarray
+        Time series to be decomposed
+    title : str
+        Figure title.
+    savepath : Path object, optional
+        Figure save path The default is False.
+    savename : str, optional
+        Figure save name. The default is False.
+    ylabel : str, optional
+        Figure ylabel. The default is "Battery Level (%)".
+    xlabel : str, optional
+        Figure xlabel. The default is "Date".
+    dates : array, optional
+        List of daytes to be highlighted in the figure. The default is False.
+
+    Raises
+    ------
+    Exception
+        - savepath does not exist
+        - savename or path was not given in correct format
 
     Returns
     -------
-    result : TYPE
-        DESCRIPTION.
+    Result : statsmodels.tsa.seasonal.DecomposeResult object
+        Object containing the decomposition results
 
     """
-    # TODO some asserts
-    # TODO finish docstrings
-    # TODO additional arguments?
-    
 
     Result = STL(series, 
                  period=24, 
@@ -59,48 +72,48 @@ def STL_decomposition(series,
                  low_pass_jump=1).fit()
 
 
-    fig1 = plt.figure(figsize=(15,15))
+    fig1 = plt.figure(figsize=(9.3,9.3))
     
-    plt.suptitle(title,fontsize=20)
+    plt.suptitle(title,fontsize=22,y=1.05)
     
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
-    plt.title('Observations',fontsize=16)
+    plt.title('Observations',fontsize=18)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
     
                 
     plt.subplot(4,1,2)
     plt.plot(Result.trend)
-    plt.title('Trend',fontsize=16)
+    plt.title('Trend',fontsize=18)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
      
     plt.subplot(4,1,3)
     plt.plot(Result.seasonal)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.title('Seasonal',fontsize=16)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.title('Seasonal',fontsize=18)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
      
     plt.subplot(4,1,4)
     plt.plot(Result.resid)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
-    plt.title('Residuals',fontsize=16)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.title('Residuals',fontsize=18)
+    plt.ylabel(ylabel,fontsize=14)
+    plt.xlabel(xlabel,fontsize=14)
     
-    fig1.tight_layout(pad=4.0)
+    fig1.tight_layout(pad=2)
     
     if not all((savename,savepath)):
         plt.show()
@@ -174,23 +187,23 @@ def detect_steps(timeseries,
                  savepath = False,
                  savename = False,
                  ):
-    """
     
+    """
+    Detect steps from the time series and plot the figure.
+    Optionally saves the figure.
 
     Parameters
     ----------
-    timeseries : TYPE
-        DESCRIPTION.
-    title : TYPE
-        DESCRIPTION.
-    xlabel : TYPE
-        DESCRIPTION.
-    savename : TYPE, optional
-        DESCRIPTION. The default is False.
-    savepath : TYPE, optional
-        DESCRIPTION. The default is False.
-     : TYPE
-        DESCRIPTION.
+    timeseries : Pandas series
+            time series for step detection
+    title : str
+            Figure title.
+    xlabel : str
+            Figure xlabel.
+    savename : str, optional
+            Figure savename. The default is False.
+    savepath : Path object, optional
+            Figure save folder. The default is False.
 
     Returns
     -------

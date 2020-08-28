@@ -12,20 +12,22 @@ import numpy as np
 def interpolate_missing(ts, interpolation):
     
     """
-
+    Impute time series missing values using pandas interpolate function 
+    with given method.
+    
     Parameters
     ----------
-    ts : TYPE
-        DESCRIPTION.
-    interpolation : TYPE
-        DESCRIPTION.
+    ts : Pandas series
+        Pandas series to be inrpolated 
+    interpolation : str
+        Intepolatio method 
 
     Returns
     -------
-    interpolated_ts : TYPE
-        DESCRIPTION.
-    missing_values : TYPE
-        DESCRIPTION.
+    interpolated_ts : pandas series
+        Imputed time series
+    missing_values : pandas series
+        Missing values indicated by booleans 
 
     """
     

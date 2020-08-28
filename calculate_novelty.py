@@ -3,6 +3,8 @@
 """
 Created on Thu Jul  2 13:54:12 2020
 
+Calculate similarity novelty score using checkerboard Gaussian kernel 
+convolution. plot the results in one figure.
 Inspired by:
 Jonathan Foote: Automatic audio segmentation using a measure of audio novelty.
 roceedings of the IEEE International Conference on Multimedia and Expo (ICME), 

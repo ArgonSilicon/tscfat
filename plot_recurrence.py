@@ -10,9 +10,7 @@ creation are expected to be 2D - numpy arrays of a shape (time,features).
 Function returns the recurrence plot objects containing recurrence matrices 
 and precalculated metrics. Recurrence matrix are plotted with matplotlib and
 saved as numpy arrays if so desired. 
-Pynicorn library is needed for recurrence plots. Full documentation can be 
-found at:
-http://www.pik-potsdam.de/~donges/pyunicorn/api_doc.html#timeseries
+
 """
 
 from pathlib import Path
@@ -21,10 +19,6 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({'figure.max_open_warning': 0})
 import matplotlib.ticker as ticker
 from datetime import datetime
-
-
-
-
 
 
 def Show_recurrence_plot(recurrence_matrix,
@@ -54,7 +48,7 @@ def Show_recurrence_plot(recurrence_matrix,
 
     Returns
     -------
-
+    
     """
     assert isinstance(recurrence_matrix,np.ndarray), "Recurrence matrix type is not np.ndarray."
     
@@ -64,7 +58,7 @@ def Show_recurrence_plot(recurrence_matrix,
    
     ax.imshow(recurrence_matrix, cmap="Blues",origin='lower')
     
-    plt.suptitle(title, fontsize=16,y=1.02)
+    plt.suptitle(title, fontsize=24,y=1.02)
     
     if type(axis) != bool:
         # We want to show all ticks...
@@ -80,12 +74,12 @@ def Show_recurrence_plot(recurrence_matrix,
         
         #plt.xticks(np.arange(len(axis)),axis)
         #plt.yticks(np.arange(len(axis)),axis)
-        plt.xlabel('date (m-d)')
-        plt.ylabel('date (m-d)')
+        plt.xlabel('Time (date)',fontsize=20)
+        plt.ylabel('Time (date)',fontsize=20)
         
     else:
-        plt.xlabel('$m = {}$'.format(recurrence_matrix.shape[0]))
-        plt.ylabel('$n = {}$'.format(recurrence_matrix.shape[1]))
+        plt.xlabel('$m = {}$'.format(recurrence_matrix.shape[0]),fontsize=20)
+        plt.ylabel('$n = {}$'.format(recurrence_matrix.shape[1]),fontsize=20)
         
 
     #ax.grid(color='black', linewidth=1,linestyle=':')
@@ -144,7 +138,7 @@ def Show_joint_recurrence_plot(recurrence_matrix,
     assert isinstance(recurrence_matrix,np.ndarray), "Recurrence matrix type is not np.ndarray."
     
     #tick_spacing = 
-    fig, ax = plt.subplots(6,4,figsize=(10,12),sharex=True) 
+    fig, ax = plt.subplots(6,4,figsize=(8.3,9),sharex=True) 
     gridsize = (6,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=4,rowspan=1)
     ax2 = plt.subplot2grid(gridsize, (1,0), colspan=4,rowspan=1)
@@ -154,22 +148,22 @@ def Show_joint_recurrence_plot(recurrence_matrix,
     ax1.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
     ax1.set_xticks(np.arange(len(axis))[::7])
     ax1.set_xticklabels(axis[::7])
-    ax1.set_ylabel(ylab1)
-    ax1.set_title(fig1title)
+    ax1.set_ylabel(ylab1,fontsize=18)
+    ax1.set_title(fig1title,fontsize=20)
     
     
     ax2.plot(axis,X2)
     ax2.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
     ax2.set_xticks(np.arange(len(axis))[::7])
     ax2.set_xticklabels(axis[::7])
-    ax2.set_ylabel(ylab2)
-    ax2.set_title(fig2title)
+    ax2.set_ylabel(ylab2,fontsize=18)
+    ax2.set_title(fig2title,fontsize=20)
     
     
     ax3.imshow(recurrence_matrix, cmap="Blues",origin='lower')
-    ax3.set_title('Joint Recursion Plot')
+    ax3.set_title('Joint Recursion Plot',fontsize=20)
     
-    plt.suptitle(title, fontsize=16,y=1.02)
+    plt.suptitle(title, fontsize=22,y=1.03)
     
     if type(axis) != bool:
         # We want to show all ticks...
@@ -185,8 +179,8 @@ def Show_joint_recurrence_plot(recurrence_matrix,
         
         #plt.xticks(np.arange(len(axis)),axis)
         #plt.yticks(np.arange(len(axis)),axis)
-        ax3.set_xlabel('date (m-d)')
-        ax3.set_ylabel('date (m-d)')
+        ax3.set_xlabel('Time (date)',fontsize=18)
+        ax3.set_ylabel('Time (date)',fontsize=18)
         
     else:
         ax3.set_xlabel('$m = {}$'.format(recurrence_matrix.shape[0]))
