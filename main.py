@@ -42,7 +42,7 @@ from interpolate_missing import interpolate_missing
 from calculate_JRQA import Calculate_JRQA
 from calculate_CRQA import Calculate_CRQA
 from plot_recurrence import Show_recurrence_plot, Show_joint_recurrence_plot
-
+import process_battery_level
 ###############################################################################
 #%% Load the data
 DATA_FOLDER = Path('/u/26/ikaheia1/data/Documents''/SpecialAssignment/Data/CSV/')
@@ -73,8 +73,8 @@ for k in dict_keys:
         pass
         #raise Exception("Dictionary key unknown.") 
 ###############################################################################
-#%% Process Battery level
-df1_r , X5, X6 = process_battery.process_battery(df1)
+#%% Process Battery level'
+df1_r, km_dtw = process_battery_level.process_battery(df1)
 #%%
 df1_bl = df1['battery_level']
 df1_re = df1_bl.resample('H').mean()

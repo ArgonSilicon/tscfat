@@ -32,6 +32,7 @@ from save2mat import save2mat
 from decompose_timeseries import STL_decomposition, detect_steps
 from interpolate_missing import interpolate_missing
 from cluster_timeseries import cluster_timeseries, gaussian_MM, Agg_Clustering
+from tslearn.clustering import TimeSeriesKMeans
 
     
 def process_battery(df,ED,TD,RA,FIGPATH):
@@ -203,13 +204,22 @@ def process_battery(df,ED,TD,RA,FIGPATH):
     print(clustering_3)
     print(clustering_2)
     
+    ##% test tslearn clustering
+    km_dtw = TimeSeriesKMeans(n_clusters = 7, metric="dtw", max_iter=5,
+                              max_iter_barycenter=5,
+                              n_jobs = -1,
+                              random_state=0).fit(data)
+
+    
     #%% Assign different clusterings to dataframe
     df_grouped = df_grouped.drop(df_grouped.index[0])
     df_grouped = df_grouped.drop(df_grouped.index[-1])
     clustered_data = df_grouped.to_frame()
     
     clustered_data['cluster_9'] = clustering + 1
-    clustered_data['cluster_7'] = clustering_7 + 1
+    #clustered_data['cluster_7'] = clustering_7 + 1
+    clustered_data['cluster_7'] = km_dtw.labels_ +1
+    
     clustered_data['cluster_5'] = clustering_5 + 1
     clustered_data['cluster_2'] = clustering_2 + 1
     print("Battery level daily patterns clustered: ")
@@ -229,7 +239,7 @@ def process_battery(df,ED,TD,RA,FIGPATH):
     
     #%%
     fig,ax = plt.subplots(4,2,figsize=(12,15))
-    fig.suptitle("Battery level daily development clustered / cluster averages",fontsize=26,y=1.03)
+    fig.suptitle("Battery level daily development clustered / tslearn cluster averages",fontsize=26,y=1.03)
     
     for i in range(len(val0)):
         ax[0,0].plot(val0[i],':',alpha=0.7)
@@ -434,7 +444,7 @@ def process_battery(df,ED,TD,RA,FIGPATH):
     
 
     #%%
-    return df
+    return df, km_dtw
 
 if __name__ == "__main__":
     pass
