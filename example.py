@@ -49,5 +49,5 @@ RA = 0.5 # neigborhood radius
 FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Figures/') # <- REPLACE THIS!
 
 #%% Process Battery level
-df1_r = process_battery(df1,ED,TD,RA,FIGPATH)
+df1_r, km_dtw = process_battery(df1,ED,TD,RA,FIGPATH)
 
