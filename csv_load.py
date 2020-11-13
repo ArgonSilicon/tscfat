@@ -11,9 +11,7 @@ an exception is raised.
 
 """
 
-from __future__ import print_function
 import pandas as pd
-from pathlib import Path
 from os import listdir
 from os.path import isfile, join, exists
 from rolling_stats import convert_to_datetime
@@ -115,8 +113,6 @@ def load_all_subjects(foldername):
     
     for filename in file_list:
         open_name = foldername / filename
-        print(open_name)
-        print(open_name.suffix)
         assert open_name.suffix == ".csv", "Trying to load incorrect file format."
         file_name, csv_file = load_one_subject(open_name)
         csv_dict[file_name] = csv_file

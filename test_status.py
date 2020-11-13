@@ -27,7 +27,6 @@ def test_battery_status(battery_df, target):
     assert isinstance(target, pd._libs.tslibs.timestamps.Timestamp), "Given target \"{}\" is not a pandas Timestamp.".format(target)
     assert isinstance(battery_df, pd.core.frame.DataFrame), "Given dataframe is not a pandas dataframe."
     
-    
     if 'battery_level' in battery_df.columns:
          status = battery_df.truncate(after=target).iloc[-1]['battery_level']
          if status != 0:

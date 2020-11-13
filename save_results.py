@@ -10,10 +10,30 @@ import json
 
 def dump_to_json(result,savepath,filename):
     
-    """ Convert result object to json and save it into given folder.
+    """
+    Convert PyRQA result object to json and save it into given folder.
+
+    Parameters
+    ----------
+    result : pyrqa.result.RQAResult
+            RQA results object.
+    savepath : Path object
+            Json save path
+    filename : str
+            Jsan save name
+
+    Raises
+    ------
+    Exception
+        - requested save folder does not exist
+
+    Returns
+    -------
+    None.
+
     """
     
-    #assert isinstance(result, pyrqa.result.RQAResult), "Filetype should be numpy.ndarray."
+    #assert isinstance(result, pyrqa.result.RQAResult), "Result should be a pyrqa.result obejct."
     assert isinstance(filename,str), "Invalid savename type, should be str."
     
     if savepath.exists():

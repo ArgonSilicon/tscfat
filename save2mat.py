@@ -12,7 +12,28 @@ import scipy.io as sio
 def save2mat(ts,
              savepath,
              filename):
-    
+    """
+    Save timeseries in matlab format.
+
+    Parameters
+    ----------
+    ts : Numpy ndarray
+        timeseries to be saved.
+    savepath : Path object
+        File save location.
+    filename : str
+        File savename.
+
+    Raises
+    ------
+    Exception
+        - requested savefolder does not exist.
+
+    Returns
+    -------
+    None.
+
+    """
     
     assert isinstance(ts, np.ndarray), "Timeseries to be saved is not a numpy array."
     assert isinstance(filename,str), "Invalid savename type, should be str."
