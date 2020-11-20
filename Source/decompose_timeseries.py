@@ -13,9 +13,10 @@ from scipy import signal
 from scipy.signal import find_peaks
 from scipy.special import expit, logit
 from datetime import datetime 
+from setup import setup_np
 
 
-def STL_decomposition(series,
+def plot_decomposition(Result,
                       title,
                       savepath = False,
                       savename = False,
@@ -24,54 +25,6 @@ def STL_decomposition(series,
                       dates = False,
                       ):
     
-    """
-    STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
-    Plot the components and their distributions. Optionally save the figure.
-    
-    Parameters
-    ----------
-    series : Numpy ndarray
-        Time series to be decomposed
-    title : str
-        Figure title.
-    savepath : Path object, optional
-        Figure save path The default is False.
-    savename : str, optional
-        Figure save name. The default is False.
-    ylabel : str, optional
-        Figure ylabel. The default is "Battery Level (%)".
-    xlabel : str, optional
-        Figure xlabel. The default is "Date".
-    dates : array, optional
-        List of daytes to be highlighted in the figure. The default is False.
-
-    Raises
-    ------
-    Exception
-        - savepath does not exist
-        - savename or path was not given in correct format
-
-    Returns
-    -------
-    Result : statsmodels.tsa.seasonal.DecomposeResult object
-        Object containing the decomposition results
-
-    """
-
-    Result = STL(series, 
-                 period=24, 
-                 seasonal=7, 
-                 trend=None, 
-                 low_pass=None,
-                 seasonal_deg=0, 
-                 trend_deg=0, 
-                 low_pass_deg=0, 
-                 robust=False,
-                 seasonal_jump=1, 
-                 trend_jump=1, 
-                 low_pass_jump=1).fit()
-
-
     fig1 = plt.figure(figsize=(9.3,9.3))
     
     plt.suptitle(title,fontsize=22,y=1.05)
@@ -129,7 +82,16 @@ def STL_decomposition(series,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
-            
+        
+    
+def plot_histogram(Result,
+                   title,
+                   savepath = False,
+                   savename = False,
+                   ylabel = "Battery Level (%)",
+                   xlabel  = "Date",
+                   dates = False,
+                   ):
         
     fig2 = plt.figure(figsize=(20,15))
     
@@ -175,7 +137,83 @@ def STL_decomposition(series,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
+
+def STL_decomposition(series,
+                      title,
+                      test = False,
+                      savepath = False,
+                      savename = False,
+                      ylabel = "Battery Level (%)",
+                      xlabel  = "Date",
+                      dates = False,
+                      ):
+    
+    """
+    STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
+    Plot the components and their distributions. Optionally save the figure.
+    
+    Parameters
+    ----------
+    series : Numpy ndarray
+        Time series to be decomposed
+    title : str
+        Figure title.
+    savepath : Path object, optional
+        Figure save path The default is False.
+    savename : str, optional
+        Figure save name. The default is False.
+    ylabel : str, optional
+        Figure ylabel. The default is "Battery Level (%)".
+    xlabel : str, optional
+        Figure xlabel. The default is "Date".
+    dates : array, optional
+        List of daytes to be highlighted in the figure. The default is False.
+
+    Raises
+    ------
+    Exception
+        - savepath does not exist
+        - savename or path was not given in correct format
+
+    Returns
+    -------
+    Result : statsmodels.tsa.seasonal.DecomposeResult object
+        Object containing the decomposition results
+
+    """
+
+    Result = STL(series, 
+                 period=24, 
+                 seasonal=7, 
+                 trend=None, 
+                 low_pass=None,
+                 seasonal_deg=0, 
+                 trend_deg=0, 
+                 low_pass_deg=0, 
+                 robust=False,
+                 seasonal_jump=1, 
+                 trend_jump=1, 
+                 low_pass_jump=1).fit()
+
+    if test == False:
+        plot_decomposition(Result,
+                          title,
+                          savepath = False,
+                          savename = False,
+                          ylabel = "Battery Level (%)",
+                          xlabel  = "Date",
+                          dates = False,
+                          )
         
+        plot_histogram(Result,
+                       title,
+                       savepath = False,
+                       savename = False,
+                       ylabel = "Battery Level (%)",
+                       xlabel  = "Date",
+                       dates = False,
+                       )
+    
         
     return Result
 
@@ -277,4 +315,10 @@ def detect_steps(timeseries,
     
     return peaks, bottoms, top_indices, neg_indices
     
-    
+def test_STL():
+    res = STL_decomposition(setup_np(),'Test title', test=True)
+    assert res != None
+    assert res.observed.all() != None
+    assert res.trend.all() != None
+    assert res.seasonal.all() != None
+    assert res.resid.all() != None
