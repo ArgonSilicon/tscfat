@@ -23,7 +23,7 @@ os.chdir(WORK_DIR)
 
 # Local application imports
 from csv_load import load_all_subjects
-from process_battery_level import process_battery
+from process_battery import process_battery
 
 
 ###############################################################################
@@ -49,5 +49,6 @@ RA = 0.5 # neigborhood radius
 FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Figures/') # <- REPLACE THIS!
 
 #%% Process Battery level
-df1_r, km_dtw = process_battery(df1,ED,TD,RA,FIGPATH)
+#_ = process_battery(df1,ED,TD,RA,FIGPATH)
+_ = process_battery(df1,FIGPATH)
 

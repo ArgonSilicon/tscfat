@@ -15,7 +15,7 @@ import pandas as pd
 from os import listdir
 from os.path import isfile, join, exists
 
-def convert_to_datetime(date, units = 'ms'):
+def __convert_to_datetime(date, units = 'ms'):
     """
     Function converts given pandas series from unix time to datetime.
 
@@ -62,7 +62,7 @@ def __convert_time(df, colname = None, conv_type = 's'):
         for name in names:
             if name[0] in df.columns:
                 try: 
-                    df[name[0]] = convert_to_datetime(df[name[0]],name[1])
+                    df[name[0]] = __convert_to_datetime(df[name[0]],name[1])
                 except:
                     print('Cannot convert column named: \"{}\" to datetime.'.format(name[0]))
                 df = df.set_index(name[0])
@@ -70,7 +70,7 @@ def __convert_time(df, colname = None, conv_type = 's'):
     else:
         try:
             
-            #df[colname] = convert_to_datetime(df[colname],conv_type)
+            df[colname] = __convert_to_datetime(df[colname],conv_type)
             df = df.set_index(colname)
         except:
                 print('Cannot convert column named: \"{}\" to datetime.'.format(name[0]))

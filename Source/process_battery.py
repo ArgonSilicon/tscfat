@@ -9,42 +9,39 @@ Created on Fri Jul  3 15:08:26 2020
 # standard library imports
 import os
 from pathlib import Path
-import json
-
-# change correct working directory
-WORK_DIR = Path('/u/26/ikaheia1/unix/Documents/SpecialAssignment/CS-special-assignment/')
-os.chdir(WORK_DIR)
+#import json
 
 # third party imports
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from scipy import signal
+#import matplotlib.pyplot as plt
+#import pandas as pd
+#from scipy import signal
 
 # Local application import
 
 
-from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
-from calculate_RQA import Calculate_RQA
-from plot_recurrence import Show_recurrence_plot
-from save_results import dump_to_json
+#from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
+#from calculate_RQA import Calculate_RQA
+#from plot_recurrence import Show_recurrence_plot
+#from save_results import dump_to_json
 from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features, plot_differences, grouped_histograms
-from save2mat import save2mat
-from calculate_similarity import calculate_similarity
-from calculate_novelty import compute_novelty_SSM
-from decompose_timeseries import STL_decomposition, detect_steps
-from Plot_similarity import Plot_similarity
+#from save2mat import save2mat
+#from calculate_similarity import calculate_similarity
+#from calculate_novelty import compute_novelty_SSM
+from decompose_timeseries import STL_decomposition#, detect_steps
+#from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
-from calculate_DTW import DTW_distance
+#from calculate_DTW import DTW_distance
 
 
-def process_battery(df):
+def process_battery(df,FIGPATH):
     
     #%% Recursion plot settings
+    '''
     ED = 1 # embedding dimensions
     TD = 1 # time delay
     RA = 0.5 # neigborhood radius
-    
+    '''
     #%% filter dataframe and resample hourly means
     df_filt = df.filter(["time","battery_level",])
     df_grouped_lists = df_filt.battery_level.groupby(df_filt.index.hour).apply(list) # -> for grouped_histograms()
@@ -60,8 +57,13 @@ def process_battery(df):
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Distributions/')
     FIGNAME = "Battery_level" 
     grouped_histograms(df_grouped_lists,'Battery level','Percentage','Proportion',FIGPATH,FIGNAME)
+    
+    #%% Plot timeseries decompostition and distribution for each component
+    FIGNAME = "Battery_level_decomposition" 
+    _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", FIGPATH,FIGNAME)
        
     #%% plot differences and detect steps
+    '''
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Differences/')
     FIGNAME = "Battery_level"
     lowest, diff, pct = plot_differences(resampled_interpolated, "battery_level","Battery level change in time", "Time (h)", "Difference",FIGPATH,FIGNAME)
@@ -128,7 +130,7 @@ def process_battery(df):
     FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Features/')
     FIGNAME = "Battery_level_features"
     show_features(resampled_interpolated['battery_level'],"Battery level ","Time (d)","Value",24,1,"right",False,FIGPATH,FIGNAME)
-    
+    '''
 
     #%%
     return df, timeseries, data
