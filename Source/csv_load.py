@@ -14,9 +14,31 @@ an exception is raised.
 import pandas as pd
 from os import listdir
 from os.path import isfile, join, exists
-from rolling_stats import convert_to_datetime
 
-def convert_time(df, colname = None, conv_type = 's'):
+def convert_to_datetime(date, units = 'ms'):
+    """
+    Function converts given pandas series from unix time to datetime.
+
+    Parameters
+    ----------
+    date : pandas series
+        Dataframe column containing the time
+    units : str (default = 'ms')
+        Time unit conversion type
+    
+    Returns
+    -------
+    conv_date : pandas series
+        Datetime converted pandas series
+    
+    """
+    assert isinstance(date,pd.core.series.Series), "Timeseries should be Pandas series type."
+    assert isinstance(units,str), "Unit type should be str, not {}".format(type(units))
+    
+    conv_date = pd.to_datetime(date,unit = units)
+    return conv_date
+
+def __convert_time(df, colname = None, conv_type = 's'):
     
     """ Convert dataframe time to pandas datetime object and set the 
     corrensponding column as a dataframe index.
@@ -47,7 +69,8 @@ def convert_time(df, colname = None, conv_type = 's'):
                 
     else:
         try:
-            df[colname] = convert_to_datetime(df[colname],conv_type)
+            
+            #df[colname] = convert_to_datetime(df[colname],conv_type)
             df = df.set_index(colname)
         except:
                 print('Cannot convert column named: \"{}\" to datetime.'.format(name[0]))
@@ -76,14 +99,15 @@ def load_one_subject(open_name):
 
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file)
-        df = convert_time(df)
+        df = __convert_time(df)
         file_name = open_name.stem
         return file_name, df
     
 
 def load_all_subjects(foldername):
     """
-    Loads all .csv files in a given folder.
+    Loads all .csv files in a given folder, and return a dictionary containing
+    the csv files.
 
     Parameters
     ----------
@@ -98,8 +122,6 @@ def load_all_subjects(foldername):
         a dictionary containing readed .csv files, 
         filenames used as dict keys.
 
-    json_list: list 
-        a list containing readed .csv files
 
     """
     
