@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from datetime import datetime
+from setup import setup_np
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -130,3 +131,7 @@ def Plot_similarity(sim,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
+        
+def test_Plot_similarity():
+    res = Plot_similarity(setup_np(),'Test title', test=True)
+    assert res != None

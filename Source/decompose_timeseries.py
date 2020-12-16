@@ -24,6 +24,38 @@ def plot_decomposition(Result,
                       xlabel  = "Date",
                       dates = False,
                       ):
+    """
+    
+
+    Parameters
+    ----------
+    Result : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+    ylabel : TYPE, optional
+        DESCRIPTION. The default is "Battery Level (%)".
+    xlabel : TYPE, optional
+        DESCRIPTION. The default is "Date".
+    dates : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
     
     fig1 = plt.figure(figsize=(9.3,9.3))
     
@@ -92,6 +124,38 @@ def plot_histogram(Result,
                    xlabel  = "Date",
                    dates = False,
                    ):
+    """
+    
+
+    Parameters
+    ----------
+    Result : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+    ylabel : TYPE, optional
+        DESCRIPTION. The default is "Battery Level (%)".
+    xlabel : TYPE, optional
+        DESCRIPTION. The default is "Date".
+    dates : TYPE, optional
+        DESCRIPTION. The default is False.
+     : TYPE
+        DESCRIPTION.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
         
     fig2 = plt.figure(figsize=(20,15))
     
@@ -147,7 +211,6 @@ def STL_decomposition(series,
                       xlabel  = "Date",
                       dates = False,
                       ):
-    
     """
     STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
     Plot the components and their distributions. Optionally save the figure.
@@ -181,7 +244,6 @@ def STL_decomposition(series,
         Object containing the decomposition results
 
     """
-
     Result = STL(series, 
                  period=24, 
                  seasonal=7, 

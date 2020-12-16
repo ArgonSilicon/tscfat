@@ -16,7 +16,7 @@ from pathlib import Path
 import re
 
 # change correct working directory
-WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Source')
+WORK_DIR = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Source')
 os.chdir(WORK_DIR)
 
 # third party imports
@@ -28,7 +28,7 @@ from process_battery import process_battery
 
 ###############################################################################
 #%% Load the data into dictionary filenames as keys
-DATA_FOLDER = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/Data/CSV/') # <- REPLACE THIS!
+DATA_FOLDER = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data') # <- REPLACE THIS!
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys()) 
 
@@ -46,7 +46,7 @@ ED = 1 # embedding dimensions
 TD = 1 # time delay
 RA = 0.5 # neigborhood radius
 # path to folder where plot are saved
-FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Figures/') # <- REPLACE THIS!
+FIGPATH = Path(r'C:\Users\arsii\Documents\Results') # <- REPLACE THIS!
 
 #%% Process Battery level
 #_ = process_battery(df1,ED,TD,RA,FIGPATH)

@@ -26,10 +26,10 @@ import numpy as np
 #from save_results import dump_to_json
 from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features, plot_differences, grouped_histograms
 #from save2mat import save2mat
-#from calculate_similarity import calculate_similarity
-#from calculate_novelty import compute_novelty_SSM
+from calculate_similarity import calculate_similarity
+from calculate_novelty import compute_novelty_SSM
 from decompose_timeseries import STL_decomposition#, detect_steps
-#from Plot_similarity import Plot_similarity
+from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
 #from calculate_DTW import DTW_distance
 
@@ -54,13 +54,14 @@ def process_battery(df,FIGPATH):
     data = np.stack(resampled_day.battery_level.values[1:-1])
     
     #%% plot histograms
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Distributions/')
+    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Distributions')
     FIGNAME = "Battery_level" 
     grouped_histograms(df_grouped_lists,'Battery level','Percentage','Proportion',FIGPATH,FIGNAME)
     
     #%% Plot timeseries decompostition and distribution for each component
+    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
     FIGNAME = "Battery_level_decomposition" 
-    _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", FIGPATH,FIGNAME)
+    _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
        
     #%% plot differences and detect steps
     '''
@@ -93,16 +94,16 @@ def process_battery(df,FIGPATH):
     FIGNAME = "Battery_level_RP"
     TITLE = "Battery level Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
     Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)   
-    
+    '''
     #%% calculate similarity and novelty
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Similarity/')
+    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
     FIGNAME = "Battery_level_similarity"
     AXIS = resampled_day[1:-1].index.strftime('%m-%d')
     
     sim = calculate_similarity(data,'cosine')
     nov, kernel = compute_novelty_SSM(sim,L=7)
-    Plot_similarity(sim,nov,"Battery level (cosine distance)",False,False,(0,0.04),0.9,AXIS,kernel)
-    
+    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
+    '''
     #Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,
     #                ylim = (0,0.05),threshold = 0,axis = AXIS, kernel)
     
