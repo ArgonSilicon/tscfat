@@ -4,6 +4,12 @@
 Created on Fri Jul  3 15:08:26 2020
 
 @author: arsi
+
+- Plot timeseries decomposition
+- Plot similarity and novelty
+- Plot rolling stats
+- Plot clustering
+
 """
 
 # standard library imports
@@ -13,11 +19,12 @@ from pathlib import Path
 
 # third party imports
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #import pandas as pd
 #from scipy import signal
 
 # Local application import
+
 
 
 #from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
@@ -32,16 +39,11 @@ from decompose_timeseries import STL_decomposition#, detect_steps
 from Plot_similarity import Plot_similarity
 from interpolate_missing import interpolate_missing
 #from calculate_DTW import DTW_distance
-
+from timeseries_clustering import Cluster_timeseries
+from arma import arma, autocorr
 
 def process_battery(df,FIGPATH):
     
-    #%% Recursion plot settings
-    '''
-    ED = 1 # embedding dimensions
-    TD = 1 # time delay
-    RA = 0.5 # neigborhood radius
-    '''
     #%% filter dataframe and resample hourly means
     df_filt = df.filter(["time","battery_level",])
     df_grouped_lists = df_filt.battery_level.groupby(df_filt.index.hour).apply(list) # -> for grouped_histograms()
@@ -63,38 +65,34 @@ def process_battery(df,FIGPATH):
     FIGNAME = "Battery_level_decomposition" 
     _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
        
-    #%% plot differences and detect steps
-    '''
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Differences/')
-    FIGNAME = "Battery_level"
-    lowest, diff, pct = plot_differences(resampled_interpolated, "battery_level","Battery level change in time", "Time (h)", "Difference",FIGPATH,FIGNAME)
-    #%%
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Decomposition/')
-    FIGNAME = "Steps"
-    peaks, bottoms, top_indices, neg_indices = detect_steps(resampled_interpolated, "Battery level peaks and bottoms", "Time (h)",FIGPATH,FIGNAME)
-    #%%
-    high_ts = resampled_interpolated.index[peaks[top_indices]]    
-    low_ts = resampled_interpolated.index[bottoms[neg_indices]]
-    print("Differencing: ")
-    print("Highest battery comsumption:\n",lowest.index)
-    print("Gaussian kernel convolution: ")
-    print("Highest peaks in battery charge:\n", high_ts)
-    print("Highest battery consumption:\n",low_ts)
-    #%% timeseries decompostition
+    #%% rolling stats
+    w = 7*24
+    variance = resampled_interpolated.rolling(window = w).var()
+    autocorrelation = resampled_interpolated.rolling(window = w).apply(autocorr)
+    mean = resampled_interpolated.rolling(window = w).mean() 
+    skew = resampled_interpolated.rolling(window = w).skew()
+    kurt = resampled_interpolated.rolling(window = w).kurt()
     
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Decomposition/')
-    FIGNAME = "Battery_level_decomposition" 
-    decomp = STL_decomposition(timeseries,"Battery level timeseries decomposition", FIGPATH,FIGNAME)
-        
-    #%% calculate receursion plot and metrics
-    res, mat = Calculate_RQA(timeseries,ED,TD,RA)
-        
-    #%% show recursion plot and save figure
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Plots/')
-    FIGNAME = "Battery_level_RP"
-    TITLE = "Battery level Recurrence Plot \n dim = {}, td = {}, r = {}".format(ED,TD,RA)  
-    Show_recurrence_plot(mat,TITLE,FIGPATH,FIGNAME)   
-    '''
+    plt.plot(variance)
+    plt.title('variance')
+    plt.show()
+    
+    plt.plot(autocorrelation)
+    plt.title('autocorrelation')
+    plt.show()
+    
+    plt.plot(mean)
+    plt.title('mean')
+    plt.show()
+    
+    plt.plot(skew)
+    plt.title('skew')
+    plt.show()
+    
+    plt.plot(kurt)
+    plt.title('kurt')
+    plt.show()
+    
     #%% calculate similarity and novelty
     FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
     FIGNAME = "Battery_level_similarity"
@@ -103,36 +101,13 @@ def process_battery(df,FIGPATH):
     sim = calculate_similarity(data,'cosine')
     nov, kernel = compute_novelty_SSM(sim,L=7)
     Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
-    '''
-    #Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,
-    #                ylim = (0,0.05),threshold = 0,axis = AXIS, kernel)
-    
-    #%% set correct names and save metrics as json 
-    RESPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Metrics/')
-    RESNAME = "Battery_level_RP_metrics.json"
-    dump_to_json(res,RESPATH,RESNAME)   
-    
-    # save the timeseries
-    TSPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
-    TSNAME = "Battery_level_ts.mat"
-    save2mat(timeseries,TSPATH,TSNAME)
-    
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Timeseries/')
-    NPNAME = "Battery_level_ts.npy"
-    with open(FIGPATH / NPNAME, mode="wb") as outfile:
-        np.save(outfile,timeseries)       
-    
-    #%% Plot timeseries and save figure
-    FIGNAME = "Battery_level_ts_scatter"
-    show_timeseries_scatter(resampled_interpolated['battery_level'],"Battery level / hourly binned","time","Level",FIGPATH,FIGNAME)
-    FIGNAME = "Battery_level_ts_line"
-    show_timeseries_line(resampled_interpolated['battery_level'],"Battery level / hourly mean","time","Level",FIGPATH,FIGNAME)
-    #%% Extract features from timeseries, plot, and save
-    FIGPATH = Path(r'/u/26/ikaheia1/unix/Documents/SpecialAssignment/Results/Features/')
-    FIGNAME = "Battery_level_features"
-    show_features(resampled_interpolated['battery_level'],"Battery level ","Time (d)","Value",24,1,"right",False,FIGPATH,FIGNAME)
-    '''
 
+    #%%
+    # Timeseries clustering
+    clusters = Cluster_timeseries(data,n=2)
+    plt.plot(clusters,'o')
+    plt.show()
+    
     #%%
     return df, timeseries, data
 

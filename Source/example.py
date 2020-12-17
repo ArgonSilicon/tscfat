@@ -40,15 +40,10 @@ for k in dict_keys:
         pass
 
 #%% Set parameters and paths 
-
-# Recursion plot settings
-ED = 1 # embedding dimensions
-TD = 1 # time delay
-RA = 0.5 # neigborhood radius
 # path to folder where plot are saved
 FIGPATH = Path(r'C:\Users\arsii\Documents\Results') # <- REPLACE THIS!
 
 #%% Process Battery level
-#_ = process_battery(df1,ED,TD,RA,FIGPATH)
+
 _ = process_battery(df1,FIGPATH)
 
