@@ -16,7 +16,8 @@ from pathlib import Path
 import re
 
 # change correct working directory
-WORK_DIR = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Source')
+#WORK_DIR = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Source')
+WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Source')
 os.chdir(WORK_DIR)
 
 # third party imports
@@ -28,7 +29,8 @@ from process_battery import process_battery
 
 ###############################################################################
 #%% Load the data into dictionary filenames as keys
-DATA_FOLDER = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data') # <- REPLACE THIS!
+#DATA_FOLDER = Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data') # <- REPLACE THIS!
+DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Data')
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys()) 
 
@@ -41,7 +43,8 @@ for k in dict_keys:
 
 #%% Set parameters and paths 
 # path to folder where plot are saved
-FIGPATH = Path(r'C:\Users\arsii\Documents\Results') # <- REPLACE THIS!
+#FIGPATH = Path(r'C:\Users\arsii\Documents\Results') # <- REPLACE THIS!
+FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
 
 #%% Process Battery level
 
