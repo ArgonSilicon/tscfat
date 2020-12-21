@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct  8 13:02:27 2020
@@ -82,7 +81,9 @@ fi_4 = fluctuation_intensity(y_4,6,7)
 fi_5 = fluctuation_intensity(y_5,6,7)
 fi_6 = fluctuation_intensity(y_6,6,7)
 fi_7 = fluctuation_intensity(y_7,6,7)
-=======
+
+
+'''
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct  8 13:02:27 2020
@@ -166,4 +167,5 @@ fi_4 = fluctuation_intensity(y_4,6,7)
 fi_5 = fluctuation_intensity(y_5,6,7)
 fi_6 = fluctuation_intensity(y_6,6,7)
 fi_7 = fluctuation_intensity(y_7,6,7)
->>>>>>> 1c86f2ee1a63d54ea6a092c3d0964a766f57cfa0
+
+'''

@@ -41,6 +41,9 @@ from interpolate_missing import interpolate_missing
 #from calculate_DTW import DTW_distance
 from timeseries_clustering import Cluster_timeseries
 from arma import arma, autocorr
+from plot_clusters import Plot_clusters,Plot_clustered_timeseries
+from Rolling_statistics import Rolling_statistics
+
 
 def process_battery(df,FIGPATH):
     
@@ -48,50 +51,28 @@ def process_battery(df,FIGPATH):
     df_filt = df.filter(["time","battery_level",])
     df_grouped_lists = df_filt.battery_level.groupby(df_filt.index.hour).apply(list) # -> for grouped_histograms()
     resampled = df_filt.resample("H").mean()
-    resampled_interpolated, _ = interpolate_missing(resampled,'linear')
+    
+    missing_values = resampled.isna()
+    resampled_interpolated = resampled.interpolate('linear') 
     timeseries = resampled_interpolated.values
     
     # daily / hours for similarity calulation
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
     
-    #%% plot histograms
-    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Distributions')
-    FIGNAME = "Battery_level" 
-    grouped_histograms(df_grouped_lists,'Battery level','Percentage','Proportion',FIGPATH,FIGNAME)
     
     #%% Plot timeseries decompostition and distribution for each component
     FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
-    FIGNAME = "Battery_level_decomposition" 
+    FIGNAME = "Battery_level_rolling_statistics" 
     _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
        
     #%% rolling stats
     w = 7*24
-    variance = resampled_interpolated.rolling(window = w).var()
-    autocorrelation = resampled_interpolated.rolling(window = w).apply(autocorr)
-    mean = resampled_interpolated.rolling(window = w).mean() 
-    skew = resampled_interpolated.rolling(window = w).skew()
-    kurt = resampled_interpolated.rolling(window = w).kurt()
+    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\RollingStatistics')
+    FIGNAME = "Battery_level_decomposition"
     
-    plt.plot(variance)
-    plt.title('variance')
-    plt.show()
+    Rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
     
-    plt.plot(autocorrelation)
-    plt.title('autocorrelation')
-    plt.show()
-    
-    plt.plot(mean)
-    plt.title('mean')
-    plt.show()
-    
-    plt.plot(skew)
-    plt.title('skew')
-    plt.show()
-    
-    plt.plot(kurt)
-    plt.title('kurt')
-    plt.show()
     
     #%% calculate similarity and novelty
     FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
@@ -104,9 +85,12 @@ def process_battery(df,FIGPATH):
 
     #%%
     # Timeseries clustering
+    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Clusters')
+    FIGNAME = "Clustered_timeseries"
+    
     clusters = Cluster_timeseries(data,n=2)
-    plt.plot(clusters,'o')
-    plt.show()
+    
+    Plot_clusters(clusters,title="Clustered timeseries",xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
     
     #%%
     return df, timeseries, data

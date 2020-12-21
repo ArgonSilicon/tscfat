@@ -33,6 +33,9 @@ def calculate_similarity(X,metric='Euclidean'):
 
     """
     
+    assert isinstance(X, np.ndarray), "Data format is not a numpy array."
+    assert np.ndim(X) == 2, "Matrix is not 2 dimensional."
+    
     Y = pdist(X,metric)
     Y_square = squareform(Y)
     Y_sim = 1 / (1+Y_square)
@@ -59,6 +62,10 @@ def calculate_distance(X,metric="Euclidean"):
             Returns a condensed distance matrix Y.
 
     """
+    
+    assert isinstance(X, np.ndarray), "Data format is not a numpy array."
+    assert np.ndim(X) == 2, "Matrix is not 2 dimensional."
+    
     Y = pdist(X,metric)
     Y_square = squareform(Y)
     return Y_square

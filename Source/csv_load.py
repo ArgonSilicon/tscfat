@@ -17,7 +17,7 @@ from os.path import isfile, join, exists
 
 def __convert_to_datetime(date, units = 'ms'):
     """
-    Function converts given pandas series from unix time to datetime.
+    Convert a given pandas series from unix time to datetime.
 
     Parameters
     ----------
@@ -39,9 +39,8 @@ def __convert_to_datetime(date, units = 'ms'):
     return conv_date
 
 def __convert_time(df, colname = None, conv_type = 's'):
-    
-    """ Convert dataframe time to pandas datetime object and set the 
-    corrensponding column as a dataframe index.
+    """ 
+    Convert dataframe time to pandas datetime object and set the corrensponding column as a dataframe index.
 
     Parameters
     ----------
@@ -56,7 +55,6 @@ def __convert_time(df, colname = None, conv_type = 's'):
         pandas datafrane with converted column
 
     """
-    
     if colname == None:
         names = [('time','s'),('day','D'),('timestamp','s')]
         for name in names:
@@ -79,11 +77,10 @@ def __convert_time(df, colname = None, conv_type = 's'):
     
 def load_one_subject(open_name):
     """
-    Loads an arbitrary .csv file and return it as a pandas dataframe
+    Load an arbitrary .csv file and return it as a pandas dataframe.
 
     Parameters
     ----------
-
     openname : Path -object
         path to the .csv file
 
@@ -96,7 +93,6 @@ def load_one_subject(open_name):
         a pandas dataframe created from the read csv file
 
     """
-
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file)
         df = __convert_time(df)
@@ -106,25 +102,20 @@ def load_one_subject(open_name):
 
 def load_all_subjects(foldername):
     """
-    Loads all .csv files in a given folder, and return a dictionary containing
-    the csv files.
+    Load all .csv files in a given folder, and return a dictionary containing the files.
 
     Parameters
     ----------
-
     foldername : Path -object
         path to the folder containing .csv files
 
     Returns
     -------
-
     csv_dict : dictionary 
         a dictionary containing readed .csv files, 
         filenames used as dict keys.
 
-
     """
-    
     if exists(foldername):
         file_list = [f for f in listdir(foldername) if isfile(join(foldername, f))]
         
