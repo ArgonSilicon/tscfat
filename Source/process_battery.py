@@ -43,7 +43,7 @@ from timeseries_clustering import Cluster_timeseries
 from arma import arma, autocorr
 from plot_clusters import Plot_clusters,Plot_clustered_timeseries
 from Rolling_statistics import Rolling_statistics
-
+from summary_statistics import Summary_statistics
 
 def process_battery(df,FIGPATH):
     
@@ -55,27 +55,32 @@ def process_battery(df,FIGPATH):
     missing_values = resampled.isna()
     resampled_interpolated = resampled.interpolate('linear') 
     timeseries = resampled_interpolated.values
+
     
     # daily / hours for similarity calulation
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
-    
+    #%%
+    Summary_statistics(resampled_interpolated)
     
     #%% Plot timeseries decompostition and distribution for each component
-    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
+    #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
+    FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/Decomposition')
     FIGNAME = "Battery_level_rolling_statistics" 
     _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
        
     #%% rolling stats
     w = 7*24
-    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\RollingStatistics')
-    FIGNAME = "Battery_level_decomposition"
+    #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\RollingStatistics')
+    FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/RollingStatistics')
+    FIGNAME = "Battery_level_Rolling_Statistics"
     
     Rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
     
     
     #%% calculate similarity and novelty
-    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
+    #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
+    FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/Similarity')
     FIGNAME = "Battery_level_similarity"
     AXIS = resampled_day[1:-1].index.strftime('%m-%d')
     
@@ -85,7 +90,8 @@ def process_battery(df,FIGPATH):
 
     #%%
     # Timeseries clustering
-    FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Clusters')
+    #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Clusters')
+    FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
     clusters = Cluster_timeseries(data,n=2)

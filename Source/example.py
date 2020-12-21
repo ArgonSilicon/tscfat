@@ -44,7 +44,7 @@ for k in dict_keys:
 #%% Set parameters and paths 
 # path to folder where plot are saved
 #FIGPATH = Path(r'C:\Users\arsii\Documents\Results') # <- REPLACE THIS!
-FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/')
+FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results')
 
 #%% Process Battery level
 

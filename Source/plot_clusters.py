@@ -5,6 +5,7 @@ Created on Fri Dec 18 12:57:38 2020
 @author: arsii
 """
 import matplotlib.pyplot as plt
+import numpy as np
 
 def Plot_clustered_timeseries():
     
@@ -40,9 +41,11 @@ def Plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fals
     None.
 
     """
-    assert isinstance(series, np.ndarray), "Series is not a numpy array."
+    assert isinstance(clusters, np.ndarray), "Given Time series is not a numpy array."
     
-    plt.plot(clusters,'o')
+    fig = plt.figure(figsize=(10,10))
+    
+    plt.plot(clusters,'o:')
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
