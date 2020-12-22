@@ -6,10 +6,64 @@ Created on Thu Dec 17 12:29:57 2020
 """
 
 from tslearn.clustering import TimeSeriesKMeans
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-def Cluster_timeseries(ts, n=3, mi=5, mib=5, rs=0):
+def __Plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False):
+    """
+    
+
+    Parameters
+    ----------
+    clusters : TYPE
+        DESCRIPTION.
+    title : TYPE
+        DESCRIPTION.
+    xlab : TYPE, optional
+        DESCRIPTION. The default is "Timepoint".
+    ylab : TYPE, optional
+        DESCRIPTION. The default is "Cluster".
+    savename : TYPE, optional
+        DESCRIPTION. The default is False.
+    savepath : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    assert isinstance(clusters, np.ndarray), "Given Time series is not a numpy array."
+    
+    fig = plt.figure(figsize=(10,10))
+    
+    plt.plot(clusters,'o:')
+    plt.title(title)
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
+    
+    if not savename and not savepath:
+        plt.show()
+        
+    elif savename and savepath:
+        
+        assert isinstance(savename,str), "Invalid savename type."
+        
+        if savepath.exists():
+            with open(savepath / (savename + ".png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+
+def Cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0):
    """
     Parameters
     ----------
@@ -42,6 +96,8 @@ def Cluster_timeseries(ts, n=3, mi=5, mib=5, rs=0):
                           random_state = rs).fit(ts)
     
    labels = km.labels_
+   
+   __Plot_clusters(labels,title=title,xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
     
    return labels
 

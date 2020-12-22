@@ -41,7 +41,7 @@ from interpolate_missing import interpolate_missing
 #from calculate_DTW import DTW_distance
 from timeseries_clustering import Cluster_timeseries
 from arma import arma, autocorr
-from plot_clusters import Plot_clusters,Plot_clustered_timeseries
+#from plot_clusters import Plot_clusters,Plot_clustered_timeseries
 from Rolling_statistics import Rolling_statistics
 from summary_statistics import Summary_statistics
 
@@ -94,9 +94,9 @@ def process_battery(df,FIGPATH):
     FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
-    clusters = Cluster_timeseries(data,n=2)
-    
-    Plot_clusters(clusters,title="Clustered timeseries",xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
+    clusters = Cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=2)
+     
+   
     
     #%%
     return df, timeseries, data

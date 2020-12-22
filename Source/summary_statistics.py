@@ -9,6 +9,7 @@ import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def __Plot_summary(df):
     print(df['battery_level'].describe())
     

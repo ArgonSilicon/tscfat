@@ -6,7 +6,6 @@ Created on Thu Oct  8 13:02:27 2020
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pytest
 
 # permutation entropy
@@ -40,7 +39,7 @@ def fluctuation_intensity(y,scale,window):
     diff_arr= []
     
     for i in range(window-1):
-        print("i: ",i)
+        #print("i: ",i)
         
         if np.sign(y[i]) == np.sign(y[i+1]): # continues growing / decreasing
             #print("continue")
