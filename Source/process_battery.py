@@ -61,7 +61,7 @@ def process_battery(df,FIGPATH):
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
     #%%
-    Summary_statistics(resampled_interpolated)
+    Summary_statistics(resampled_interpolated.battery_level)
     
     #%% Plot timeseries decompostition and distribution for each component
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
