@@ -6,15 +6,71 @@ Created on Fri Dec 18 13:45:10 2020
 """
 
 import matplotlib.pyplot as plt
-from arma import autocorr
+import pandas as pd
+import numpy as np
+#from arma_model import autocorr
 from degree_of_fluctuation import fluctuation_intensity
 from scipy.stats import entropy
 import nolds
+from setup import setup_np, setup_pd
+import pytest
+
+def __autocorr(series, t=1):
+    """ Calculate autocorrelation for given timeseries
+    
+
+    Parameters
+    ----------
+    series : pandas series or numpy array
+        Timeseries for autocorrelation 
+    t : int (default=1)
+        Autocorrelation lag
+
+    Returns
+    -------
+    cc: float
+        autocorrelation coefficient (lag = 1)
+
+    """
+    
+    # TODO: insert assertions
+    
+    timeseries = series.values.reshape(-1)
+    cc = np.corrcoef(np.array([timeseries[:-t], timeseries[t:]]))
+    return cc[0][1]
 
 def Rolling_statistics(ts,w,savename = False, savepath = False):
+    """
+    Calculate and plot several rolling statistics.
+
+    Parameters
+    ----------
+    ts : pandas dataframe
+        A dataframe containing time as index and one column of data
+    w : int
+        Rolling statistics window size
+    savename : str (default = False)
+        Name used as plot save name. Has to be a type of str
+    savepath : Path -object (default = False)
+        path where plot is to be saved. Path has to exist before calling this 
+        function.
+        
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    assert isinstance(ts,pd.DataFrame), "Timeseries is not a pandas dataframe"
+    assert isinstance(w,int), "Window size is not an integer"
     
     variance = ts.rolling(window = w).var()
-    autocorrelation = ts.rolling(window = w).apply(autocorr)
+    autocorrelation = ts.rolling(window = w).apply(__autocorr)
     mean = ts.rolling(window = w).mean() 
     skew = ts.rolling(window = w).skew()
     kurt = ts.rolling(window = w).kurt()
@@ -82,4 +138,11 @@ def Rolling_statistics(ts,w,savename = False, savepath = False):
     else:
         raise Exception("Arguments were not given correctly.")
     
-    
+def test_rolling_statistics():
+    test_argument = setup_np()
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(ValueError) as exc_info:
+        Rolling_statistics(test_argument,w=7)
+    expected_error_msg = "Timeseries is not a pandas dataframe"
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)    
