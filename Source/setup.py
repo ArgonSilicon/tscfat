@@ -13,7 +13,8 @@ from pathlib import Path
 
 def setup_np():
     
-    open_name =  Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data\Battery_test_data_1.csv')
+    #open_name =  Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data\Battery_test_data_1.csv')
+    open_name = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Data/Battery_test_data_1.csv')
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file)
         df['time'] = pd.to_datetime(df['time'],unit = 's')
@@ -26,7 +27,8 @@ def setup_ps():
     
 def setup_pd():
     
-    open_name =  Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data\Battery_test_data_1.csv')
+    #open_name =  Path(r'C:\Users\arsii\Documents\CS-special-assignment\Data\Battery_test_data_1.csv')
+    open_name = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Data/Battery_test_data_1.csv')
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file)
         df['time'] = pd.to_datetime(df['time'],unit = 's')
