@@ -198,7 +198,7 @@ def test_STL():
     
     test_argument = setup_pd()
     # Store information about raised ValueError in exc_info
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(AssertionError) as exc_info:
         STL_decomposition(test_argument,'Test title', test=True)
     expected_error_msg = "Series is not a numpy array."
     # Check if the raised ValueError contains the correct message
