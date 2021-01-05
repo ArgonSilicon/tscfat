@@ -138,11 +138,20 @@ def Rolling_statistics(ts,w,savename = False, savepath = False):
     else:
         raise Exception("Arguments were not given correctly.")
     
-def test_rolling_statistics():
+def test_rolling_statistics_ts():
     test_argument = setup_np()
     # Store information about raised ValueError in exc_info
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(AssertionError) as exc_info:
         Rolling_statistics(test_argument,w=7)
     expected_error_msg = "Timeseries is not a pandas dataframe"
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+
+def test_rolling_statistics_w():
+    test_argument = setup_pd()
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        Rolling_statistics(test_argument,w=str(7))
+    expected_error_msg = "Window size is not an integer"
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)    
