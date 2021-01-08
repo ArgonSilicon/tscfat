@@ -15,8 +15,9 @@ from scipy.special import expit, logit
 from datetime import datetime 
 from setup import setup_np, setup_pd
 import pytest
+from print_decorator import print_decorator
 
-
+@print_decorator
 def plot_decomposition(Result,
                       title,
                       savepath = False,
@@ -100,7 +101,7 @@ def plot_decomposition(Result,
     plt.xlabel(xlabel,fontsize=14)
     
     fig1.tight_layout(pad=2)
-    
+    '''
     if not all((savename,savepath)):
         plt.show()
       
@@ -115,7 +116,7 @@ def plot_decomposition(Result,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
-        
+      '''  
     
 
 

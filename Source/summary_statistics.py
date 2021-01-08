@@ -12,8 +12,6 @@ import numpy as np
 
 
 def __Plot_summary(series):
-    desc = series.describe().round().to_frame()
-    
     
     fig,ax = plt.subplots(3,2,figsize=(8,8))
     fig.suptitle('Time series summary',fontsize=20,y=1.05)
@@ -23,32 +21,11 @@ def __Plot_summary(series):
     ax[0,0].set_xticklabels(ax[0,0].get_xticks(),Rotation= 45) 
     
     ax[0,1].hist(series,20)
-    ax[0,1].set_title("Battery level histogram")
+    ax[0,1].set_title("Histogram")
 
-    '''
-    fig = plt.figure()
-    series.plot.box(grid=True,title="Battery level bar plot")
-    
-
-    the_table = plt.table(cellText=desc.values,colWidths = [0.25]*len(desc.columns),
-          rowLabels=desc.index,
-          colLabels=desc.columns,
-          cellLoc = 'center', rowLoc = 'center',
-          loc='center')
-
-    plt.title("Time series summary")
-    the_table.scale(2, 2)
-    # Hide axes
-    ax = plt.gca()
-    ax.get_xaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)# Hide axes border
-    plt.box(on=None)
-    plt.draw()
-    plt.show()
-    '''
     
     pd.plotting.lag_plot(series,lag=1,ax=ax[1,0])
-    ax[1,0].set_title('Lag plot')
+    ax[1,0].set_title('Lag plot / lag 1')
     
     
     pd.plotting.autocorrelation_plot(series,ax=ax[1,1])

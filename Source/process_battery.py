@@ -13,35 +13,17 @@ Created on Fri Jul  3 15:08:26 2020
 """
 
 # standard library imports
-import os
 from pathlib import Path
-#import json
 
 # third party imports
 import numpy as np
-import matplotlib.pyplot as plt
-#import pandas as pd
-#from scipy import signal
 
 # Local application import
-
-
-
-#from vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
-#from calculate_RQA import Calculate_RQA
-#from plot_recurrence import Show_recurrence_plot
-#from save_results import dump_to_json
-from plot_timeseries import show_timeseries_scatter, show_timeseries_line, show_features, plot_differences, grouped_histograms
-#from save2mat import save2mat
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty_SSM
 from decompose_timeseries import STL_decomposition#, detect_steps
 from Plot_similarity import Plot_similarity
-from interpolate_missing import interpolate_missing
-#from calculate_DTW import DTW_distance
 from timeseries_clustering import Cluster_timeseries
-from arma import arma, autocorr
-#from plot_clusters import Plot_clusters,Plot_clustered_timeseries
 from Rolling_statistics import Rolling_statistics
 from summary_statistics import Summary_statistics
 
