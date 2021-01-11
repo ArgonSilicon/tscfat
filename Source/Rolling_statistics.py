@@ -3,6 +3,9 @@
 Created on Fri Dec 18 13:45:10 2020
 
 @author: arsii
+
+Calculate rolling windows statistic for the given time series and plot them.
+
 """
 
 import matplotlib.pyplot as plt
@@ -14,6 +17,7 @@ from scipy.stats import entropy
 import nolds
 from setup import setup_np, setup_pd
 import pytest
+from plot_decorator import plot_decorator
 
 def __autocorr(series, t=1):
     """ Calculate autocorrelation for given timeseries
@@ -25,7 +29,13 @@ def __autocorr(series, t=1):
         Timeseries for autocorrelation 
     t : int (default=1)
         Autocorrelation lag
-
+        
+    Raises
+    ------
+    Exception
+        - given time series is not a pandas series
+        - given windows size is not an integer
+        
     Returns
     -------
     cc: float
@@ -33,13 +43,19 @@ def __autocorr(series, t=1):
 
     """
     
-    # TODO: insert assertions
+    assert isinstance(series, pd.Series), 'Given time series is not an pandas series'
+    assert isinstance(t,int), 'Given lag is not an integer'
     
     timeseries = series.values.reshape(-1)
     cc = np.corrcoef(np.array([timeseries[:-t], timeseries[t:]]))
     return cc[0][1]
 
-def Rolling_statistics(ts,w,savename = False, savepath = False):
+@plot_decorator
+def Rolling_statistics(ts,
+                       w,
+                       savename = False,
+                       savepath = False,
+                       test = False):
     """
     Calculate and plot several rolling statistics.
 
@@ -54,20 +70,25 @@ def Rolling_statistics(ts,w,savename = False, savepath = False):
     savepath : Path -object (default = False)
         path where plot is to be saved. Path has to exist before calling this 
         function.
+    test : Boolean, optional
+        Flag for test function. The default is False.
         
     Raises
     ------
     Exception
-        DESCRIPTION.
+        - given time series is not a pandas dataframe
+        - given windows size is not an integer
+        - given window length is larger than the time series length
 
     Returns
     -------
-    None.
+        None or matplotlib.pyplot figure is test if True.
 
     """
     
-    assert isinstance(ts,pd.DataFrame), "Timeseries is not a pandas dataframe"
-    assert isinstance(w,int), "Window size is not an integer"
+    assert isinstance(ts,pd.DataFrame), "Timeseries is not a pandas dataframe."
+    assert isinstance(w,int), "Window size is not an integer."
+    assert (w <= ts.shape[0]), "Window length is larger than the time series length."
     
     variance = ts.rolling(window = w).var()
     autocorrelation = ts.rolling(window = w).apply(__autocorr)
@@ -122,36 +143,74 @@ def Rolling_statistics(ts,w,savename = False, savepath = False):
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     
-    
-    if not savename and not savepath:
-        plt.show()
-        
-    elif savename and savepath:
-        
-        assert isinstance(savename,str), "Invalid savename type."
-        
-        if savepath.exists():
-            with open(savepath / (savename + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    if test == True:
+        print(type(fig))
+        return fig
     else:
-        raise Exception("Arguments were not given correctly.")
+        return None
+    
+def test_rolling_statistics():
+    """
+    Test with proper arguments.
+
+    Returns
+    -------
+    None.
+
+    """
+    test_argument = setup_pd()
+    test_argument = test_argument['battery_level'].to_frame()
+    res = Rolling_statistics(test_argument, w = 7*24, savename = False, savepath = False, test = True)
+    print(type(res))
+    #assert res is not None, 'Function returned a None object.' 
     
 def test_rolling_statistics_ts():
+    """
+    Given a numpy array, Rolling_statistics raises an error.
+
+    Returns
+    -------
+    None.
+
+    """
     test_argument = setup_np()
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
         Rolling_statistics(test_argument,w=7)
-    expected_error_msg = "Timeseries is not a pandas dataframe"
+    expected_error_msg = "Timeseries is not a pandas dataframe."
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)
 
 def test_rolling_statistics_w():
+    """
+    Given window size as a string, Rolling_statistics raises an error.
+
+    Returns
+    -------
+    None.
+
+    """
     test_argument = setup_pd()
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
         Rolling_statistics(test_argument,w=str(7))
-    expected_error_msg = "Window size is not an integer"
+    expected_error_msg = "Window size is not an integer."
     # Check if the raised ValueError contains the correct message
-    assert exc_info.match(expected_error_msg)    
+    assert exc_info.match(expected_error_msg)  
+    
+def test_rolling_statistics_long_window():
+    """
+    Given too large window size, Rolling_statistics raises an error.
+
+    Returns
+    -------
+    None.
+
+    """
+    test_argument = setup_pd()
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        Rolling_statistics(test_argument,w=10000000)
+    expected_error_msg = "Window length is larger than the time series length."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)

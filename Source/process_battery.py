@@ -37,13 +37,13 @@ def process_battery(df,FIGPATH):
     missing_values = resampled.isna()
     resampled_interpolated = resampled.interpolate('linear') 
     timeseries = resampled_interpolated.values
-
+    
     
     # daily / hours for similarity calulation
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
     #%%
-    Summary_statistics(resampled_interpolated.battery_level)
+    _ = Summary_statistics(resampled_interpolated.battery_level,"Time series summary",False,False)
     
     #%% Plot timeseries decompostition and distribution for each component
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
@@ -57,7 +57,7 @@ def process_battery(df,FIGPATH):
     FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/RollingStatistics')
     FIGNAME = "Battery_level_Rolling_Statistics"
     
-    Rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
+    _ = Rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
     
     
     #%% calculate similarity and novelty

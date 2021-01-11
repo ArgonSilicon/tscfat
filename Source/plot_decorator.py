@@ -4,16 +4,22 @@
 Created on Fri Jan  8 15:49:55 2021
 
 @author: ikaheia1
+
+Function wrapper for plotting the figure or saving it to the destined folder.
 """
 import matplotlib.pyplot as plt
 #import functools
 
-def print_decorator(func):
+def plot_decorator(func):
     #@functools.wraps(func)
     def wrapper(*args,**kwargs):
         func(*args,**kwargs)
-        sn = kwargs['savename']
-        sp = kwargs['savepath']
+        sn = ()
+        sp = ()
+        if 'savename' in kwargs:
+            sn = kwargs.get('savename')
+        if 'savepath' in kwargs:
+            sp = kwargs.get('savepath')
         
         if not all((sn,sp)):
             plt.show()

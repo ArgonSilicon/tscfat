@@ -4,21 +4,19 @@
 Created on Wed Jul  1 14:40:46 2020
 
 @author: arsi
+
+Calculate STL decomposition for given time series and plot the components.
+
 """
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from statsmodels.tsa.seasonal import seasonal_decompose,STL
-from scipy import signal
-from scipy.signal import find_peaks
-from scipy.special import expit, logit
-from datetime import datetime 
+from statsmodels.tsa.seasonal import STL
 from setup import setup_np, setup_pd
 import pytest
-from print_decorator import print_decorator
+from plot_decorator import plot_decorator
 
-@print_decorator
-def plot_decomposition(Result,
+@plot_decorator
+def __plot_decomposition(Result,
                       title,
                       savepath = False,
                       savename = False,
@@ -27,31 +25,31 @@ def plot_decomposition(Result,
                       dates = False,
                       ):
     """
-    
+    Plot the decomposed time series.
 
     Parameters
     ----------
-    Result : TYPE
-        DESCRIPTION.
-    title : TYPE
-        DESCRIPTION.
-    savepath : TYPE, optional
-        DESCRIPTION. The default is False.
-    savename : TYPE, optional
-        DESCRIPTION. The default is False.
-    ylabel : TYPE, optional
-        DESCRIPTION. The default is "Battery Level (%)".
-    xlabel : TYPE, optional
-        DESCRIPTION. The default is "Date".
-    dates : TYPE, optional
-        DESCRIPTION. The default is False.
-     : TYPE
-        DESCRIPTION.
+    Result : statsmodels.tsa.seasonal.DecomposeResult object
+        Object containing the decomposition results    
+    title : str
+        Figure title.
+    savepath : Path object, optional
+        Figure save path The default is False.
+    savename : str, optional
+        Figure save name. The default is False.
+    ylabel : str, optional
+        Figure ylabel. The default is "Battery Level (%)".
+    xlabel : str, optional
+        Figure xlabel. The default is "Date".
+    dates : array, optional
+        List of daytes to be highlighted in the figure. The default is False.
+        
 
     Raises
     ------
     Exception
-        DESCRIPTION.
+        - savepath does not exist
+        - savename or path was not given in correct format
 
     Returns
     -------
@@ -101,24 +99,7 @@ def plot_decomposition(Result,
     plt.xlabel(xlabel,fontsize=14)
     
     fig1.tight_layout(pad=2)
-    '''
-    if not all((savename,savepath)):
-        plt.show()
-      
-    elif all((savename,savepath)):
-        
-        assert isinstance(savename,str), "Invalid savename type."
-        
-        if savepath.exists():
-            with open(savepath / (savename + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
-      '''  
     
-
 
 def STL_decomposition(series,
                       title,
@@ -153,8 +134,8 @@ def STL_decomposition(series,
     Raises
     ------
     Exception
-        - savepath does not exist
-        - savename or path was not given in correct format
+        - given series is not a numpy array.
+        
 
     Returns
     -------
@@ -178,7 +159,7 @@ def STL_decomposition(series,
                  low_pass_jump=1).fit()
 
     if test == False:
-        plot_decomposition(Result,
+        __plot_decomposition(Result,
                           title,
                           savepath = savepath,
                           savename = savename,
@@ -190,6 +171,15 @@ def STL_decomposition(series,
     return Result
     
 def test_STL():
+    """
+    Test STL_decomposition function. Test passes with proper arguments and 
+    raises an AssertionError if the input time series is not numpy array.
+
+    Returns
+    -------
+    None.
+
+    """
     res = STL_decomposition(setup_np(),'Test title', test=True) 
     assert res is not None
     assert res.observed.all() is not None
