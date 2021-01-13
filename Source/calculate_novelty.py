@@ -3,60 +3,167 @@
 """
 Created on Thu Jul  2 13:54:12 2020
 
-Calculate similarity novelty score using checkerboard Gaussian kernel 
-convolution. plot the results in one figure.
-Inspired by:
-Jonathan Foote: Automatic audio segmentation using a measure of audio novelty.
-roceedings of the IEEE International Conference on Multimedia and Expo (ICME), 
-New York, NY, USA, 2000, pp. 452-455. 
+ 
 """
 
 import numpy as np
+import pytest
 
-def compute_novelty_SSM(simmat, L=10, var=1.0, exclude=False):
-    """Compute novelty function from SSM [FMP, Section 4.4.1]
-
-    Notebook: C4/C4S4_NoveltySegmentation.ipynb
-
-    Args:
-        S: SSM
-        kernel: Checkerboard kernel (if kernel==None, it will be computed)
-        L: Parameter specifying the kernel size M=2*L+1
-        var: Variance parameter determing the tapering (epsilon)
-        exclude: Sets the first L and last L values of novelty function to zero
-
-    Returns:
-        nov: Novelty function
-    """    
-    grid = np.linspace(-1,1,2*L+1)    
-    v = np.meshgrid(grid,grid)
-    d = np.sqrt(v*v + v*v)
-    sigma = 1.0
-    mu = 0.0
-    gaussian_2D = np.exp(-((d - mu)**2 / (2.0 * sigma**2)))
+def _create_kernel(edge, sigma=1.0, mu=0.0):
+    """
+    Create a (2*edge+1) x (2*edge+1) gaussian kernel.
     
-    kernel_grid = np.sign(np.linspace(-L,L,2*L+1))
-    signs = np.outer(kernel_grid,kernel_grid)
-    kernel = signs * gaussian_2D
-    kernel = kernel / np.sum(np.abs(kernel))
-        
+
+    Parameters
+    ----------
+    edge : int, optional
+        Gaussian kernel window length / 2. 
+    sigma : float, optional
+        Variance for the gaussian kernel construction. The default is 1.0.
+    mu : float, optional
+        Mean for the gaussian kernel construction. The default is 0.0.
+
+    Returns
+    -------
+    kernel : numpy ndarray
+        2D gaussian convolution kernel.
+
+    """   
+    assert isinstance(edge,int), "Edge is not an integer."
+    assert edge > 0, "Edge should be positive, non zero integer."
+    
+    grid = np.linspace(-1, 1, 2*edge + 1)    
+    x,y = np.meshgrid(grid,grid)
+    d = np.sqrt(x**2 + y**2)
+    gaussian_mat = np.exp(-((d - mu)**2 / (2.0 * sigma**2)))
+    
+    kernel_grid = np.sign(np.linspace(-edge, edge, 2*edge +1))
+    signs = np.outer(kernel_grid, kernel_grid)
+    signed_gaussian = signs * gaussian_mat
+    kernel = signed_gaussian / np.sum(np.abs(signed_gaussian))
+    
+    return kernel
+
+def compute_novelty(simmat, edge = 7, sigma=1.0, mu = 0.0):
+    """
+    Compute novelty score using the self similarity matrix and gaussian 
+    checkerboard convolution kernel, calculating the convolution along the 
+    self similarity matrix diagonal.
+
+    Parameters
+    ----------
+    simmat : numpy ndarray 
+        N x N self similarity matrix. 
+    edge : float, optional
+        Gaussian kernel window length / 2. The default is 7.
+    sigma : float, optional
+        Variance for the gaussian kernel construction. The default is 1.0.
+    mu : float, optional
+        Mean for the gaussian kernel construction. The default is 0.0.
+
+    Returns
+    -------
+    nov : numpy ndarray
+        1D novelty score vector.
+    kernel : numpy ndarray
+        2D gaussian convolution kernel.
+
+    """
+    
+    assert isinstance(simmat,np.ndarray), "Self similarity matrix is not a numpy array."
+    assert np.ndim(simmat) == 2, "Self similarity matrix is not 2-dimensional."
+    assert simmat.shape[0] == simmat.shape[1], "Self similarity matrix is not square."
+    assert 2*edge + 1 <= simmat.shape[0], "Kernel size is larger than the self similarity matrix."
+    
+    kernel = _create_kernel(edge, sigma, mu)
     
     N = simmat.shape[0]
-    M = 2*L + 1
-    nov = np.zeros(N)
+    M = 2*edge + 1
     
-    S_padded  = np.pad(simmat,L,mode='constant')
+    novelty = np.zeros(N)
     
-    for n in range(N):
-        nov[n] = np.sum(S_padded[n:n+M, n:n+M]  * kernel)
-    
-    if exclude:
-        right = np.min([L,N])
-        left = np.max([0,N-L])
-        nov[0:right] = 0
-        nov[left:N] = 0
-        
-    return nov, kernel
+    simmat_padded  = np.pad(simmat,edge,mode='constant')
 
-if __name__ == "__main__":
-    pass    
+    for i in range(N):
+        novelty[i] = np.sum(simmat_padded[i:i+M, i:i+M] * kernel)
+ 
+    return novelty, kernel
+
+def test_compute_novelty():
+    """
+    Test compute novelty function:
+        - Proper arguments return non-empty novelty score array and kernel.
+        - Self similarity matrix given as array raises an error
+        - 1D self similarity matrix raises an error
+        - Non-square self similarity matrix raises an error
+        - Kernel size larger than the self similarity matrix raises an error
+
+    Returns
+    -------
+    None.
+
+    """
+    import numpy as np
+    test_argument = np.random.rand(5,5)
+    np.fill_diagonal(test_argument,1)
+    nov,ker = compute_novelty(test_argument,edge=1)
+    assert nov is not None
+    assert ker is not None
+    
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        compute_novelty([[1,0,0],[0,1,0],[0,0,1]])
+    expected_error_msg = "Self similarity matrix is not a numpy array."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    with pytest.raises(AssertionError) as exc_info:
+        compute_novelty(np.array([1,0,0]))
+    expected_error_msg = "Self similarity matrix is not 2-dimensional."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    with pytest.raises(AssertionError) as exc_info:
+        compute_novelty(np.random.rand(3,2))
+    expected_error_msg = "Self similarity matrix is not square."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    with pytest.raises(AssertionError) as exc_info:
+        compute_novelty(np.random.rand(3,3),edge=10)
+    expected_error_msg = "Kernel size is larger than the self similarity matrix."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+      
+
+def test_create_kernel():
+    """
+    Test create kernel function:
+        - Proper arguments yield an N x N numpy array
+        - Edge given as float raises an error
+        - Negative edge lenght raises an error
+
+    Returns
+    -------
+    None.
+
+    """
+    res = _create_kernel(7)
+    assert isinstance(res,np.ndarray), "Kernel is not a numpy array."
+    assert (np.ndim(res) == 2), "Kernel is not a 2D array."
+    assert res.shape[0]  == res.shape[1], "Kernel is not a square matrix." 
+    
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        _create_kernel(float(1))
+    expected_error_msg = "Edge is not an integer."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    with pytest.raises(AssertionError) as exc_info:
+        _create_kernel(-1)
+    expected_error_msg = "Edge should be positive, non zero integer."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    

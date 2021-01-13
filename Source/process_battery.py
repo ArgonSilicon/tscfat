@@ -20,7 +20,7 @@ import numpy as np
 
 # Local application import
 from calculate_similarity import calculate_similarity
-from calculate_novelty import compute_novelty_SSM
+from calculate_novelty import compute_novelty
 from decompose_timeseries import STL_decomposition#, detect_steps
 from Plot_similarity import Plot_similarity
 from timeseries_clustering import Cluster_timeseries
@@ -67,7 +67,7 @@ def process_battery(df,FIGPATH):
     AXIS = resampled_day[1:-1].index.strftime('%m-%d')
     
     sim = calculate_similarity(data,'cosine')
-    nov, kernel = compute_novelty_SSM(sim,L=7)
+    nov, kernel = compute_novelty(sim,edge=7)
     Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
 
     #%%
