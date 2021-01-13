@@ -8,31 +8,26 @@ Created on Thu Dec 17 12:29:57 2020
 from tslearn.clustering import TimeSeriesKMeans
 import matplotlib.pyplot as plt
 import numpy as np
+from plot_decorator import plot_decorator
 import pytest
 
-def __Plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False):
+@plot_decorator
+def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False):
     """
-    
+    Plot a scatterplot showing the clusters.
 
     Parameters
     ----------
-    clusters : TYPE
-        DESCRIPTION.
-    title : TYPE
-        DESCRIPTION.
-    xlab : TYPE, optional
-        DESCRIPTION. The default is "Timepoint".
-    ylab : TYPE, optional
-        DESCRIPTION. The default is "Cluster".
-    savename : TYPE, optional
-        DESCRIPTION. The default is False.
-    savepath : TYPE, optional
-        DESCRIPTION. The default is False.
-
-    Raises
-    ------
-    Exception
-        DESCRIPTION.
+    clusters : numpy array
+        An array showing the corresponding clusters for the time series.
+    title : str
+        The plot title
+    xlab : str, optional
+        Plot x-label . The default is "Timepoint".
+    ylab : str, optional
+        Plot y-label The default is "Cluster".
+    savename : Path object, optional
+        Figure save name. The default is False.
 
     Returns
     -------
@@ -41,27 +36,13 @@ def __Plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fa
     """
     assert isinstance(clusters, np.ndarray), "Given Time series is not a numpy array."
     
-    fig = plt.figure(figsize=(10,10))
+    plt.figure(figsize=(10,10))
     
     plt.plot(clusters,'o:')
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
     
-    if not savename and not savepath:
-        plt.show()
-        
-    elif savename and savepath:
-        
-        assert isinstance(savename,str), "Invalid savename type."
-        
-        if savepath.exists():
-            with open(savepath / (savename + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
 
 def Cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0):
    """
@@ -97,21 +78,16 @@ def Cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
     
    labels = km.labels_
    
-   __Plot_clusters(labels,title=title,xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
-    
+   _plot_clusters(labels,title=title,xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
+
    return labels
 
 
 def test_Cluster_timeseries():
-    from tslearn.clustering import TimeSeriesKMeans
-    from tslearn.generators import random_walks
-    
-    X = random_walks(n_ts=50, sz=32, d=1)
-    
-    km_dba = TimeSeriesKMeans(n_clusters=3, metric="dtw", max_iter=5,
-                              max_iter_barycenter=5,
-                              random_state=0).fit(X)
- 
-    assert km_dba is not None
+    import numpy as np
 
+    sample = np.array([[1,1,1,2,2,2],[2,2,2,3,3,3],[1,2,3,4,5,6],[4,5,6,7,8,9]],np.int32)
+    clusters = Cluster_timeseries(sample, False, False, title="Clustered timeseries", n=2, mi=5, mib=5, rs=0)
+    np.testing.assert_array_equal(clusters,np.array([0,0,1,1])), "Clusters are not correctly assigned."
+  
 

@@ -15,10 +15,13 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from datetime import datetime
 from setup import setup_np
+from plot_decorator import plot_decorator
+import pytest
+
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
-
+@plot_decorator
 def Plot_similarity(sim,
                     nov,
                     title="Similarity and novelty",
@@ -73,8 +76,8 @@ def Plot_similarity(sim,
 
     """
      
-    assert isinstance(sim,np.ndarray), "Recurrence matrix type is not np.ndarray."
-    assert isinstance(nov,np.ndarray), "Recurrence matrix type is not np.ndarray."
+    assert isinstance(sim,np.ndarray), "Similarity matrix type is not np.ndarray."
+    assert isinstance(nov,np.ndarray), "Novelty score array type is not np.ndarray."
 
     sim[sim < threshold] = 0
     # plot it
@@ -97,6 +100,7 @@ def Plot_similarity(sim,
         #ax[1,3].text(-0.1, 1.05, "B", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     #ax1 = plt.subplot(gs[1])
+ 
     ax3.plot(axis,nov,label="Novelty")
     ax3.set_title("Novelty score", fontsize=22)
     ax3.set_xlabel('Time (date)',fontsize=16)
@@ -108,7 +112,9 @@ def Plot_similarity(sim,
     ax3.legend(fontsize=16)
     ax3.set_ylim(ylim)
     #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
-    
+
+        
+    #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     ax[0,3].set_axis_off()
     ax[2,3].set_axis_off()
     
@@ -117,21 +123,15 @@ def Plot_similarity(sim,
     plt.tight_layout(pad=0)
     
     
-    if not savename and not savepath:
-        plt.show()
-        
-    elif savename and savepath:
-        
-        assert isinstance(savename,str), "Invalid savename type."
-        
-        if savepath.exists():
-            with open(savepath / (savename + ".png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png",bbox_inches = 'tight')
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
-        
+     
 def test_Plot_similarity():
-    res = Plot_similarity(setup_np(),'Test title', test=True)
-    assert res != None
+    from setup import setup_pd, setup_np
+    #test_fig = Summary_statistics(setup_ps(), savepath = False, savename = False, test = True)
+    #assert test_fig is not None
+    
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        Plot_similarity(setup_pd(),setup_np())
+    expected_error_msg = "Similarity matrix type is not np.ndarray."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)

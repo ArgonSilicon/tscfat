@@ -22,11 +22,11 @@ import pytest
 from plot_decorator import plot_decorator
 
 @plot_decorator
-def __Plot_summary(series,
+def _Plot_summary(series,
                    title,
                    savepath=False,
                    savename=False,
-                   test=False):
+                   ):
     """
     
     Parameters
@@ -51,7 +51,7 @@ def __Plot_summary(series,
     
     ax[0,0].plot(series)
     ax[0,0].set_title('Original timeseries')
-    ax[0,0].set_xticklabels(ax[0,0].get_xticks(),Rotation= 45) 
+    ax[0,0].set_xticklabels(ax[0,0].get_xticks(),rotation= 45) 
     
     ax[0,1].hist(series,20)
     ax[0,1].set_title("Histogram")
@@ -70,11 +70,6 @@ def __Plot_summary(series,
     sm.graphics.tsa.plot_acf(series,lags=24,ax=ax[2,1])
     
     fig.tight_layout(pad=1.0)
-    
-    if test:
-        return fig
-    else:
-        return None
 
 
 def Summary_statistics(series,
@@ -106,21 +101,19 @@ def Summary_statistics(series,
     
     assert isinstance(series, pd.Series), "Series is not a pandas Series."
     
-    sf = __Plot_summary(series,title,savepath,savename)
-    return sf
-
+    _Plot_summary(series,title,savepath,savename)
+    
+    
 def test_Summary_statistics():
     """
-    Test Summary_statistics function. Test that returned fig is not None, and 
-    Pandas data frame as an argument raises an error.
+    Test Summary_statistics function. Test that Pandas data frame as an
+    Sargument raises an error.
 
     Returns
     -------
     None.
 
     """
-    test_fig = Summary_statistics(setup_ps(), savepath = False, savename = False, test = True)
-    assert test_fig is not None
     
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:

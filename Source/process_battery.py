@@ -77,7 +77,7 @@ def process_battery(df,FIGPATH):
     FIGNAME = "Clustered_timeseries"
     
     clusters = Cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=2)
-     
+
    
     
     #%%
