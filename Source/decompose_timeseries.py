@@ -16,7 +16,7 @@ import pytest
 from plot_decorator import plot_decorator
 
 @plot_decorator
-def __plot_decomposition(Result,
+def _plot_decomposition(Result,
                       title,
                       savepath = False,
                       savename = False,
@@ -159,7 +159,7 @@ def STL_decomposition(series,
                  low_pass_jump=1).fit()
 
     if test == False:
-        __plot_decomposition(Result,
+        _plot_decomposition(Result,
                           title,
                           savepath = savepath,
                           savename = savename,

@@ -22,7 +22,7 @@ import pytest
 from plot_decorator import plot_decorator
 
 @plot_decorator
-def _Plot_summary(series,
+def _plot_summary(series,
                    title,
                    savepath=False,
                    savename=False,
@@ -72,7 +72,7 @@ def _Plot_summary(series,
     fig.tight_layout(pad=1.0)
 
 
-def Summary_statistics(series,
+def summary_statistics(series,
                        title = "Time series summary",
                        savepath = False,
                        savename = False,
@@ -101,7 +101,7 @@ def Summary_statistics(series,
     
     assert isinstance(series, pd.Series), "Series is not a pandas Series."
     
-    _Plot_summary(series,title,savepath,savename)
+    _plot_summary(series,title,savepath,savename)
     
     
 def test_Summary_statistics():
@@ -117,7 +117,7 @@ def test_Summary_statistics():
     
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
-        Summary_statistics(setup_pd(),'Test title', savepath = False, savename = False, test = True)
+        summary_statistics(setup_pd(),'Test title', savepath = False, savename = False, test = True)
     expected_error_msg = "Series is not a pandas Series."
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)

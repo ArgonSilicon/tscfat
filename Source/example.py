@@ -23,7 +23,7 @@ os.chdir(WORK_DIR)
 # third party imports
 
 # Local application imports
-from csv_load import load_all_subjects
+from load_csv import load_all_subjects
 from process_battery import process_battery
 
 

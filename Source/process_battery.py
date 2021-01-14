@@ -22,10 +22,10 @@ import numpy as np
 from calculate_similarity import calculate_similarity
 from calculate_novelty import compute_novelty
 from decompose_timeseries import STL_decomposition#, detect_steps
-from Plot_similarity import Plot_similarity
-from timeseries_clustering import Cluster_timeseries
-from Rolling_statistics import Rolling_statistics
-from summary_statistics import Summary_statistics
+from plot_similarity import plot_similarity
+from cluster_timeseries import cluster_timeseries
+from rolling_statistics import rolling_statistics
+from summary_statistics import summary_statistics
 
 def process_battery(df,FIGPATH):
     
@@ -43,7 +43,7 @@ def process_battery(df,FIGPATH):
     resampled_day = resampled_interpolated.resample('D').apply(list)
     data = np.stack(resampled_day.battery_level.values[1:-1])
     #%%
-    _ = Summary_statistics(resampled_interpolated.battery_level,"Time series summary",False,False)
+    _ = summary_statistics(resampled_interpolated.battery_level,"Time series summary",False,False)
     
     #%% Plot timeseries decompostition and distribution for each component
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
@@ -57,7 +57,7 @@ def process_battery(df,FIGPATH):
     FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/RollingStatistics')
     FIGNAME = "Battery_level_Rolling_Statistics"
     
-    _ = Rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
+    _ = rolling_statistics(resampled_interpolated,w,FIGNAME,FIGPATH)
     
     
     #%% calculate similarity and novelty
@@ -68,7 +68,7 @@ def process_battery(df,FIGPATH):
     
     sim = calculate_similarity(data,'cosine')
     nov, kernel = compute_novelty(sim,edge=7)
-    Plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
+    plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
 
     #%%
     # Timeseries clustering
@@ -76,7 +76,7 @@ def process_battery(df,FIGPATH):
     FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
-    clusters = Cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=2)
+    clusters = cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=2)
 
    
     
