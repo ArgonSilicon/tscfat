@@ -5,7 +5,8 @@ Created on Mon Jul  6 14:07:02 2020
 
 @author: arsi
 
-Plot and save similairity matrix
+Plot and save self similarity matrix, convolution kernel and novelty score.
+ 
 """
 
 
@@ -14,7 +15,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from datetime import datetime
-from setup import setup_np
 from plot_decorator import plot_decorator
 import pytest
 
@@ -29,8 +29,9 @@ def Plot_similarity(sim,
                     savename = False,
                     ylim = (0,0.05),
                     threshold = 0,
-                    axis = False,
+                    axis = None,
                     kernel = False,
+                    test = False
                     ):
     """
     Plot the similarity matrix. Optionally save the figure, plot the kernel, 
@@ -101,19 +102,32 @@ def Plot_similarity(sim,
     
     #ax1 = plt.subplot(gs[1])
  
-    ax3.plot(axis,nov,label="Novelty")
-    ax3.set_title("Novelty score", fontsize=22)
-    ax3.set_xlabel('Time (date)',fontsize=16)
-    ax3.set_ylabel('Novelty',fontsize=16)
-    ax3.set_xticks(np.arange(len(axis))[::7])
-    ax3.set_xticklabels(axis[::7])
-    #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-    ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
-    ax3.legend(fontsize=16)
-    ax3.set_ylim(ylim)
-    #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
+    if axis is not None:
+        ax3.plot(axis,nov,label="Novelty")
+        ax3.set_title("Novelty score", fontsize=22)
+        ax3.set_xlabel('Time (date)',fontsize=16)
+        ax3.set_ylabel('Novelty',fontsize=16)
+        ax3.set_xticks(np.arange(len(axis))[::7])
+        ax3.set_xticklabels(axis[::7])
+        #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+        #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
+        ax3.legend(fontsize=16)
+        ax3.set_ylim(ylim)
+        #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
 
+    else:
+        ax3.plot(nov,label="Novelty")
+        ax3.set_title("Novelty score", fontsize=22)
+        ax3.set_xlabel('Time (date)',fontsize=16)
+        ax3.set_ylabel('Novelty2',fontsize=16)
+        #ax3.set_xticks(np.arange(len(axis))[::7])
+        #ax3.set_xticklabels(axis[::7])
+        #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+        #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
+        ax3.legend(fontsize=16)
+        ax3.set_ylim(ylim)
         
+    
     #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     ax[0,3].set_axis_off()
     ax[2,3].set_axis_off()
@@ -122,16 +136,35 @@ def Plot_similarity(sim,
     plt.grid(True)
     plt.tight_layout(pad=0)
     
-    
+    assert fig is not None, "ohno!"
+    if test == True:
+        return fig
      
 def test_Plot_similarity():
     from setup import setup_pd, setup_np
-    #test_fig = Summary_statistics(setup_ps(), savepath = False, savename = False, test = True)
-    #assert test_fig is not None
+    '''
+    import numpy as np
+    simmat = np.eye(5)
+    novelty = np.ones(5).reshape(1,-1)
+    ker = np.array([[1,1,0,-1,-1],
+                    [1,1,0,-1,-1],
+                    [0,0,0,0,0],
+                    [-1,-1,0,1,1],
+                    [-1,-1,0,1,1]])
+    ret = Plot_similarity(simmat,novelty, savepath = False, savename = False, kernel = ker, axis = None, test = True)
+    assert ret is not None
+    '''
     
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
         Plot_similarity(setup_pd(),setup_np())
     expected_error_msg = "Similarity matrix type is not np.ndarray."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        Plot_similarity(setup_np(),setup_pd())
+    expected_error_msg = "Novelty score array type is not np.ndarray."
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)
