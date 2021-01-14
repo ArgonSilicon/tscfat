@@ -9,7 +9,7 @@ Created on Thu Dec 17 12:29:57 2020
 from tslearn.clustering import TimeSeriesKMeans
 import matplotlib.pyplot as plt
 import numpy as np
-from plot_decorator import plot_decorator
+from Utils.plot_decorator import plot_decorator
 import pytest
 
 @plot_decorator

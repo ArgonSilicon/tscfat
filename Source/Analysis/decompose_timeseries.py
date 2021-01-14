@@ -11,9 +11,9 @@ Calculate STL decomposition for given time series and plot the components.
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import STL
-from setup import setup_np, setup_pd
+from Utils.setup import setup_np, setup_pd
 import pytest
-from plot_decorator import plot_decorator
+from Utils.plot_decorator import plot_decorator
 
 @plot_decorator
 def _plot_decomposition(Result,

@@ -15,14 +15,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from datetime import datetime
-from plot_decorator import plot_decorator
+from Utils.plot_decorator import plot_decorator
 import pytest
 
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
 @plot_decorator
-def Plot_similarity(sim,
+def plot_similarity(sim,
                     nov,
                     title="Similarity and novelty",
                     savepath = False, 
@@ -157,14 +157,14 @@ def test_Plot_similarity():
     
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
-        Plot_similarity(setup_pd(),setup_np())
+        plot_similarity(setup_pd(),setup_np())
     expected_error_msg = "Similarity matrix type is not np.ndarray."
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)
     
     # Store information about raised ValueError in exc_info
     with pytest.raises(AssertionError) as exc_info:
-        Plot_similarity(setup_np(),setup_pd())
+        plot_similarity(setup_np(),setup_pd())
     expected_error_msg = "Novelty score array type is not np.ndarray."
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)

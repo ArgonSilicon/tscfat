@@ -13,12 +13,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 #from arma_model import autocorr
-from degree_of_fluctuation import fluctuation_intensity
+from Analysis.degree_of_fluctuation import fluctuation_intensity
 from scipy.stats import entropy
 import nolds
-from setup import setup_np, setup_pd
+from Utils.setup import setup_np, setup_pd
 import pytest
-from plot_decorator import plot_decorator
+from Utils.plot_decorator import plot_decorator
 
 def _autocorr(series, t=1):
     """ Calculate autocorrelation for given timeseries

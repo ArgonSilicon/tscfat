@@ -17,9 +17,9 @@ the results:
 import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
-from setup import setup_ps, setup_pd
+from Utils.setup import setup_ps, setup_pd
 import pytest
-from plot_decorator import plot_decorator
+from Utils.plot_decorator import plot_decorator
 
 @plot_decorator
 def _plot_summary(series,

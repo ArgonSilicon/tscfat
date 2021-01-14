@@ -10,7 +10,7 @@ Functions for distance matrix and similarity matrix calculation.
 """
 from scipy.spatial.distance import pdist, squareform
 import numpy as np
-from setup import setup_pd, setup_np
+from Utils.setup import setup_pd, setup_np
 import pytest
 
 def calculate_similarity(X,metric='Euclidean'):        
