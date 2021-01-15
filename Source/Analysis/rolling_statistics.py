@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 #from arma_model import autocorr
-from Analysis.degree_of_fluctuation import fluctuation_intensity
+from Analysis.fluctuation_intensity import fluctuation_intensity
 from scipy.stats import entropy
 import nolds
 from Utils.setup import setup_np, setup_pd
@@ -144,11 +144,6 @@ def rolling_statistics(ts,
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     
-    if test == True:
-        print(type(fig))
-        return fig
-    else:
-        return None
     
 def test_rolling_statistics():
     """

@@ -8,10 +8,10 @@ Created on Fri Jan  8 15:49:55 2021
 Function wrapper for plotting the figure or saving it to the destined folder.
 """
 import matplotlib.pyplot as plt
-#import functools
+import functools
 
 def plot_decorator(func):
-    #@functools.wraps(func)
+    @functools.wraps(func)
     def wrapper(*args,**kwargs):
         func(*args,**kwargs)
         sn = ()
@@ -35,5 +35,9 @@ def plot_decorator(func):
                 raise Exception("Requested folder: " + str(sp) + " does not exist.")
         else:
             raise Exception("Arguments were not given correctly.")
+            
+        if 'Test' in kwargs:
+            if kwargs.get('Test') == True:
+                return fig
     return wrapper
 
