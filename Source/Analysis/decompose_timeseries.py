@@ -11,9 +11,9 @@ Calculate STL decomposition for given time series and plot the components.
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import STL
-from Utils.setup import setup_np, setup_pd
+from Source.Utils.setup import setup_np, setup_pd
 import pytest
-from Utils.plot_decorator import plot_decorator
+from Source.Utils.plot_decorator import plot_decorator
 
 @plot_decorator
 def _plot_decomposition(Result,
@@ -23,6 +23,7 @@ def _plot_decomposition(Result,
                       ylabel = "Battery Level (%)",
                       xlabel  = "Date",
                       dates = False,
+                      test = False,
                       ):
     """
     Plot the decomposed time series.
@@ -100,6 +101,7 @@ def _plot_decomposition(Result,
     
     fig1.tight_layout(pad=2)
     
+    return fig1
 
 def STL_decomposition(series,
                       title,

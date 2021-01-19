@@ -13,7 +13,8 @@ import functools
 def plot_decorator(func):
     @functools.wraps(func)
     def wrapper(*args,**kwargs):
-        func(*args,**kwargs)
+        fig = func(*args,**kwargs)
+        
         sn = ()
         sp = ()
         if 'savename' in kwargs:
@@ -35,9 +36,10 @@ def plot_decorator(func):
                 raise Exception("Requested folder: " + str(sp) + " does not exist.")
         else:
             raise Exception("Arguments were not given correctly.")
-            
-        if 'Test' in kwargs:
-            if kwargs.get('Test') == True:
+        
+        if 'test' in kwargs:
+            if kwargs.get('test') == True:
                 return fig
+        
     return wrapper
 

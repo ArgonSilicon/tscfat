@@ -12,6 +12,31 @@ import pytest
 
 
 def distribution_degree(y,scale,window):
+    """
+    Calculate distribution degree for given time series.
+
+    Parameters
+    ----------
+    y : TYPE
+        DESCRIPTION.
+    scale : TYPE
+        DESCRIPTION.
+    window : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    
+    assert isinstance(y, np.ndarray), "Given time series is not a numpy array."
+    assert isinstance(scale, int), "Given scale is not an integer."
+    assert isinstance(window, int), "Given window length is not an integer."
+    assert scale > 0, "Given scale is negative."
+    assert (0 < window <= len(y)), "Improper window length."
+    
     s = scale
     m = window -1
     interval = s / m

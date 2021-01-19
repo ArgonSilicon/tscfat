@@ -16,15 +16,15 @@ from pathlib import Path
 import re
 
 # change correct working directory
-WORK_DIR = Path(r'F:\CS-special-assignment\Source')
+WORK_DIR = Path(r'F:\CS-special-assignment')
 #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Source')
 os.chdir(WORK_DIR)
 
 # third party imports
 
 # Local application imports
-from Utils.load_csv import load_all_subjects
-from Analysis.process_battery import process_battery
+from Source.Utils.load_csv import load_all_subjects
+from Source.Analysis.process_battery import process_battery
 
 
 ###############################################################################

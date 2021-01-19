@@ -7,6 +7,7 @@ Created on Fri Jan 15 15:15:03 2021
 import pytest
 
 from Source.Utils.argument_loader import setup_np, setup_pd
+#from Source.Utils.arg_loader import ArgLoader
 from Source.Analysis.rolling_statistics import rolling_statistics
 
 class TestRollingStatistics(object):
@@ -28,6 +29,7 @@ class TestRollingStatistics(object):
         assert res is not None, 'Function returned a None object.' 
     '''
     
+    
     def test_rolling_statistics_ts(self):
         """
         Given a numpy array, Rolling_statistics raises an error.
@@ -44,6 +46,7 @@ class TestRollingStatistics(object):
         expected_error_msg = "Timeseries is not a pandas dataframe."
         # Check if the raised ValueError contains the correct message
         assert exc_info.match(expected_error_msg)
+        
     
     def test_rolling_statistics_w(self):
         """

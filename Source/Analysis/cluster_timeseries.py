@@ -9,11 +9,11 @@ Created on Thu Dec 17 12:29:57 2020
 from tslearn.clustering import TimeSeriesKMeans
 import matplotlib.pyplot as plt
 import numpy as np
-from Utils.plot_decorator import plot_decorator
+from Source.Utils.plot_decorator import plot_decorator
 import pytest
 
 @plot_decorator
-def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False):
+def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False, test=False):
     """
     Plot a scatterplot showing the clusters.
 
@@ -37,12 +37,16 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fal
     """
     assert isinstance(clusters, np.ndarray), "Given Time series is not a numpy array."
     
-    plt.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(10,10))
     
     plt.plot(clusters,'o:')
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
+    
+    return fig
+    
+    
     
 
 def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0):
@@ -79,7 +83,7 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
     
    labels = km.labels_
    
-   _plot_clusters(labels,title=title,xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH)
+   _plot_clusters(labels,title=title,xlab="Timepoint",ylab="Cluster",savename = FIGNAME, savepath = FIGPATH,test=False)
 
    return labels
 

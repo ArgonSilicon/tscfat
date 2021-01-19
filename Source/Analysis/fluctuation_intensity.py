@@ -24,7 +24,16 @@ plt.plot(x, y_1,'-o')
 plt.ylim(0,8)
 plt.show()
 '''
+
+
 def fluctuation_intensity(y,scale,window):
+    
+    assert isinstance(y, np.ndarray), "Given time series is not a numpy array."
+    assert isinstance(scale, int), "Given scale is not an integer."
+    assert isinstance(window, int), "Given window length is not an integer."
+    assert scale > 0, "Given scale is negative."
+    assert (0 < window <= len(y)), "Improper window length."
+    
     # scale
     s = scale
     # max fluctuations

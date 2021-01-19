@@ -19,13 +19,13 @@ from pathlib import Path
 import numpy as np
 
 # Local application import
-from Analysis.calculate_similarity import calculate_similarity
-from Analysis.calculate_novelty import compute_novelty
-from Analysis.decompose_timeseries import STL_decomposition#, detect_steps
-from Analysis.plot_similarity import plot_similarity
-from Analysis.cluster_timeseries import cluster_timeseries
-from Analysis.rolling_statistics import rolling_statistics
-from Analysis.summary_statistics import summary_statistics
+from Source.Analysis.calculate_similarity import calculate_similarity
+from Source.Analysis.calculate_novelty import compute_novelty
+from Source.Analysis.decompose_timeseries import STL_decomposition#, detect_steps
+from Source.Analysis.plot_similarity import plot_similarity
+from Source.Analysis.cluster_timeseries import cluster_timeseries
+from Source.Analysis.rolling_statistics import rolling_statistics
+from Source.Analysis.summary_statistics import summary_statistics
 
 def process_battery(df,FIGPATH):
     
