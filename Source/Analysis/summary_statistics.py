@@ -17,7 +17,7 @@ the results:
 import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
-from Source.Utils.setup import setup_ps, setup_pd
+from Source.Utils.argument_loader import setup_ps, setup_pd
 import pytest
 from Source.Utils.plot_decorator import plot_decorator
 
@@ -26,6 +26,7 @@ def _plot_summary(series,
                    title,
                    savepath=False,
                    savename=False,
+                   test = False
                    ):
     """
     
@@ -70,6 +71,8 @@ def _plot_summary(series,
     sm.graphics.tsa.plot_acf(series,lags=24,ax=ax[2,1])
     
     fig.tight_layout(pad=1.0)
+    
+    return fig
 
 
 def summary_statistics(series,
@@ -101,8 +104,8 @@ def summary_statistics(series,
     
     assert isinstance(series, pd.Series), "Series is not a pandas Series."
     
-    _plot_summary(series,title,savepath,savename)
-    
+    _plot_summary(series,title,savepath,savename,test=False)
+
     
 def test_Summary_statistics():
     """

@@ -136,10 +136,13 @@ def plot_similarity(sim,
     plt.grid(True)
     plt.tight_layout(pad=0)
     
+    return fig
+
+'''
     assert fig is not None, "ohno!"
     if test == True:
         return fig
-     
+'''     
 def test_Plot_similarity():
     from setup import setup_pd, setup_np
     '''
