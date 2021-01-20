@@ -60,6 +60,8 @@ def _plot_summary(series,
     
     pd.plotting.lag_plot(series,lag=1,ax=ax[1,0])
     ax[1,0].set_title('Lag plot / lag 1')
+    ax[1,0].set_box_aspect(1)
+    #ax[1,0].set(adjustable='box-forced', aspect='equal')
     
     
     pd.plotting.autocorrelation_plot(series,ax=ax[1,1])
