@@ -7,6 +7,7 @@ Created on Thu Oct  8 13:02:27 2020
 """
 
 import numpy as np
+import pandas as pd
 import pytest
 
 # permutation entropy
@@ -27,8 +28,8 @@ plt.show()
 
 
 def fluctuation_intensity(y,scale,window):
-    
-    assert isinstance(y, np.ndarray), "Given time series is not a numpy array."
+        
+    assert isinstance(y,np.ndarray), "Given time series is not a numpy array."
     assert isinstance(scale, int), "Given scale is not an integer."
     assert isinstance(window, int), "Given window length is not an integer."
     assert scale > 0, "Given scale is negative."

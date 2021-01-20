@@ -52,7 +52,7 @@ def _plot_summary(series,
     
     ax[0,0].plot(series)
     ax[0,0].set_title('Original timeseries')
-    ax[0,0].set_xticklabels(ax[0,0].get_xticks(),rotation= 45) 
+    ax[0,0].tick_params('x', labelrotation=45)
     
     ax[0,1].hist(series,20)
     ax[0,1].set_title("Histogram")

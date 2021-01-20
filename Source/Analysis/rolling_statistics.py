@@ -95,7 +95,7 @@ def rolling_statistics(ts,
     mean = ts.rolling(window = w).mean() 
     skew = ts.rolling(window = w).skew()
     kurt = ts.rolling(window = w).kurt()
-    flu_int = ts.rolling(window = w).apply(fluctuation_intensity,args=(100,w))
+    flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
     #ent = ts.rolling(window = w).apply(entropy)
     ent = ts.rolling(window = w).apply(nolds.sampen)
     
@@ -107,41 +107,48 @@ def rolling_statistics(ts,
     ax[0,0].set_title('Original timeseries',fontsize=16)
     ax[0,0].set_xlabel('Date')
     ax[0,0].set_ylabel('Value')
+    ax[0,0].tick_params('x', labelrotation=45)
     
     ax[0,1].plot(mean)
     ax[0,1].set_title('Mean',fontsize=16)
     ax[0,1].set_xlabel('Date')
     ax[0,1].set_ylabel('Value')
+    ax[0,1].tick_params('x', labelrotation=45)
     
     ax[1,0].plot(variance)
     ax[1,0].set_title('Variance',fontsize=16)
     ax[1,0].set_xlabel('Date')
     ax[1,0].set_ylabel('Value')
+    ax[1,0].tick_params('x', labelrotation=45)
     
     ax[1,1].plot(autocorrelation)
     ax[1,1].set_title('Autocorrelation',fontsize=16)
     ax[1,1].set_xlabel('Date')
     ax[1,1].set_ylabel('Value')
+    ax[1,1].tick_params('x', labelrotation=45)
     
     ax[2,0].plot(skew)
     ax[2,0].set_title('Skewness',fontsize=16)
     ax[2,0].set_xlabel('Date')
     ax[2,0].set_ylabel('Value')
+    ax[2,0].tick_params('x', labelrotation=45)
     
     ax[2,1].plot(kurt)
     ax[2,1].set_title('Kurtosis',fontsize=16)
     ax[2,1].set_xlabel('Date')
     ax[2,1].set_ylabel('Value')
+    ax[2,1].tick_params('x', labelrotation=45)
     
     ax[3,0].plot(flu_int)
     ax[3,0].set_title('Fluctuation intensity',fontsize=16)
     ax[3,0].set_xlabel('Date')
     ax[3,0].set_ylabel('Value')
-     
+    ax[3,0].tick_params('x', labelrotation=45)
+    
     ax[3,1].plot(ent)
     ax[3,1].set_title('Entropy',fontsize=16)
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
-    
+    ax[3,1].tick_params('x', labelrotation=45)
   
 
