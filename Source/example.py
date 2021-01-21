@@ -16,8 +16,8 @@ from pathlib import Path
 import re
 
 # change correct working directory
-#WORK_DIR = Path(r'F:\CS-special-assignment')
-WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment')
+WORK_DIR = Path(r'F:\CS-special-assignment')
+#WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment')
 os.chdir(WORK_DIR)
 
 # third party imports
@@ -29,8 +29,8 @@ from Source.Analysis.process_battery import process_battery
 
 ###############################################################################
 #%% Load the data into dictionary filenames as keys
-#DATA_FOLDER = Path(r'F:\CS-special-assignment\Data') # <- REPLACE THIS!
-DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Data')
+DATA_FOLDER = Path(r'F:\CS-special-assignment\Data') # <- REPLACE THIS!
+#DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/CS-special-assignment/Data')
 csv_dict = load_all_subjects(DATA_FOLDER)
 dict_keys = list(csv_dict.keys()) 
 

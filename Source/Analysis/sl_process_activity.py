@@ -83,7 +83,7 @@ def process_activity(df,FIGPATH):
     fig.suptitle('Daily activity clusters',fontsize=20)
     
     for i in range(NCLUST):
-        dfr = resampled_fit[resampled_fit['cluster'] == i]
+        dfr = resampled_fit[resampled_fit['clusters'] == i]
         mat = dfr.activity.to_numpy()
         mat = np.stack(mat,axis=0)
         mat = np.transpose(mat)
