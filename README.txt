@@ -1,1 +1,1 @@
-Time series co-fluctuation analyisis toolbox.
+Time series co-fluctuation analysis toolbox.
