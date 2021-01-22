@@ -15,38 +15,42 @@ import os
 from pathlib import Path
 import re
 
-# change correct working directory
-WORK_DIR = Path(r'F:\tscfat')
-#WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
-os.chdir(WORK_DIR)
+def main():
+    # change correct working directory
+    WORK_DIR = Path(r'F:\tscfat')
+    #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
+    os.chdir(WORK_DIR)
+    
+    # third party imports
+    
+    # Local application imports
+    from Source.Utils.load_csv import load_all_subjects
+    from Source.Analysis.process_battery import process_battery
+    
+    
+    ###############################################################################
+    #%% Load the data into dictionary filenames as keys
+    DATA_FOLDER = Path(r'F:\tscfat\Data') # <- REPLACE THIS!
+    #DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data')
+    csv_dict = load_all_subjects(DATA_FOLDER)
+    dict_keys = list(csv_dict.keys()) 
+    
+    #%% Loop thru keys and assing dataframe if battery data is found
+    for k in dict_keys:
+        if re.search("Battery",k):
+            df1 = csv_dict[k]
+        else:
+            pass
+    
+    #%% Set parameters and paths 
+    # path to folder where plot are saved
+    FIGPATH = Path(r'F:\tscfat\Results') # <- REPLACE THIS!
+    #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results')
+    
+    #%% Process Battery level
+    
+    _ = process_battery(df1,FIGPATH)
 
-# third party imports
+if __name__ == '__main__':
 
-# Local application imports
-from Source.Utils.load_csv import load_all_subjects
-from Source.Analysis.process_battery import process_battery
-
-
-###############################################################################
-#%% Load the data into dictionary filenames as keys
-DATA_FOLDER = Path(r'F:\tscfat\Data') # <- REPLACE THIS!
-#DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data')
-csv_dict = load_all_subjects(DATA_FOLDER)
-dict_keys = list(csv_dict.keys()) 
-
-#%% Loop thru keys and assing dataframe if battery data is found
-for k in dict_keys:
-    if re.search("Battery",k):
-        df1 = csv_dict[k]
-    else:
-        pass
-
-#%% Set parameters and paths 
-# path to folder where plot are saved
-FIGPATH = Path(r'F:\tscfat\Results') # <- REPLACE THIS!
-#FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results')
-
-#%% Process Battery level
-
-_ = process_battery(df1,FIGPATH)
-
+    main()

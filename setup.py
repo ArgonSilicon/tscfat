@@ -8,5 +8,5 @@ Created on Mon Jan 18 14:06:42 2021
 
 from setuptools import setup, find_packages
 
-setup(name="CS-special-assignment",
+setup(name="tscfat",
       packages = find_packages())
