@@ -7,10 +7,8 @@ Created on Fri Nov 20 14:31:11 2020
 @author: ikaheia1
 """
 
-import numpy as np
 import pandas as pd
 from pathlib import Path
-
 
 def setup_np():
     
@@ -30,7 +28,7 @@ def setup_ps():
         df = pd.read_csv(read_file)
         df['time'] = pd.to_datetime(df['time'],unit = 's')
         return df['battery_level']
-    
+  
 def setup_pd():
     
     open_name =  Path(r'F:\tscfat\Data\Battery_test_data_1.csv')
