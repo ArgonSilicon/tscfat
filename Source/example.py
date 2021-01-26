@@ -8,6 +8,7 @@ Created on Wed Jun 17 14:28:18 2020
 This is the example script for battery level processing. 
 The data is loaded in CSV format. 
 The analysis is conducted in process_battery_level.py.
+The results are stored on disk.
 
 """
 # standard library imports
