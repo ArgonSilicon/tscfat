@@ -14,6 +14,8 @@ import os
 
 from Source.Analysis.sl_process_activity import process_activity
 
+plt.style.use('seaborn')
+
 def main():
     #%%
     # change correct working directory
@@ -48,35 +50,26 @@ def main():
         subject = os.path.join(DATA_FOLDER, file)
     
         df = pd.read_csv(subject)
+        df.describe()
         
         try:
             df['timestamp'] = pd.to_datetime(df['timestamp'],unit='s',origin='unix')
             df = df.set_index('timestamp')
             df.columns = ['activity']
+            df[df['activity'] != 0] = 1
             
+            resampled = df.resample('H').sum()
             '''
-            start = df.index[0]
-            end = df.index[-1]
-            
-            if not first:
-                first = start
-            if not last:
-                last = end
-            if end > last:
-                last == end
-            if start < first:
-                first = start
-            '''
-            
-            df_active = df[df['activity'] > 0] # subject is active
+            # check when subject is active
+            df_active = df[df['activity'] != 0] # subject is active
             resampled_active = df_active.resample("H").count()
             resampled_active = resampled_active.reindex(ix)
             
             # fo missing data
-            resampled = df.resample("H").sum(min_count=1)
-            resampled = resampled.reindex(ix) 
+            #resampled = df.resample("H").sum(min_count=1)
+            #resampled = resampled.reindex(ix) 
             
-            missing_values = resampled.isna().astype(int)
+            missing_values = resampled_active.isna().astype(int)
             missing_values.plot(title="Missing datapoints / hourly")
             print(missing_values.shape)
             
@@ -89,12 +82,14 @@ def main():
                                            ordered=True)
             m_day = m_day.sort_index()
             m_day.plot(kind='bar',title="Missing datapoints",ylabel='Count')
+            '''
             
             # create a scaler object
-            scaler = MinMaxScaler()
+            #scaler = MinMaxScaler()
             # fit and transform the data
-            df_norm = scaler.fit(resampled_active['activity'].values.reshape(-1,1))
-            resampled['activity'] = df_norm.transform(resampled['activity'].values.reshape(-1,1))
+            #df_norm = scaler.fit(resampled_active['activity'].values.reshape(-1,1))
+            #df_norm = scaler.fit(resampled['activity'].values.reshape(-1,1))
+            #resampled['activity'] = df_norm.transform(resampled['activity'].values.reshape(-1,1))
         
         
             FIGPATH = Path(r'F:\tscfat\Results')
