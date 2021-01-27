@@ -21,6 +21,7 @@ from Source.Utils.argument_loader import setup_ps, setup_pd
 import pytest
 from Source.Utils.plot_decorator import plot_decorator
 
+
 @plot_decorator
 def _plot_summary(series,
                    title,

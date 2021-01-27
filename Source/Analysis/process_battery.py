@@ -17,6 +17,7 @@ from pathlib import Path
 
 # third party imports
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Local application import
 from Source.Analysis.calculate_similarity import calculate_similarity
@@ -26,6 +27,8 @@ from Source.Analysis.plot_similarity import plot_similarity
 from Source.Analysis.cluster_timeseries import cluster_timeseries
 from Source.Analysis.rolling_statistics import rolling_statistics
 from Source.Analysis.summary_statistics import summary_statistics
+
+plt.style.use('seaborn')
 
 def process_battery(df,FIGPATH):
     
