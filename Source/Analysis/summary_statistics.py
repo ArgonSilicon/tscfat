@@ -52,6 +52,7 @@ def _plot_summary(series,
     fig.suptitle(title,fontsize=20,y=1.05)
     
     ax[0,0].plot(series)
+    #ax[0,0].plot(x = series.index, y = series.values)
     ax[0,0].set_title('Original timeseries')
     ax[0,0].tick_params('x', labelrotation=45)
     
