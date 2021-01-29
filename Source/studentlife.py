@@ -162,7 +162,13 @@ def main():
     df = pd.read_json(subject)
     '''
     #%% STRESS
-    DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Stress')
+    st1 = pd.Timestamp('2013-03-27 00:00:01')
+    st2 = pd.Timestamp('2013-06-01 23:59:59')
+    ix = pd.date_range(start=st1, end=st2, freq='H')
+    
+    stress_miss = np.empty((0,70), int)
     
     for file in os.listdir(DATA_FOLDER):
         print(file)
@@ -172,10 +178,34 @@ def main():
             df = pd.read_json(current_file)
             df_filt = df.filter(["resp_time","level",])
             df_filt = df_filt.set_index('resp_time')
+            resampled = df_filt.reindex(ix)
             resampled = df_filt.resample("D").mean()
+            
+            missing = resampled.level.isna().astype(int)
+            missing = missing.values.reshape(1,-1)
+            stress_miss = np.append(stress_miss, missing, axis=0)
+            
             resampled.plot()
         except:
             print('Something fishy here')
+            
+    import matplotlib.dates as mdates
+    import matplotlib.ticker as ticker
+            
+    ticklabels = [item.strftime('%Y-%m-%d') for item in resampled.index]
+    tick_locs = np.linspace(24,len(ticklabels),10)
+    
+    f1,ax = plt.subplots(figsize=(15,15))
+    ax.imshow(stress_miss, aspect='auto',interpolation='none',cmap="Blues")
+    ax.set_title('Missing datapoints',fontsize=36)
+    ax.set_xlabel('date',fontsize=26)
+    ax.set_ylabel('subject',fontsize=26)
+    ax.tick_params(axis='both', which='major', labelsize=16)
+    ax.tick_params(axis='both', which='minor', labelsize=16)
+    plt.xticks(rotation=45)
+    ax.xaxis.set_major_locator(ticker.FixedLocator(tick_locs))
+    ax.xaxis.set_major_formatter(ticker.FixedFormatter(ticklabels))
+    plt.show()
         
     #%%
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood')
