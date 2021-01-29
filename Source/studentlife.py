@@ -73,6 +73,9 @@ def main():
             mis_mat[:,i] = np.transpose(missing.values)
             proportions = proportions.fillna(value=0)
             
+            plt.plot(resampled_counts)
+            plt.title("Sampling frequency")
+            plt.show()
             
             plt.plot(missing)
             plt.title('Missing datapoints')
@@ -149,7 +152,7 @@ def main():
     subject = DATA_FOLDER / 'Behavior_u04.json'
     df = pd.read_json(subject)
     
-    #%%
+    #%% STRESS
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
     
     for file in os.listdir(DATA_FOLDER):
@@ -175,6 +178,23 @@ def main():
         try:
             df = pd.read_json(current_file)
             df_filt = df.filter(["resp_time","happy",])
+            df_filt = df_filt.set_index('resp_time')
+            resampled = df_filt.resample("D").mean()
+            resampled.plot()
+        except:
+            print('Something fishy here')
+            
+            
+    #%%
+    DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood_1')
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        
+        try:
+            df = pd.read_json(current_file)
+            df_filt = df.filter(["resp_time","tomorrow",])
             df_filt = df_filt.set_index('resp_time')
             resampled = df_filt.resample("D").mean()
             resampled.plot()

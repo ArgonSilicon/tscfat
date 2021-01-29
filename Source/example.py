@@ -18,7 +18,8 @@ import re
 
 def main():
     # change correct working directory
-    WORK_DIR = Path(r'F:\tscfat')
+    #WORK_DIR = Path(r'F:\tscfat') # <- WINDOWS
+    WORK_DIR = Path(r'/mnt/f/tscfat')
     #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
     
@@ -31,7 +32,9 @@ def main():
     
     ###############################################################################
     #%% Load the data into dictionary filenames as keys
-    DATA_FOLDER = Path(r'F:\tscfat\Data') # <- REPLACE THIS!
+    #DATA_FOLDER = Path(r'F:\tscfat\Data') # <- WINDOWS
+    #DATA_FOLDER = Path(r'/mnt/f/tscfat/Data')
+    DATA_FOLDER = Path.cwd() / 'Data' 
     #DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data')
     csv_dict = load_all_subjects(DATA_FOLDER)
     dict_keys = list(csv_dict.keys()) 
@@ -45,7 +48,9 @@ def main():
     
     #%% Set parameters and paths 
     # path to folder where plot are saved
-    FIGPATH = Path(r'F:\tscfat\Results') # <- REPLACE THIS!
+    #FIGPATH = Path(r'F:\tscfat\Results') # <- WINDOWS
+    #FIGPATH = Path(r'/mnt/f/tscfat/Results')
+    FIGPATH = Path.cwd() / 'Results'
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results')
     
     #%% Process Battery level

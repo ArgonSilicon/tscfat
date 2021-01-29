@@ -50,7 +50,8 @@ def process_battery(df,FIGPATH):
     
     #%% Plot timeseries decompostition and distribution for each component
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Decomposition')
-    FIGPATH = Path(r'F:\tscfat\Results\Decomposition')
+    #FIGPATH = Path(r'F:\tscfat\Results\Decomposition') 
+    FIGPATH = Path.cwd() / 'Results' / 'Decomposition' 
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Decomposition')
     FIGNAME = "Battery_level_rolling_statistics" 
     _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
@@ -58,7 +59,8 @@ def process_battery(df,FIGPATH):
     #%% rolling stats
     w = 7*24
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\RollingStatistics')
-    FIGPATH = Path(r'F:\tscfat\Results\RollingStatistics')
+    #FIGPATH = Path(r'F:\tscfat\Results\RollingStatistics')
+    FIGPATH = Path.cwd() / 'Results' / 'RollingStatistics'
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/RollingStatistics')
     FIGNAME = "Battery_level_Rolling_Statistics"
     
@@ -67,7 +69,8 @@ def process_battery(df,FIGPATH):
     
     #%% calculate similarity and novelty
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Similarity')
-    FIGPATH = Path(r'F:\tscfat\Results\Similarity')
+    #FIGPATH = Path(r'F:\tscfat\Results\Similarity')
+    FIGPATH = Path.cwd() / 'Results' / 'Similarity'
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Similarity')
     FIGNAME = "Battery_level_similarity"
     AXIS = resampled_day[1:-1].index.strftime('%m-%d')
@@ -79,7 +82,8 @@ def process_battery(df,FIGPATH):
     #%%
     # Timeseries clustering
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\Clusters')
-    FIGPATH = Path(r'F:\tscfat\Results\Clusters')
+    #FIGPATH = Path(r'F:\tscfat\Results\Clusters')
+    FIGPATH = Path.cwd() / 'Results' / 'Clusters'
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
