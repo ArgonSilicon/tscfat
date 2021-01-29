@@ -20,9 +20,15 @@ plt.style.use('seaborn')
 def main():
     #%%
     # change correct working directory
-    WORK_DIR = Path(r'F:\tscfat')
+    #WORK_DIR = Path(r'F:\tscfat')
+    #os.chdir(WORK_DIR)
+    
+    WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
+    #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
     
+    #%%
+    '''
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA')
     subject = DATA_FOLDER / 'EMA_definition.json'
     df = pd.read_json(subject)
@@ -36,10 +42,11 @@ def main():
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\sensing\phonecharge')
     subject = DATA_FOLDER / 'phonecharge_u00.csv'
     df = pd.read_csv(subject)
-    
+    '''
     #%%
-    DATA_FOLDER = Path(r'F:\StudentLife\dataset\sensing\activity')
-    
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\sensing\activity')
+    #DATA_FOLDER = Path.cwd() / 'StudentLife' / 'dataset' / 'sensing' / 'activity'
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/sensing/activity')
     first = None
     last = None
     st1 = pd.Timestamp('2013-03-27 04:00:00')
@@ -91,7 +98,8 @@ def main():
             m_day = m_day.sort_index()
             m_day.plot(kind='bar',title="Missing datapoints / day",ylabel='Count')
             
-            FIGPATH = Path(r'F:\tscfat\Results')
+            FIGPATH = Path.cwd() / 'Results'
+            print(FIGPATH)
             clusters = process_activity(proportions,FIGPATH)
             i += 1
             
@@ -145,13 +153,14 @@ def main():
     
     
     #%%
+    '''
     rng=pd.date_range(start=df.index.min(), periods=35, freq='H')
     df.reindex(rng).ffill()
     #%%
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Behavior')
     subject = DATA_FOLDER / 'Behavior_u04.json'
     df = pd.read_json(subject)
-    
+    '''
     #%% STRESS
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
     

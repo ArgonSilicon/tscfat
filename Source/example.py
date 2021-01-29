@@ -19,7 +19,7 @@ import re
 def main():
     # change correct working directory
     #WORK_DIR = Path(r'F:\tscfat') # <- WINDOWS
-    WORK_DIR = Path(r'/mnt/f/tscfat')
+    WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
     #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
     
