@@ -52,7 +52,7 @@ def process_activity(df,FIGPATH):
     _  = STL_decomposition(timeseries,"Battery level timeseries decomposition", False, FIGPATH,FIGNAME)
        
     #%% rolling stats
-    w = 7*24
+    w = 7
     #FIGPATH = Path(r'C:\Users\arsii\Documents\Results\RollingStatistics')
     #FIGPATH = Path(r'F:\tscfat\Results\RollingStatistics')
     FIGPATH = Path.cwd() / 'Results' /'RollingStatistics'

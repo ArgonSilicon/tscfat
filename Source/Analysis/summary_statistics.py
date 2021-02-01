@@ -70,7 +70,7 @@ def _plot_summary(series,
     ax[1,1].set_xlim([0,240])
     ax[1,1].set_title('Autocorrelation')
     
-    sm.graphics.tsa.plot_pacf(series,lags=48,ax=ax[2,0])
+    sm.graphics.tsa.plot_pacf(series,lags=24,ax=ax[2,0])
     
     sm.graphics.tsa.plot_acf(series,lags=24,ax=ax[2,1])
     

@@ -76,6 +76,8 @@ def main():
             
             proportions = resampled / resampled_counts
           
+            interpolated = proportions.interpolate()
+            
             missing = proportions.isna().astype(int)
             mis_mat[:,i] = np.transpose(missing.values)
             proportions = proportions.fillna(value=0)
@@ -99,7 +101,10 @@ def main():
             m_day.plot(kind='bar',title="Missing datapoints / day",ylabel='Count')
             
             FIGPATH = Path.cwd() / 'Results'
-            print(FIGPATH)
+            #print(FIGPATH)
+            dp = interpolated.resample("D").mean()
+            
+            clusters = process_activity(dp,FIGPATH)
             clusters = process_activity(proportions,FIGPATH)
             i += 1
             
@@ -164,11 +169,15 @@ def main():
     #%% STRESS
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
     DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Stress')
-    st1 = pd.Timestamp('2013-03-27 00:00:01')
-    st2 = pd.Timestamp('2013-06-01 23:59:59')
-    ix = pd.date_range(start=st1, end=st2, freq='H')
     
-    stress_miss = np.empty((0,70), int)
+    st1 = pd.Timestamp('2013-03-25')
+    st2 = pd.Timestamp('2013-06-04')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
+    
+    stress_mat = np.empty((72,0), int)
+    
+    #stress_miss = np.empty((0,70), int)
     
     for file in os.listdir(DATA_FOLDER):
         print(file)
@@ -178,17 +187,20 @@ def main():
             df = pd.read_json(current_file)
             df_filt = df.filter(["resp_time","level",])
             df_filt = df_filt.set_index('resp_time')
-            resampled = df_filt.reindex(ix)
+            
             resampled = df_filt.resample("D").mean()
+            resampled = df_filt.reindex(ix)
             
             missing = resampled.level.isna().astype(int)
             missing = missing.values.reshape(1,-1)
-            stress_miss = np.append(stress_miss, missing, axis=0)
+            
+            stress_mat = np.append(stress_mat, resampled, axis=1)
             
             resampled.plot()
         except:
             print('Something fishy here')
             
+    '''      
     import matplotlib.dates as mdates
     import matplotlib.ticker as ticker
             
@@ -206,7 +218,7 @@ def main():
     ax.xaxis.set_major_locator(ticker.FixedLocator(tick_locs))
     ax.xaxis.set_major_formatter(ticker.FixedFormatter(ticklabels))
     plt.show()
-        
+       ''' 
     #%%
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood')
     
@@ -240,6 +252,52 @@ def main():
         except:
             print('Something fishy here')
 
+    #%%
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/PAM')
+    st1 = pd.Timestamp('2013-03-25')
+    st2 = pd.Timestamp('2013-06-04')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
+    pam_mat = np.empty((72,0), int)
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        
+        try:
+            df = pd.read_json(current_file)
+            df_filt = df.filter(["resp_time","picture_idx",])
+            df_filt = df_filt.set_index('resp_time')
+            
+            
+            resampled = df_filt.resample("D").mean()
+            resampled = resampled.reindex(ix)
+            interpolated = resampled.interpolate()
+            
+            pam_mat = np.append(pam_mat, interpolated.values, axis=1)
+            
+            interpolated.plot()
+        except:
+            print('Something fishy here')
+            
+    #%%
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Behavior')
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        
+        try:
+            df = pd.read_json(current_file)
+            df_filt = df.filter(["resp_time","anxious",])
+            df_filt = df_filt.set_index('resp_time')
+            
+            resampled = resampled.resample("D").mean()
+            resampled = df_filt.reindex(ix)
+            resampled.plot()
+        except:
+            print('Something fishy here')
     #%%            
 if __name__ == '__main__':
 
