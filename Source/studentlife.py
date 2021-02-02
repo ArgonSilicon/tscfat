@@ -298,6 +298,21 @@ def main():
             resampled.plot()
         except:
             print('Something fishy here')
+            
+    #%%
+    
+    # THIS IS SOMETHING THAT NEEDS TO BE DONE WITH EMA SCORES???
+    
+    # result = df.append([df2])
+    # result = result.sort_index()
+    # result = (results - result.min()) / (result.max() - result.min()) # column-wise by default
+    # result['average'] = result.mean(axis=1)
+    # result = result.resample("D").mean()
+    # result = result.reindex(ix)
+    # result = result.interpolate()
+    # fillna?
+    
+    
     #%%            
 if __name__ == '__main__':
 
