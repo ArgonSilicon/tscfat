@@ -75,6 +75,7 @@ def main():
             resampled_counts = resampled_counts.reindex(ix)
             
             proportions = resampled / resampled_counts
+            # STORE THE PROPORTIONS IN A MATRIX AND IMPUTE WITH impute_data.py
           
             interpolated = proportions.interpolate()
             
@@ -104,7 +105,7 @@ def main():
             #print(FIGPATH)
             dp = interpolated.resample("D").mean()
             
-            clusters = process_activity(dp,FIGPATH)
+            #clusters = process_activity(dp,FIGPATH)
             clusters = process_activity(proportions,FIGPATH)
             i += 1
             
