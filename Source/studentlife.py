@@ -12,6 +12,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import json
 import os
+import seaborn as sns
+
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
 
 from Source.Analysis.sl_process_activity import process_activity
 
@@ -28,6 +32,40 @@ def main():
     os.chdir(WORK_DIR)
     
     #%%
+    DATA_FOLDER = Path(r'/home/arsi/Documents/Data/oura_2020-06-26_2021-02-10_trends.csv')
+    
+    df = pd.read_csv(DATA_FOLDER)
+    df.describe()
+    df = df.set_index('date')
+    
+    #X = np.array([[1, 2], [3, 6], [4, 8], [np.nan, 3], [7, np.nan]])
+    
+    X = df.to_numpy()
+    
+    imp = IterativeImputer(max_iter=10, random_state=0)
+
+    imp.fit(X)
+
+    #IterativeImputer(random_state=0)
+
+    #X_test = [[np.nan, 2], [6, np.nan], [np.nan, 6]]
+
+    # the model learns that the second feature is double the first
+    #print(np.round(imp.transform(X_test)))
+    
+    X_imp = imp.transform(X)
+    
+    df_imp = pd.DataFrame(data = X_imp,    # values
+                 index = df.index,   # 1st column as index
+                 columns = df.columns)  # 1st row as the column names
+
+    xcorr = df_imp.corr()
+    
+    sns.heatmap(xcorr, annot=False)
+    
+    xmat = xcorr.to_numpy()
+    
+    
     '''
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA')
     subject = DATA_FOLDER / 'EMA_definition.json'
@@ -157,8 +195,18 @@ def main():
     m_day = m_day.sort_index()
     m_day.plot(kind='bar',title="Missing datapoints / day",ylabel='Count')
     
+
     
     #%%
+    from skimage.measure import block_reduce
+    
+    mis_mat_red = block_reduce(mis_mat,block_size=(24,1), func=np.mean, cval=np.mean(mis_mat))
+    mis_mat_re = np.where(mis_mat_red < 1, 0, 1)
+    
+    plt.imshow(np.transpose(mis_mat_re))
+    plt.title("Actrivity / missing data")
+    plt.ylabel('Subject no.')
+    plt.xlabel('Time (day)')    
     '''
     rng=pd.date_range(start=df.index.min(), periods=35, freq='H')
     df.reindex(rng).ffill()
@@ -167,16 +215,16 @@ def main():
     subject = DATA_FOLDER / 'Behavior_u04.json'
     df = pd.read_json(subject)
     '''
-    #%% STRESS
+    #%% STRESScurre
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Stress')
     DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Stress')
     
-    st1 = pd.Timestamp('2013-03-25')
-    st2 = pd.Timestamp('2013-06-04')
+    st1 = pd.Timestamp('2013-03-24 00:00:00')
+    st2 = pd.Timestamp('2013-06-04 00:00:00')
     ix = pd.date_range(start=st1, end=st2, freq='D')
     
     
-    stress_mat = np.empty((72,0), int)
+    stress_mat = np.empty((73,0), int)
     
     #stress_miss = np.empty((0,70), int)
     
@@ -190,17 +238,54 @@ def main():
             df_filt = df_filt.set_index('resp_time')
             
             resampled = df_filt.resample("D").mean()
-            resampled = df_filt.reindex(ix)
+            #resampled = resampled.fillna(value=-1)
+            re_ix = resampled.reindex(ix)
             
-            missing = resampled.level.isna().astype(int)
-            missing = missing.values.reshape(1,-1)
+            missing = re_ix.level.isna().astype(int)
+            missing = missing.values.reshape(-1,1)
             
-            stress_mat = np.append(stress_mat, resampled, axis=1)
+            stress_mat = np.append(stress_mat, missing, axis=1)
             
-            resampled.plot()
+            plt.scatter(re_ix.index,re_ix.values)
+            plt.show()
         except:
             print('Something fishy here')
             
+    
+    missing_prop = stress_mat.sum(axis=1) / stress_mat.shape[1]
+    
+    plt.plot(missing_prop)
+    plt.show()
+    
+    plt.imshow(np.transpose(stress_mat))
+    plt.title('Daily missing datapoints / Stress')
+    plt.ylabel('Subject no.')
+    plt.xlabel('Time(day)')
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(73),stress_mat[:,40])
+    plt.title('Worst case')
+    plt.ylabel('Missingness')
+    plt.yticks((0,1), ('Observation','Missing'))
+    plt.xlabel('Time(day)')
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(73),stress_mat[:,12])
+    plt.title('Best case')
+    plt.ylabel('Missingness')
+    plt.yticks((0,1), ('Observation','Missing'))
+    plt.xlabel('Time(day)')
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(73),stress_mat[:,16])
+    plt.title('Typical case')
+    plt.ylabel('Missingness')
+    plt.yticks((0,1), ('Observation','Missing'))
+    plt.xlabel('Time(day)')
+    plt.show()
     '''      
     import matplotlib.dates as mdates
     import matplotlib.ticker as ticker
@@ -221,22 +306,94 @@ def main():
     plt.show()
        ''' 
     #%%
-    DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood')
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Mood')
+    stress_mat = np.empty((73,0), int)
     
     for file in os.listdir(DATA_FOLDER):
         print(file)
         current_file = os.path.join(DATA_FOLDER, file)
+        
         
         try:
             df = pd.read_json(current_file)
             df_filt = df.filter(["resp_time","happy",])
             df_filt = df_filt.set_index('resp_time')
             resampled = df_filt.resample("D").mean()
-            resampled.plot()
+            re_ix = resampled.reindex(ix)
+            
+            missing = re_ix.happy.isna().astype(int)
+            missing = missing.values.reshape(-1,1)
+            
+            stress_mat = np.append(stress_mat, missing, axis=1)
+            
+            re_ix.plot()
         except:
             print('Something fishy here')
+        '''
+        df = pd.read_json(current_file)
+        df_filt = df.filter(["resp_time","happy",])
+        df_filt = df_filt.set_index('resp_time')
+        resampled = df_filt.resample("D").mean()
+        re_ix = resampled.reindex(ix)
             
+        missing = re_ix.happy.isna().astype(int)
+        missing = missing.values.reshape(-1,1)
             
+        stress_mat = np.append(stress_mat, missing, axis=1)
+            
+        re_ix.plot()
+        '''  
+    plt.imshow(np.transpose(stress_mat))
+    plt.title('Mood: Happiness / missing data')
+    plt.ylabel("Subject no.")
+    plt.xlabel("Time(day)")
+    plt.show()
+    
+    #%%
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Mood')
+    stress_mat = np.empty((73,0), int)
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        
+        
+        try:
+            df = pd.read_json(current_file)
+            df_filt = df.filter(["resp_time","sad",])
+            df_filt = df_filt.set_index('resp_time')
+            resampled = df_filt.resample("D").mean()
+            re_ix = resampled.reindex(ix)
+            
+            missing = re_ix.sad.isna().astype(int)
+            missing = missing.values.reshape(-1,1)
+            
+            stress_mat = np.append(stress_mat, missing, axis=1)
+            
+            re_ix.plot()
+        except:
+            print('Something fishy here')
+        '''
+        df = pd.read_json(current_file)
+        df_filt = df.filter(["resp_time","happy",])
+        df_filt = df_filt.set_index('resp_time')
+        resampled = df_filt.resample("D").mean()
+        re_ix = resampled.reindex(ix)
+            
+        missing = re_ix.happy.isna().astype(int)
+        missing = missing.values.reshape(-1,1)
+            
+        stress_mat = np.append(stress_mat, missing, axis=1)
+            
+        re_ix.plot()
+        '''  
+    plt.imshow(np.transpose(stress_mat))
+    plt.title('Mood: Saddness / missing data')
+    plt.ylabel("Subject no.")
+    plt.xlabel("Time(day)")
+    plt.show()
     #%%
     DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Mood_1')
     
@@ -252,8 +409,41 @@ def main():
             resampled.plot()
         except:
             print('Something fishy here')
-
+            
     #%%
+    #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\Behavior')
+    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Behavior')
+    beh_mat = np.empty((72,0), int)
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        
+        try:
+            df = pd.read_json(current_file)
+            df_filt = df.filter(["resp_time","anxious","calm","conventional","critical",
+                                 "dependable","disorganized","enthusiastic","experiences",
+                                 "reserved","symphatetic"])
+            df_filt = df_filt.set_index('resp_time')
+            resampled = df_filt.resample("D").mean()
+            re_ix = resampled.reindex(ix)
+            
+            missing = re_ix.isnull().any(axis=1).astype(int)
+            missing = missing.values.reshape(-1,1)
+            
+            beh_mat = np.append(beh_mat, missing, axis=1)
+            
+            resampled.plot()
+        except:
+            print('Something fishy here')
+    
+    plt.imshow(np.transpose(beh_mat))
+    plt.title('Behavior / missing data')
+    plt.ylabel("Subject no.")
+    plt.xlabel("Time(day)")
+    plt.show()
+
+    #%%re
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
     DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/PAM')
     st1 = pd.Timestamp('2013-03-25')
@@ -266,6 +456,7 @@ def main():
         print(file)
         current_file = os.path.join(DATA_FOLDER, file)
         
+        
         try:
             df = pd.read_json(current_file)
             df_filt = df.filter(["resp_time","picture_idx",])
@@ -273,15 +464,62 @@ def main():
             
             
             resampled = df_filt.resample("D").mean()
-            resampled = resampled.reindex(ix)
-            interpolated = resampled.interpolate()
+            re_ix = resampled.reindex(ix)
+            #interpolated = resampled.interpolate()
             
-            pam_mat = np.append(pam_mat, interpolated.values, axis=1)
+            missing = re_ix.picture_idx.isna().astype(int)
+            missing = missing.values.reshape(-1,1)
             
-            interpolated.plot()
+            pam_mat = np.append(pam_mat, missing, axis=1)
+            
+            re_ix.plot()
         except:
             print('Something fishy here')
             
+        '''
+        df = pd.read_json(current_file)
+        df_filt = df.filter(["resp_time","picture_idx",])
+        df_filt = df_filt.set_index('resp_time')
+        
+        
+        resampled = df_filt.resample("D").mean()
+        re_ix = resampled.reindex(ix)
+        #interpolated = resampled.interpolate()
+        
+        missing = re_ix.picture_idx.isna().astype(int)
+        missing = missing.values.reshape(-1,1)
+        
+        pam_mat = np.append(pam_mat, missing, axis=1)
+        
+        re_ix.plot()
+        '''
+    plt.imshow(np.transpose(pam_mat))
+    plt.title('PAM / missing data')
+    plt.ylabel("Subject no.")
+    plt.xlabel("Time(day)")
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(72),pam_mat[:,0])
+    plt.title('Worst case')
+    plt.ylabel('Missingness')
+    plt.xlabel('Time(day)')
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(72),pam_mat[:,1])
+    plt.title('Best case')
+    plt.ylabel('Missingness')
+    plt.xlabel('Time(day)')
+    plt.show()
+    
+    fig = plt.figure(figsize=(10,2))
+    plt.scatter(np.arange(72),pam_mat[:,7])
+    plt.title('Typical case')
+    plt.ylabel('Missingness')
+    plt.xlabel('Time(day)')
+    plt.show()
+         
     #%%
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
     DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/Behavior')
@@ -295,7 +533,9 @@ def main():
             df_filt = df_filt.set_index('resp_time')
             
             resampled = resampled.resample("D").mean()
-            resampled = df_filt.reindex(ix)
+            re = df_filt.reindex(ix)
+            resampled.isnull().any(axis=1)
+            
             resampled.plot()
         except:
             print('Something fishy here')
