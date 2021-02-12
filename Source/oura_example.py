@@ -46,9 +46,9 @@ def crosscorr(datax, datay, lag=0, wrap=False):
         if wrap:
             shiftedy = datay.shift(lag)
             shiftedy.iloc[:lag] = datay.iloc[-lag:].values
-            return datax.corr(shiftedy)
+            return datax.corr(shiftedy,method='pearson')
         else: 
-            return datax.corr(datay.shift(lag))
+            return datax.corr(datay.shift(lag),method='pearson')
 
 #%%
 GROUP_LABEL_CSV_PATH = Path('/home/arsi/Documents/Data/esm_groups.csv/')
@@ -151,9 +151,7 @@ df_temp2 = df[df['title'] == 'Right now I feel Distracted']
 df_temp2 = df_temp2['scaled_answer'].astype('int64')
 distracted = df_temp2.resample('D').mean()
 #%%
-affections = pd.concat([active,determined,attentive,inspired,alert,afraid,nervous,upset,hostile,ashamed,stressed,distracted],axis=1)
-affections.columns=['active','determined','attentive','inspired','alert','afraid','nervous','upset','hostile',
-                              'ashamed','stressed','distracted']
+
 
 #%%
 def main():
@@ -167,11 +165,21 @@ def main():
     os.chdir(WORK_DIR)
     
     #%%
+    st1 = pd.Timestamp('2020-06-26')
+    st2 = pd.Timestamp('2021-02-10')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    #%%
+    affections = pd.concat([active,determined,attentive,inspired,alert,afraid,nervous,upset,hostile,ashamed,stressed,distracted],axis=1)
+    affections.columns=['active','determined','attentive','inspired','alert','afraid','nervous','upset','hostile',
+                              'ashamed','stressed','distracted']
+    #%%
     DATA_FOLDER = Path(r'/home/arsi/Documents/Data/oura_2020-06-26_2021-02-10_trends.csv')
     
     df = pd.read_csv(DATA_FOLDER)
     df.describe()
     df = df.set_index('date')
+    df.index = pd.to_datetime(df.index)
+    df = df.asfreq(freq="D")
     
     #X = np.array([[1, 2], [3, 6], [4, 8], [np.nan, 3], [7, np.nan]])
     
@@ -195,99 +203,106 @@ def main():
                           columns = df.columns)  # 1st row as the column names
 
     aff_re = affections.reindex(df_imp.index)
-    df_imp = pd.to_datetime(df_imp)
-    affections = pd.to_datetime(affections)
     
-    combinations = list(itertools.combinations(df_imp.columns.to_list(), 2))
+    #df_imp.index = pd.to_datetime(df_imp.index)
+    
+    result = pd.concat([df_imp, aff_re], axis=1)
+    
+    combinations = list(itertools.combinations(result.columns.to_list(), 2))
   
     # cross correlation
-    xcorr = df_imp.corr()
+    xcorr = result.corr()
     
     sns.heatmap(xcorr, annot=False)
 
     #xmat = xcorr.to_numpy()
+    #%%
     
+    
+    #%%
     for pair in combinations: 
         #%%
-        overall_pearson_r = df_imp[pair[0]].corr(df_imp[pair[1]])#df_imp.corr().iloc[0,17]
-        print(f"Pandas computed Pearson r: {overall_pearson_r}")
+        overall_pearson_r = result[pair[0]].corr(result[pair[1]])#.corr().iloc[0,17]
+        #print(f"Pandas computed Pearson r: {overall_pearson_r}")
         
-        r, p = stats.pearsonr(df_imp.dropna()[pair[0]], df_imp.dropna()[pair[1]])
-        print(f"Scipy computed Pearson r: {r} and p-value: {p}")
+        if (0.2 < abs(overall_pearson_r) < 0.5):
+            print(pair)
+            r, p = stats.pearsonr(result.dropna()[pair[0]], result.dropna()[pair[1]])
+            #print(f"Scipy computed Pearson r: {r} and p-value: {p}")
+            
+            df_filt = result.filter([pair[0],pair[1],])
+            
+            scaler = MinMaxScaler()
+            scaler.fit(df_filt)
+            #print(scaler.data_max_)
+            scaled = scaler.transform(df_filt)
+            
+            df_scaled = pd.DataFrame(data = scaled,    # values
+                                     index = df_filt.index,    # 1st column as index
+                                     columns = [pair[0],pair[1],]) # 1st row as the column names
+            '''
+            fig,ax = plt.subplots(figsize=(14,3))
+            df_scaled.rolling(window=7,center=True).mean().plot(ax = ax)
+            ax.set(xlabel='Frame',ylabel='Normalized Value')
+            ax.set(title=f"Rolling window mean score / Overall Pearson r = {np.round(overall_pearson_r,2)}");
+            plt.show()
+            '''
+            #%%
+            # Set window size to compute moving window synchrony.
+            r_window_size = 7
+             
+            # Compute rolling window synchrony
+            rolling_r = df_scaled[pair[0]].rolling(window = r_window_size, center = True).corr(df_scaled[pair[1]])
+            
+            # plot
+            f,ax = plt.subplots(2,1,figsize = (14,6),sharex = True)
+            df_scaled.rolling(window = r_window_size, center = True).mean().plot(ax = ax[0])
+            ax[0].set(xlabel = 'Date',ylabel = 'Normalized value')
+            rolling_r.plot(ax = ax[1])
+            ax[1].set(xlabel = 'Date',ylabel = 'Pearson r')
+            plt.suptitle("Rolling window (size = {}) mean and correlation \n Overal pearson correlation: {}".format(r_window_size, np.round(overall_pearson_r,2)))
+            plt.show()    
+            #%%
+            
         
-        df_filt = df_imp.filter([pair[0],pair[1],])
-        
-        scaler = MinMaxScaler()
-        scaler.fit(df_filt)
-        print(scaler.data_max_)
-        scaled = scaler.transform(df_filt)
-        
-        df_scaled = pd.DataFrame(data = scaled,    # values
-                                 index = df_filt.index,    # 1st column as index
-                                 columns = [pair[0],pair[1],]) # 1st row as the column names
-        '''
-        fig,ax = plt.subplots(figsize=(14,3))
-        df_scaled.rolling(window=7,center=True).mean().plot(ax = ax)
-        ax.set(xlabel='Frame',ylabel='Normalized Value')
-        ax.set(title=f"Rolling window mean score / Overall Pearson r = {np.round(overall_pearson_r,2)}");
-        plt.show()
-        '''
-        #%%
-        # Set window size to compute moving window synchrony.
-        r_window_size = 7
-         
-        # Compute rolling window synchrony
-        rolling_r = df_scaled[pair[0]].rolling(window = r_window_size, center = True).corr(df_scaled[pair[1]])
-        
-        # plot
-        f,ax = plt.subplots(2,1,figsize = (14,6),sharex = True)
-        df_scaled.rolling(window = r_window_size, center = True).mean().plot(ax = ax[0])
-        ax[0].set(xlabel = 'Date',ylabel = 'Normalized value')
-        rolling_r.plot(ax = ax[1])
-        ax[1].set(xlabel = 'Date',ylabel = 'Pearson r')
-        plt.suptitle("Rolling window (size = {}) mean and correlation \n Overal pearson correlation: {}".format(r_window_size, np.round(overall_pearson_r,2)))
-        plt.show()    
-        #%%
-        
-    
-        d1 = df_scaled[pair[0]]
-        d2 = df_scaled[pair[1]]
-        r_window_size = 14
-        rs = [crosscorr(d1,d2, lag) for lag in range(-int(r_window_size),int(r_window_size+1))]
-        offset = -(np.floor(len(rs)/2) - np.argmax(rs))
-        
-        f,ax=plt.subplots(figsize=(14,3))
-        ax.plot(np.arange(-14,15,1),rs)
-        ax.axvline(np.ceil(len(rs)/2) - (r_window_size + 1), color = 'k',linestyle = ':', label = 'Center')
-        ax.axvline(np.argmax(rs) - r_window_size, color = 'r', linestyle = '--', label = 'Peak synchrony',alpha = 0.5)
-        ax.set(title=f'Offset = {offset} days\n  {pair[0]} leads <> {pair[1]} leads')
-        ax.set(ylim = [-1,1], xlim = [-14,14],)
-        ax.set(xlabel = 'Offset (days)', ylabel = 'Pearson r')
-        ax.set_xticklabels([int(item) for item in ax.get_xticks()]);
-        plt.legend()
-        plt.show()
-        
-        #%%
-        # Windowed time lagged cross correlation
-        window = 7
-        no_splits = 15
-        samples_per_split = int(df_scaled.shape[0] / no_splits)
-        rss = []
-        
-        for t in range(0, no_splits):
-            d1 = df_scaled[pair[0]][(t) * samples_per_split : (t+1) * samples_per_split]
-            d2 = df_scaled[pair[1]][(t) * samples_per_split : (t+1) * samples_per_split]
-            rs = [crosscorr(d1, d2, lag) for lag in range(-int(window), int(window+1))]
-            rss.append(rs)
-        
-        rss = pd.DataFrame(rss)
-        
-        f,ax = plt.subplots(figsize=(10,5))
-        sns.heatmap(rss,cmap='RdBu_r',ax=ax)
-        ax.set(title=f'Windowed Time Lagged Cross Correlation \n {pair[0]} leads <> {pair[1]} leads')
-        ax.set(xlim=[0,15])
-        ax.set(xlabel='Offset',ylabel='Window epochs')
-        ax.set_xticklabels(np.arange(-7,8,1))#[int(item-7) for item in ax.get_xticks()]);
+            d1 = df_scaled[pair[0]]
+            d2 = df_scaled[pair[1]]
+            r_window_size = 14
+            rs = [crosscorr(d1,d2, lag) for lag in range(-int(r_window_size),int(r_window_size+1))]
+            offset = -(np.floor(len(rs)/2) - np.argmax(rs))
+            
+            f,ax=plt.subplots(figsize=(14,3))
+            ax.plot(np.arange(-14,15,1),rs)
+            ax.axvline(np.ceil(len(rs)/2) - (r_window_size + 1), color = 'k',linestyle = ':', label = 'Center')
+            ax.axvline(np.argmax([abs(x) for x in rs]) - r_window_size, color = 'r', linestyle = '--', label = 'Peak synchrony',alpha = 0.5)
+            ax.set(title=f'Offset = {offset} days\n  {pair[0]} leads <> {pair[1]} leads')
+            ax.set(ylim = [-1,1], xlim = [-14,14],)
+            ax.set(xlabel = 'Offset (days)', ylabel = 'Pearson r')
+            ax.set_xticklabels([int(item) for item in ax.get_xticks()]);
+            plt.legend()
+            plt.show()
+            
+            #%%
+            # Windowed time lagged cross correlation
+            window = 7
+            no_splits = 15
+            samples_per_split = int(df_scaled.shape[0] / no_splits)
+            rss = []
+            
+            for t in range(0, no_splits):
+                d1 = df_scaled[pair[0]][(t) * samples_per_split : (t+1) * samples_per_split]
+                d2 = df_scaled[pair[1]][(t) * samples_per_split : (t+1) * samples_per_split]
+                rs = [crosscorr(d1, d2, lag) for lag in range(-int(window), int(window+1))]
+                rss.append(rs)
+            
+            rss = pd.DataFrame(rss)
+            
+            f,ax = plt.subplots(figsize=(10,5))
+            sns.heatmap(rss,cmap='RdBu_r',ax=ax, annot=True,fmt='.1f')
+            ax.set(title=f'Windowed Time Lagged Cross Correlation \n {pair[0]} leads <> {pair[1]} leads')
+            ax.set(xlim=[0,15])
+            ax.set(xlabel='Offset',ylabel='Window epochs')
+            ax.set_xticklabels(np.arange(-7,8,1))#[int(item-7) for item in ax.get_xticks()]);
         
         #%%
         # Rolling window time lagged cross correlation
@@ -312,6 +327,16 @@ def main():
         sns.heatmap(rss,cmap='RdBu_r',ax=ax)
         ax.set(title=f'Rolling Windowed Time Lagged Cross Correlation',xlim=[0,15], xlabel='Offset',ylabel='Epochs')
         ax.set_xticklabels(np.arange(-7,8,1))#[int(item) for item in ax.get_xticks()]);
+        
+        
         '''
+        
+#%%
+from calculate_similarity import calculate_similarity
+
+
+
+
+#%%
 if __name__ == "__main__":
     main()

@@ -30,7 +30,7 @@ def main():
     WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
     #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
-    
+    #%%
     #%%
     DATA_FOLDER = Path(r'/home/arsi/Documents/Data/oura_2020-06-26_2021-02-10_trends.csv')
     

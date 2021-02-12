@@ -89,7 +89,7 @@ def plot_similarity(sim,
     ax3 = plt.subplot2grid(gridsize, (3,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
-    ax1.set_title("Similarity matrix (cosine distance)", fontsize=22)
+    ax1.set_title("Similarity matrix", fontsize=22)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
     ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
     #ax1.text(-0.1, 1.05, "A", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
@@ -118,8 +118,8 @@ def plot_similarity(sim,
     else:
         ax3.plot(nov,label="Novelty")
         ax3.set_title("Novelty score", fontsize=22)
-        ax3.set_xlabel('Time (date)',fontsize=16)
-        ax3.set_ylabel('Novelty2',fontsize=16)
+        ax3.set_xlabel('Time (day)',fontsize=16)
+        ax3.set_ylabel('Novelty',fontsize=16)
         #ax3.set_xticks(np.arange(len(axis))[::7])
         #ax3.set_xticklabels(axis[::7])
         #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
