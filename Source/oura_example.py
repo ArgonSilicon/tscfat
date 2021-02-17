@@ -19,6 +19,7 @@ import itertools
 
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
+from Source.Analysis.decompose_timeseries import STL_decomposition
 
 WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
 #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
@@ -59,6 +60,18 @@ df = assign_groups(df,GROUP_LABEL_CSV_PATH)
 
 df['time'] = pd.to_datetime(df['time'],unit='s')
 df = df.set_index(df['time'])
+
+#%%
+valo = Path('/mnt/f/Data/valo.csv')
+df = pd.read_csv(valo)
+#%%
+light_path = esm_path = Path('/home/arsi/Documents/Data/Light.csv')
+df_light = pd.read_csv(light_path)
+df_light['time'] = pd.to_datetime(df_light['time'],unit='s')
+df_light = df_light.set_index(df_light['time'])
+df_filt = df_light.filter(['double_light_lux'])
+light_hour = df_filt.resample('H').mean()
+light_day = df_filt.resample('D').mean()
 
 #%% Check NaN's
 #df_nans = df.groupby[]
@@ -204,21 +217,44 @@ def main():
                           columns = df.columns)  # 1st row as the column names
 
     aff_re = affections.reindex(df_imp.index)
-    
+    light_re = light_day.reindex(df_imp.index)
+   
     #df_imp.index = pd.to_datetime(df_imp.index)
+    res2 = STL_decomposition(light_re.values,'test')
     
-    result = pd.concat([df_imp, aff_re], axis=1)
+    #light_detrend = light_re.diff()
+    #light = res.observed -res.trend.reshape(-1,1)
+    
+    df_light = pd.DataFrame(data = res2.observed - res2.trend.reshape(-1,1),    # values
+                            index = light_re.index,   # 1st column as index
+                            columns = ['light'])
+    
+    result = pd.concat([df_imp, aff_re, df_light], axis=1)
+    
+    
+    res3 = STL_decomposition(result.active.values,'active')
+    #%%
+    active_df = pd.DataFrame(data = res3.observed - res3.trend,    # values
+                            index = result.index,   # 1st column as index
+                            columns = ['active'])
+    
+    test = pd.concat([active_df,df_light],axis=1)
+    
+    light_affect = pd.concat([aff_re,df_light],axis=1)
     
     combinations = list(itertools.combinations(result.columns.to_list(), 2))
   
     # cross correlation
     xcorr = result.corr()
+    light_corr = light_affect.corr()
     
-    sns.heatmap(xcorr, annot=False)
+    sns.heatmap(light_corr,cmap='RdBu_r',annot=True,fmt='.1f')
+    
+    sns.heatmap(xcorr, cmap='RdBu_r',annot=False)
 
     #xmat = xcorr.to_numpy()
     #%%
-    
+    #ig,ax
     
     #%%
     for pair in combinations: 
