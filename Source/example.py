@@ -35,6 +35,7 @@ def main():
     #DATA_FOLDER = Path(r'F:\tscfat\Data') # <- WINDOWS
     #DATA_FOLDER = Path(r'/mnt/f/tscfat/Data')
     DATA_FOLDER = Path.cwd() / 'Data' 
+    DATA_FOLDER = Path('/home/arsi/Documents/Data/')
     #DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data')
     csv_dict = load_all_subjects(DATA_FOLDER)
     dict_keys = list(csv_dict.keys()) 

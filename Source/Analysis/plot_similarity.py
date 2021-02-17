@@ -82,14 +82,14 @@ def plot_similarity(sim,
 
     sim[sim < threshold] = 0
     # plot it
-    fig, ax = plt.subplots(4,4,figsize=(8.3,9.5),sharex=True)  
+    fig, ax = plt.subplots(4,4,figsize=(10,10),sharex=True)  
     gridsize = (4,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
     ax2 = plt.subplot2grid(gridsize, (1,3), colspan=1,rowspan=1)
     ax3 = plt.subplot2grid(gridsize, (3,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
-    ax1.set_title("Similarity matrix", fontsize=22)
+    ax1.set_title("Similarity matrix", fontsize=18)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
     ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
     #ax1.text(-0.1, 1.05, "A", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
@@ -97,14 +97,14 @@ def plot_similarity(sim,
     
     if type(kernel) != bool:
         ax2.imshow(kernel,cmap='Blues')
-        ax2.set_title('Kernel',fontsize=22)
+        ax2.set_title('Kernel',fontsize=18)
         #ax[1,3].text(-0.1, 1.05, "B", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     #ax1 = plt.subplot(gs[1])
  
     if axis is not None:
         ax3.plot(axis,nov,label="Novelty")
-        ax3.set_title("Novelty score", fontsize=22)
+        ax3.set_title("Novelty score", fontsize=18)
         ax3.set_xlabel('Time (date)',fontsize=16)
         ax3.set_ylabel('Novelty',fontsize=16)
         ax3.set_xticks(np.arange(len(axis))[::7])
@@ -117,7 +117,7 @@ def plot_similarity(sim,
 
     else:
         ax3.plot(nov,label="Novelty")
-        ax3.set_title("Novelty score", fontsize=22)
+        ax3.set_title("Novelty score", fontsize=18)
         ax3.set_xlabel('Time (day)',fontsize=16)
         ax3.set_ylabel('Novelty',fontsize=16)
         #ax3.set_xticks(np.arange(len(axis))[::7])
@@ -132,9 +132,10 @@ def plot_similarity(sim,
     ax[0,3].set_axis_off()
     ax[2,3].set_axis_off()
     
-    plt.suptitle(title + " Daily Patterns",fontsize=26,y=1.03)
+    plt.suptitle(title + " Daily Patterns",fontsize=20,y=1)
+    plt.suptitle(title,fontsize=20,y=1)
     plt.grid(True)
-    plt.tight_layout(pad=0)
+    plt.tight_layout(pad=1)
     
     return fig
 

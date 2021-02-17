@@ -47,6 +47,7 @@ def crosscorr(datax, datay, lag=0, wrap=False):
             shiftedy = datay.shift(lag)
             shiftedy.iloc[:lag] = datay.iloc[-lag:].values
             return datax.corr(shiftedy,method='pearson')
+        
         else: 
             return datax.corr(datay.shift(lag),method='pearson')
 
@@ -284,25 +285,27 @@ def main():
             
             #%%
             # Windowed time lagged cross correlation
-            window = 7
+            window = 14
+            max_lag = 7
             no_splits = 15
             samples_per_split = int(df_scaled.shape[0] / no_splits)
             rss = []
             
-            for t in range(0, no_splits):
-                d1 = df_scaled[pair[0]][(t) * samples_per_split : (t+1) * samples_per_split]
-                d2 = df_scaled[pair[1]][(t) * samples_per_split : (t+1) * samples_per_split]
-                rs = [crosscorr(d1, d2, lag) for lag in range(-int(window), int(window+1))]
+            for t in range(0, no_splits-1):
+                d1 = df_scaled[pair[0]][(t) * window : (t+2) * window]
+                d2 = df_scaled[pair[1]][(t) * window : (t+2) * window]
+                rs = [crosscorr(d1, d2, lag) for lag in range(-int(max_lag), int(max_lag+1))]
                 rss.append(rs)
             
             rss = pd.DataFrame(rss)
             
-            f,ax = plt.subplots(figsize=(10,5))
+            f,ax = plt.subplots(figsize=(10,10))
             sns.heatmap(rss,cmap='RdBu_r',ax=ax, annot=True,fmt='.1f')
             ax.set(title=f'Windowed Time Lagged Cross Correlation \n {pair[0]} leads <> {pair[1]} leads')
             ax.set(xlim=[0,15])
             ax.set(xlabel='Offset',ylabel='Window epochs')
             ax.set_xticklabels(np.arange(-7,8,1))#[int(item-7) for item in ax.get_xticks()]);
+            plt.show()
         
         #%%
         # Rolling window time lagged cross correlation

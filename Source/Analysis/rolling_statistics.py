@@ -96,12 +96,12 @@ def rolling_statistics(ts,
     skew = ts.rolling(window = w).skew()
     kurt = ts.rolling(window = w).kurt()
     flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
-    #ent = ts.rolling(window = w).apply(entropy)
-    ent = ts.rolling(window = w).apply(nolds.sampen)
+    ent = ts.rolling(window = w).apply(entropy)
+    #ent = ts.rolling(window = w).apply(nolds.sampen)
     
     
-    fig,ax = plt.subplots(4,2,figsize=(15,15))
-    fig.suptitle("Rolling Statistics",fontsize=26,y=1.0)
+    fig,ax = plt.subplots(4,2,figsize=(10,10))
+    fig.suptitle("Rolling Statistics",fontsize=20,y=1.0)
     
     ax[0,0].plot(ts)
     ax[0,0].set_title('Original timeseries',fontsize=16)
@@ -150,5 +150,7 @@ def rolling_statistics(ts,
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     ax[3,1].tick_params('x', labelrotation=45)
+    
+    plt.tight_layout(pad=1)
   
 

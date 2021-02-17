@@ -48,8 +48,8 @@ def _plot_summary(series,
 
     """
     
-    fig,ax = plt.subplots(3,2,figsize=(8,8))
-    fig.suptitle(title,fontsize=20,y=1.05)
+    fig,ax = plt.subplots(3,2,figsize=(10,10))
+    fig.suptitle(title,fontsize=20,y=1)
     
     ax[0,0].plot(series)
     #ax[0,0].plot(x = series.index, y = series.values)
@@ -71,8 +71,10 @@ def _plot_summary(series,
     ax[1,1].set_title('Autocorrelation')
     
     sm.graphics.tsa.plot_pacf(series,lags=24,ax=ax[2,0])
+    ax[2,0].set(xlabel='lag',ylabel='correlation')
     
     sm.graphics.tsa.plot_acf(series,lags=24,ax=ax[2,1])
+    ax[2,1].set(xlabel='lag',ylabel='correlation')
     
     fig.tight_layout(pad=1.0)
     
