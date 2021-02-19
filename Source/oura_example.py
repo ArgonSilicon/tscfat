@@ -27,7 +27,11 @@ os.chdir(WORK_DIR)
 
 from Source.Analysis.sl_process_activity import process_activity
 from Source.Analysis.assign_labels import assign_groups
-from Source.Analysis.vector_encoding import decode_string, decode_string_3
+from Source.Analysis.vector_encoding import ordinal_encoding, one_hot_encoding, decode_string, decode_string_3, custom_resampler, normalize_values
+from Source.Analysis.calculate_novelty import compute_novelty
+from Source.Analysis.plot_similarity import plot_similarity
+from Source.Analysis.calculate_similarity import calculate_similarity
+from Source.Analysis.rolling_statistics import rolling_statistics
 
 plt.style.use('seaborn')
 
@@ -65,13 +69,106 @@ df = df.set_index(df['time'])
 valo = Path('/mnt/f/Data/valo.csv')
 df = pd.read_csv(valo)
 #%%
-light_path = esm_path = Path('/home/arsi/Documents/Data/Light.csv')
+light_path = Path('/home/arsi/Documents/Data/Light.csv')
 df_light = pd.read_csv(light_path)
 df_light['time'] = pd.to_datetime(df_light['time'],unit='s')
 df_light = df_light.set_index(df_light['time'])
 df_filt = df_light.filter(['double_light_lux'])
 light_hour = df_filt.resample('H').mean()
 light_day = df_filt.resample('D').mean()
+#%%
+app_path = Path('/home/arsi/Documents/Data/Apps.csv')
+df_apps = pd.read_csv(app_path)
+# Local application import
+
+# Load dictionary for app labels
+DICT_PATH = Path(r'/home/arsi/Documents/Data/')
+DICT_NAME = 'labels_dict.json'
+loadname = DICT_PATH / DICT_NAME
+
+from Source.Analysis.test_status import test_battery_status, test_screen_status
+
+with open(loadname) as json_file: 
+    labels = json.load(json_file) 
+    
+labels['Deezer'] = 'Entertainment'
+labels['Digital Wellbeing'] = 'Health'
+labels['Suomi Radio'] = 'Entertainment'
+labels['Bose Music'] = 'Entertainment'
+labels['Zoom'] = 'Communication'
+labels['Out of Milk'] = 'Shop'
+labels['Authenticator'] = 'Other'
+#%%
+df_apps['Encoded'] = ordinal_encoding(df_apps['application_name'].values.reshape(-1,1))
+df_apps['group'] = [labels[value] for value in df_apps['application_name'].values]
+df_apps['Encoded_group'] = ordinal_encoding(df_apps['group'].values.reshape(-1,1))
+
+#enc_df_apps = pd.DataFrame(one_hot_encoding(df_apps0['Encoded_group'].values.reshape(-1,4)))
+Colnames = ['Communication','Entertainment','Other','Shop','Social_media','Sports','Transportation','Travel','Work/Study','Health']
+enc_df = pd.DataFrame(one_hot_encoding(df_apps['Encoded_group'].values.reshape(-1,1)),columns=Colnames,index=df_apps.index)
+df_apps = pd.concat([df_apps,enc_df], axis=1, join='outer') 
+df_apps['time'] = pd.to_datetime(df_apps['time'],unit='s')
+df_apps = df_apps.set_index(df_apps['time'])
+
+#%%
+bat_path = Path('/home/arsi/Documents/Data/Battery.csv')
+df_bat = pd.read_csv(bat_path)
+df_bat['time'] = pd.to_datetime(df_bat['time'],unit='s')
+df_bat = df_bat.set_index(df_bat['time'])
+bat_re = df_bat.filter(['battery_level'])
+bat_re = bat_re.resample('H').mean()
+bat_re_day = bat_re.resample('D').mean()
+bat_re_day['Min'] = bat_re.resample('D').min()
+bat_re_day['Max'] = bat_re.resample('D').max()
+bat_re_day['Var'] = bat_re.resample('D').var()
+bat_re_day = bat_re_day.reindex(ix)
+
+
+screen_path = Path('/home/arsi/Documents/Data/Screen.csv')
+df_screen = pd.read_csv(screen_path)
+df_screen['time'] = pd.to_datetime(df_screen['time'],unit='s')
+df_screen = df_screen.set_index(df_screen['time'])
+# TODO: fix this for loop
+temp = []
+max_time = pd.Timestamp(min(max(df_bat.index.values),max(df_screen.index.values)))
+min_time = pd.Timestamp(max(min(df_bat.index.values),min(df_screen.index.values)))
+
+df_bat = df_bat.sort_index()
+df_screen = df_screen.sort_index()
+
+for i in df_apps.index.values:
+    ts = pd.Timestamp(i)
+    
+    if min_time <= ts <= max_time and all((test_battery_status(df_bat,ts),test_screen_status(df_screen,ts))):
+        temp.append(True)
+    else:
+        temp.append(False)
+
+df_apps['is_active'] = temp
+
+#%%
+#df_filt = df.filter(["time",*Colnames])
+df_apps_filt = df_apps[df_apps['is_active'] == True]
+#print(df_filt.shape)
+df_apps_filt = df_apps_filt.filter(['Communication','Entertainment','Other','Shop','Social_media','Sports','Transportation','Travel','Work/Study','Health'])
+resampled = df_apps_filt.resample("H").sum()
+#resampled = resampled.drop(columns='Other')
+# daily / hours for similarity calulation
+resampled['total'] = resampled.sum(axis=1)
+resampled_day = resampled.resample('D').sum()
+resampled_re = resampled_day.reindex(ix)
+
+#%%
+res = resampled_day[1:-1]
+
+temp2 = np.zeros((68,9,24))
+for i in range(res.shape[0]):
+    temp2[i] = np.stack(res.iloc[i].values)
+
+data = temp2.reshape(68,-1)
+
+#timeseries = resampled['Encoded_group'].values.reshape(-1,1) # to_numpy() if an array is needed
+timeseries = resampled.filter(['time',*Colnames]).to_numpy()
 
 #%% Check NaN's
 #df_nans = df.groupby[]
@@ -229,7 +326,9 @@ def main():
                             index = light_re.index,   # 1st column as index
                             columns = ['light'])
     
-    result = pd.concat([df_imp, aff_re, df_light], axis=1)
+    result = pd.concat([df_imp, aff_re, df_light,resampled_re,bat_re_day['battery_level']], axis=1)
+    result['negative'] = result[['afraid','nervous','upset','hostile','ashamed','stressed','distracted']].sum(axis=1)
+    result['positive'] = result[['active','determined','attentive','inspired','alert']].sum(axis=1)
     
     
     res3 = STL_decomposition(result.active.values,'active')
@@ -245,24 +344,26 @@ def main():
     combinations = list(itertools.combinations(result.columns.to_list(), 2))
   
     # cross correlation
-    xcorr = result.corr()
-    light_corr = light_affect.corr()
+    xcorr = result.diff().corr()
+    #light_corr = light_affect.corr()
     
-    sns.heatmap(light_corr,cmap='RdBu_r',annot=True,fmt='.1f')
+    #sns.heatmap(light_corr,cmap='RdBu_r',annot=True,fmt='.1f')
     
-    sns.heatmap(xcorr, cmap='RdBu_r',annot=False)
+    fig,ax = plt.subplots(1,1,figsize=(15,14))
+    sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+    ax.set(title="Dataframe crosscorrelations")
 
     #xmat = xcorr.to_numpy()
-    #%%
-    #ig,ax
+    #%% save the result as csv
+    result.to_csv(r'/home/arsi/Documents/Data/Combined_data.csv', header=True)
     
     #%%
     for pair in combinations: 
         #%%
-        overall_pearson_r = result[pair[0]].corr(result[pair[1]])#.corr().iloc[0,17]
+        overall_pearson_r = result[pair[0]].corr(result[pair[1]],method='pearson')#.corr().iloc[0,17]
         #print(f"Pandas computed Pearson r: {overall_pearson_r}")
         
-        if (0.2 < abs(overall_pearson_r) < 0.5):
+        if (abs(overall_pearson_r) > 0.1):
             print(pair)
             r, p = stats.pearsonr(result.dropna()[pair[0]], result.dropna()[pair[1]])
             #print(f"Scipy computed Pearson r: {r} and p-value: {p}")
@@ -286,7 +387,7 @@ def main():
             '''
             #%%
             # Set window size to compute moving window synchrony.
-            r_window_size = 7
+            r_window_size = 14
              
             # Compute rolling window synchrony
             rolling_r = df_scaled[pair[0]].rolling(window = r_window_size, center = True).corr(df_scaled[pair[1]])
@@ -371,9 +472,48 @@ def main():
         '''
         
 #%%
-from calculate_similarity import calculate_similarity
 
+FIGPATH = None #Path.cwd() / 'Results' / 'Similarity'
 
+FIGNAME = None #"Battery_level_similarity"
+AXIS = None#resampled_day[1:-1].index.strftime('%m-%d')
+
+for name in df.columns.to_list():
+    sim = calculate_similarity(df[name].values.reshape(-1,1))
+    nov, kernel = compute_novelty(sim,edge=7)
+    plot_similarity(sim,nov,"{}".format(name),FIGPATH,FIGNAME,(0,0.2),0.9,AXIS,kernel)
+
+#%%
+combinations = list(itertools.combinations(df.columns.to_list(), 2))
+combinations = [('negative',x) for x in df.columns.to_list()]
+
+for name in combinations:
+    sim1 = calculate_similarity(df[name[0]].values.reshape(-1,1))
+    sim2 = calculate_similarity(df[name[1]].values.reshape(-1,1))
+    sim3 = sim1 * sim2
+    
+    nov, kernel = compute_novelty(sim3,edge=7)
+    plot_similarity(sim3,nov,"Joint recurrence plot: {} - {}".format(name[0],name[1]),FIGPATH,FIGNAME,(0,0.2),0,AXIS,kernel)
+    
+combinations = [('positive',x) for x in df.columns.to_list()]
+ 
+for name in combinations:
+    sim1 = calculate_similarity(df[name[0]].values.reshape(-1,1))
+    sim2 = calculate_similarity(df[name[1]].values.reshape(-1,1))
+    sim3 = sim1 * sim2
+    
+    nov, kernel = compute_novelty(sim3,edge=7)
+    plot_similarity(sim3,nov,"Joint recurrence plot: {} - {}".format(name[0],name[1]),FIGPATH,FIGNAME,(0,0.2),0,AXIS,kernel)   
+    
+
+#%%
+w=7
+    
+FIGPATH = None #Path.cwd() / 'Results' / 'RollingStatistics'
+FIGNAME = None #"Battery_level_Rolling_Statistics"
+ 
+for name in df.columns.to_list():   
+    _ = rolling_statistics(df[name].to_frame(),w,FIGNAME,FIGPATH)
 
 
 #%%

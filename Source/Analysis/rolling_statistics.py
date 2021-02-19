@@ -101,7 +101,7 @@ def rolling_statistics(ts,
     
     
     fig,ax = plt.subplots(4,2,figsize=(10,10))
-    fig.suptitle("Rolling Statistics",fontsize=20,y=1.0)
+    fig.suptitle("Rolling Statistics {}".format(ts.columns[0]),fontsize=20,y=1.0)
     
     ax[0,0].plot(ts)
     ax[0,0].set_title('Original timeseries',fontsize=16)
