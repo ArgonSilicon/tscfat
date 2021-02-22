@@ -16,6 +16,7 @@ import os
 import seaborn as sns
 import scipy.stats as stats
 import itertools
+from scipy import signal
 
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
@@ -345,6 +346,130 @@ def main():
   
     # cross correlation
     xcorr = result.diff().corr()
+    
+    neg_df = result.filter(['afraid','nervous','upset','hostile','ashamed','stressed','distracted'])
+    pos_df = result.filter(['active','determined','attentive','inspired','alert'])
+    
+    neg_corr = neg_df.diff().rolling(window=14).corr()
+    pos_corr = pos_df.diff().rolling(window=14).corr()
+    
+    aff_tot = result.negative.diff().rolling(window=14).corr(result.positive.diff().rolling(window=14))
+    
+    affects = result[['active','determined','attentive','inspired','alert','afraid','nervous','upset','hostile',
+                              'ashamed','stressed','distracted']]
+    
+    xcorr = affects.rolling(14).corr()
+    xcorr_diff = affects.diff().rolling(14).corr()
+    
+    xcorr_vec = []
+    neg_corr_vec = []
+    pos_corr_vec = []
+    neg_ave_vec = []
+    pos_ave_vec = []
+    neg_within_corr = []
+    pos_within_corr = []
+    
+    def upper_tri_indexing(A):
+        m = A.shape[0]
+        r,c = np.triu_indices(m,1)
+        return A[r,c]
+
+    for i in range(230):
+        a = i * 12
+        b = a + 7
+        xcorr_vec.append(xcorr_diff.values[a:b,7:12].mean())
+    
+    xcorr_vec = np.asarray(xcorr_vec,dtype=np.float64) # neg-pos affect crosscorrelation
+    
+    for i in range(230):  
+        a = i * 12
+        b = a + 7
+        A = xcorr_diff.values[a:b,0:7]
+        B = upper_tri_indexing(A)
+        neg_within_corr.append(B.mean())
+        
+    for i in range(230):  
+        a = i * 12 + 7
+        b = a + 5
+        A = xcorr_diff.values[a:b,7:12]
+        B = upper_tri_indexing(A)
+        pos_within_corr.append(B.mean())
+    
+    
+    for i in range(230):
+        a = i * 12
+        b = a + 7
+        neg_corr_vec.append(neg_corr.values[a:b,:].mean())
+        neg_ave_vec.append(neg_df.values[a:b,:].mean())
+        
+    for i in range(230):
+        a = i * 5
+        b = a + 5
+        pos_corr_vec.append(pos_corr.values[a:b,:].mean())
+        pos_ave_vec.append(pos_df.values[a:b,:].mean())
+    
+    
+    aff_tot = aff_tot.to_frame()
+    aff_tot.rename(columns = {0:'affections_cross_correlation'},inplace=True)
+    aff_tot['negative_correlation'] = neg_corr_vec
+    aff_tot['positive_correlation'] = pos_corr_vec
+    aff_tot['negative_autocorrelation'] = result.negative.rolling(14).apply(lambda x: x.autocorr())
+    aff_tot['positive_autocorrelation'] = result.positive.rolling(14).apply(lambda x: x.autocorr())
+    aff_tot['within_positive_correlation'] = pos_within_corr
+    aff_tot['within_negative_correlation'] = neg_within_corr
+    aff_tot['cross_correlation'] = xcorr_vec
+    aff_tot['autocorr_mean'] = aff_tot[['negative_autocorrelation','positive_autocorrelation']].mean(axis=1)
+    #%% normalize
+    import pandas as pd
+    from sklearn import preprocessing
+
+    x = result[['negative','positive']] #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    result[['negative_rs','positive_rs']] = x_scaled
+    
+    fig, ax = plt.subplots(2,1,figsize=(10,10))
+    aff_tot[['within_positive_correlation','within_negative_correlation','cross_correlation']].rolling(window=7).mean().plot(ax=ax[0])
+    ax[0].set(title='Affects Average Correlation',ylabel='Correlation')
+    result[['negative_rs','positive_rs']].rolling(window=14).mean().rolling(window=7).mean().plot(ax=ax[1])
+    ax[1].set(title='Affects Rolling Window Mean(14 days )',ylabel='Value')
+    plt.suptitle('Negative and positive affect cross correlations',fontsize=16)   
+    fig.tight_layout()
+    plt.show()
+    
+    
+    fig, ax = plt.subplots(2,1,figsize=(10,10))
+    aff_tot[['positive_autocorrelation','negative_autocorrelation','cross_correlation']].rolling(window=7).mean().plot(ax=ax[0])
+    ax[0].set(title='Affects Average Correlation',ylabel='Correlation')
+    result[['negative_rs','positive_rs']].rolling(window=14).mean().rolling(window=7).mean().plot(ax=ax[1])
+    ax[1].set(title='Affects Rolling Window Mean(14 days )',ylabel='Value')
+    plt.suptitle('Negative and positive affect cross correlations',fontsize=16)   
+    fig.tight_layout()
+    plt.show()
+    
+    fig, ax = plt.subplots(2,1,figsize=(10,10))
+    aff_tot[['autocorr_mean','cross_correlation']].rolling(window=7).mean().plot(ax=ax[0])
+    ax[0].set(title='Affects Average Correlation',ylabel='Correlation')
+    result[['negative_rs','positive_rs']].rolling(window=14).mean().rolling(window=7).mean().plot(ax=ax[1])
+    ax[1].set(title='Affects Rolling Window Mean(14 days )',ylabel='Value')
+    plt.suptitle('Negative and positive affect cross correlations',fontsize=16)   
+    fig.tight_layout()
+    plt.show()
+    '''
+    labels = ['{}-{}-{}'.format(x,y,z) for x,y,z in (zip(aff_tot.index.day.to_list(),aff_tot.index.month.to_list(),aff_tot.index.year.to_list()))]
+    x = np.arange(len(labels))  # the label locations
+    
+    fig,ax = plt.subplots(2,1)
+    ax[0].plot(neg_corr_vec,label='negative affect correlation')
+    ax[0].plot(pos_corr_vec, label='positive affect correlation')
+    #ax[0].xaxis.label.set_visible(False)
+    ax[1].set_xticks(x)
+    ax[1].set_xticklabels(labels)
+    ax[1].plot(aff_tot, label='affect cross correlation')
+    ax[0].legend()
+    ax[1].legend()
+    plt.show()
+    '''
     #light_corr = light_affect.corr()
     
     #sns.heatmap(light_corr,cmap='RdBu_r',annot=True,fmt='.1f')
@@ -443,6 +568,24 @@ def main():
             ax.set(xlabel='Offset',ylabel='Window epochs')
             ax.set_xticklabels(np.arange(-7,8,1))#[int(item-7) for item in ax.get_xticks()]);
             plt.show()
+            
+            max_val =[]
+            max_ind = []
+            for i in range(rss.values.shape[0]):
+                max_temp = np.max(rss.values[:,i])
+                min_temp = np.min(rss.values[:,i])
+                if abs(max_temp) >= abs(min_temp):
+                     max_val.append(max_temp)
+                     max_ind.append(np.argmax(rss.values[:,i])-7)
+                else:
+                    max_val.append(min_temp)
+                    max_ind.append(np.argmin(rss.values[:,i])-7)
+                    
+            fig, ax = plt.subplots(1,1)
+            ax.plot(max_val,label='max correlation')
+            ax.plot(max_ind,label='offset')
+            ax.legend()
+            plt.show()
         
         #%%
         # Rolling window time lagged cross correlation
@@ -516,6 +659,68 @@ for name in df.columns.to_list():
     _ = rolling_statistics(df[name].to_frame(),w,FIGNAME,FIGPATH)
 
 
+#%% Check some frequencies
+
+f, Pxx = signal.periodogram(df.battery_level)
+plt.plot(f, Pxx)
+
+top_3_periods = {}
+
+# get indices for 3 highest Pxx values
+top3_freq_indices = np.flip(np.argsort(Pxx), 0)[0:3]
+
+# use indices from previous step to
+# get 3 frequencies with highest power
+freqs = f[top3_freq_indices]
+
+# use same indices to get powers as well
+power = Pxx[top3_freq_indices]
+
+# we are interested in period and it is calculated as 1/frequency 
+periods = 1 / np.array(freqs)
+
+# populate dict with calculated values
+top_3_periods['period1'] = periods[0]
+top_3_periods['freq1'] = freqs[0]
+top_3_periods['power1'] = power[0]
+
+top_3_periods['period2'] = periods[1]
+top_3_periods['freq2'] = freqs[1]
+top_3_periods['power2'] = power[1]
+
+top_3_periods['period3'] = periods[2]
+top_3_periods['freq3'] = freqs[2]
+top_3_periods['power3'] = power[2]
+
+print(top_3_periods)
+
+#%% Fourier
+from scipy.fft import fft, fftfreq
+
+# Number of sample points
+
+N = 230
+
+# sample spacing
+
+T = 1.0 / 230
+
+x = np.linspace(0.0, N*T, N, endpoint=False)
+
+#y = np.sin(50.0 * 2.0*np.pi*x) + 0.5*np.sin(80.0 * 2.0*np.pi*x)
+
+y = df.positive.values
+
+yf = fft(y)
+
+xf = fftfreq(N, T)[:N//2]
+
+plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
+
+plt.grid()
+
+plt.show()
 #%%
+
 if __name__ == "__main__":
     main()

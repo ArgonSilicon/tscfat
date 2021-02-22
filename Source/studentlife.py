@@ -13,6 +13,7 @@ from sklearn.preprocessing import MinMaxScaler
 import json
 import os
 import seaborn as sns
+import re
 
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
@@ -91,10 +92,12 @@ def main():
     st2 = pd.Timestamp('2013-06-01 04:00:00')
     ix = pd.date_range(start=st1, end=st2, freq='H')
     mis_mat = np.zeros([1585,49])
+    activity_miss_dict = {}
     i = 0
     for file in os.listdir(DATA_FOLDER):
         print(file)
         subject = os.path.join(DATA_FOLDER, file)
+        res = re.findall("u(\d+).csv", file)
     
         df = pd.read_csv(subject)
         df.describe()
@@ -118,6 +121,8 @@ def main():
             interpolated = proportions.interpolate()
             
             missing = proportions.isna().astype(int)
+            
+            activity_miss_dict[res[0]] = missing.values.flatten().sum()
             mis_mat[:,i] = np.transpose(missing.values)
             proportions = proportions.fillna(value=0)
             
@@ -150,6 +155,8 @@ def main():
         except:
             print("Something went horribly wrong!")
             i += 1
+    
+    activity_miss_dict = dict(sorted(activity_miss_dict.items(), key=lambda item: item[1]))
     
     import matplotlib.dates as mdates
     import matplotlib.ticker as ticker
@@ -451,10 +458,11 @@ def main():
     ix = pd.date_range(start=st1, end=st2, freq='D')
     
     pam_mat = np.empty((72,0), int)
-    
+    pam_miss_dict = {}
     for file in os.listdir(DATA_FOLDER):
         print(file)
         current_file = os.path.join(DATA_FOLDER, file)
+        res = re.findall("u(\d+).json", current_file)
         
         
         try:
@@ -469,6 +477,8 @@ def main():
             
             missing = re_ix.picture_idx.isna().astype(int)
             missing = missing.values.reshape(-1,1)
+            miss_sum = missing.flatten().sum()
+            pam_miss_dict[res[0]] = miss_sum
             
             pam_mat = np.append(pam_mat, missing, axis=1)
             
@@ -493,6 +503,7 @@ def main():
         
         re_ix.plot()
         '''
+    pam_miss_dict = dict(sorted(pam_miss_dict.items(), key=lambda item: item[1]))
     plt.imshow(np.transpose(pam_mat))
     plt.title('PAM / missing data')
     plt.ylabel("Subject no.")
@@ -552,6 +563,8 @@ def main():
     # result = result.reindex(ix)
     # result = result.interpolate()
     # fillna?
+   
+
     
     
     #%%            
