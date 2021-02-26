@@ -18,7 +18,7 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.tools.eval_measures import rmse, aic
 from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.vector_ar.vecm import coint_johansen
-import statsmodels.tsa.stattools as ts, acf
+import statsmodels.tsa.stattools as ts
 from statsmodels.stats.stattools import durbin_watson
 
 #%% Load the data
@@ -29,7 +29,8 @@ df = pd.read_csv(df_path)
 
 df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
-df = df.drop(columns=['date','call_total_count','call_total_duration','Other','Work/Study'])
+df = df.drop(columns=['date'])
+#df = df.drop(columns=['date','call_total_count','call_total_duration','Other','Work/Study'])
 df['negative'] = df[['afraid','nervous','upset','hostile','ashamed','stressed','distracted']].sum(axis=1)
 df['positive'] = df[['active','determined','attentive','inspired','alert']].sum(axis=1)
 

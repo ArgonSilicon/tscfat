@@ -21,6 +21,7 @@ from scipy import signal
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from Source.Analysis.decompose_timeseries import STL_decomposition
+from statsmodels.tsa.stattools import adfuller
 
 WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
 #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
@@ -34,6 +35,7 @@ from Source.Analysis.plot_similarity import plot_similarity
 from Source.Analysis.calculate_similarity import calculate_similarity
 from Source.Analysis.rolling_statistics import rolling_statistics
 
+from Source.Analysis.decompose_timeseries import STL_decomposition
 plt.style.use('seaborn')
 
 def crosscorr(datax, datay, lag=0, wrap=False):
@@ -118,12 +120,16 @@ df_bat['time'] = pd.to_datetime(df_bat['time'],unit='s')
 df_bat = df_bat.set_index(df_bat['time'])
 bat_re = df_bat.filter(['battery_level'])
 bat_re = bat_re.resample('H').mean()
-bat_re_day = bat_re.resample('D').mean()
+bat_re_day = bat_re.resample('D').apply(list)
+bat_re_day = bat_re_day['2020-06-26':'2021-02-09']
+data = np.stack(bat_re_day.battery_level.values)
+#data = np.stack(bat_re_day.battery_level.values[1:-1])
 bat_re_day['Min'] = bat_re.resample('D').min()
 bat_re_day['Max'] = bat_re.resample('D').max()
 bat_re_day['Var'] = bat_re.resample('D').var()
 bat_re_day = bat_re_day.reindex(ix)
 
+#%%
 
 screen_path = Path('/home/arsi/Documents/Data/Screen.csv')
 df_screen = pd.read_csv(screen_path)
@@ -156,9 +162,29 @@ resampled = df_apps_filt.resample("H").sum()
 #resampled = resampled.drop(columns='Other')
 # daily / hours for similarity calulation
 resampled['total'] = resampled.sum(axis=1)
+
+df = resampled.groupby(resampled.index).total.sum()
+df = df.groupby(df.index.day).cumsum()
+df.groupby(['Category','scale']).sum().groupby('Category').cumsum()
+
+
 resampled_day = resampled.resample('D').sum()
 resampled_re = resampled_day.reindex(ix)
 
+#%% screen cumsums
+screen_filt = df_screen[df_screen['screen_status'] == 3]
+screen_filt.screen_status = np.repeat(1,24887)
+screen_filt = screen_filt.resample('H').sum()
+screen_filt = screen_filt['2020-06-26':'2021-02-09']
+
+screen_data = screen_filt.screen_status.values
+s_data = screen_data.reshape(-1,24)
+#%%
+df = screen_filt.groupby(screen_filt.index).screen_status.sum()
+df = df.groupby([df.index.day,df.index.month]).cumsum()
+df.plot()
+df_a = df.resample('H').sum()
+activations = df.values
 #%%
 res = resampled_day[1:-1]
 
@@ -423,10 +449,15 @@ def main():
     import pandas as pd
     from sklearn import preprocessing
 
-    x = result[['negative','positive']] #returns a numpy array
+    X = result[['negative','positive']] #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(X)
+    result[['negative_rs','positive_rs']] = x_scaled
+    
+    x = result[['battery_level']] #returns a numpy array
     min_max_scaler = preprocessing.MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(x)
-    result[['negative_rs','positive_rs']] = x_scaled
+    result[['battery_re']] = x_scaled
     
     fig, ax = plt.subplots(2,1,figsize=(10,10))
     aff_tot[['within_positive_correlation','within_negative_correlation','cross_correlation']].rolling(window=7).mean().plot(ax=ax[0])
@@ -437,6 +468,14 @@ def main():
     fig.tight_layout()
     plt.show()
     
+    fig, ax = plt.subplots(2,1,figsize=(10,10))
+    #weekdays['ratio'].plot(ax=ax[0])
+    weekdays.clusters.rolling(14).var().plot(ax=ax[0])
+    ax[0].set(title='Affects Average Correlation',ylabel='Correlation')
+    result[['negative_rs','positive_rs']].rolling(window=14).mean().rolling(window=7).mean().plot(ax=ax[1])
+    #(result['negative_rs'] / result['positive_rs']).rolling(window=14).mean().rolling(window=7).mean().plot(ax=ax[1])
+    fig.tight_layout()
+    plt.show()
     
     fig, ax = plt.subplots(2,1,figsize=(10,10))
     aff_tot[['positive_autocorrelation','negative_autocorrelation','cross_correlation']].rolling(window=7).mean().plot(ax=ax[0])
@@ -470,6 +509,34 @@ def main():
     ax[1].legend()
     plt.show()
     '''
+    
+    fig,ax = plt.subplots(1,1,figsize=(10,10))
+    result[['negative_rs','positive_rs']].rolling(14).mean().plot(ax=ax)
+    plt.show()
+    
+    active_df = pd.DataFrame(data = res3.observed - res3.trend,    # values
+                            index = result.index,   # 1st column as index
+                            columns = ['active'])
+    
+    x = result.values #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    
+    rezult = pd.DataFrame(data = x_scaled,    # values
+                          index = result.index,   # 1st column as index
+                          columns = result.columns)
+    
+    
+    
+    for i in range(rezult.shape[1]):
+        fig,ax = plt.subplots(1,1,figsize=(10,10))
+        rezult[['negative_rs','positive_rs']].rolling(14).mean().plot(marker='.',linestyle='none',ax=ax)
+        rezult.iloc[:,i].rolling(14).mean().plot(ax=ax)
+        ax.set(title='{}'.format(rezult.iloc[:,i].name))
+        plt.show()
+        
+    
+    
     #light_corr = light_affect.corr()
     
     #sns.heatmap(light_corr,cmap='RdBu_r',annot=True,fmt='.1f')
@@ -721,6 +788,179 @@ plt.grid()
 
 plt.show()
 #%%
+fig, ax = plt.subplots(1,1,figsize=(10,10))
+sns.regplot(x = "positive_rs", 
+            y = "negative_rs",  
+            data = df,
+            ax=ax) 
+plt.show()
 
+fig, ax = plt.subplots(1,1,figsize=(10,10))
+graph = sns.jointplot(data = rezult,
+                      x = 'negative_rs', 
+                      y = 'Awake Time',  
+                      kind="reg")
+
+r, p = stats.pearsonr(df.negative_rs.fillna(0), df['Awake Time'].fillna(0))
+
+# if you choose to write your own legend, then you should adjust the properties then
+phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
+# here graph is not a ax but a joint grid, so we access the axis through ax_joint method
+
+graph.ax_joint.legend([phantom],['r={:2f}, p={:2f}'.format(r,p)])
+plt.show()
+
+fig, ax = plt.subplots(1,1,figsize=(10,10))
+sns.jointplot(data = df,
+              x = 'positive_rs', 
+              y = 'negative_rs',  
+              kind="reg").annotate(stats.pearsonr)
+plt.show()
+
+#%% Cross correlation function`???
+
+def ccf(x, y, lag_max = 100):
+
+    result = signal.correlate(y - np.mean(y), x - np.mean(x), method='direct') / (np.std(y) * np.std(x) * len(y))
+    length = (len(result) - 1) // 2
+    lo = length - lag_max
+    hi = length + (lag_max + 1)
+
+    return result[lo:hi],result
+
+pos_neg,resa = ccf(result.negative_rs.diff().fillna(0).values, result.battery_re.diff().fillna(0).values)
+
+plt.plot(np.arange(-100,101,1),pos_neg)
+plt.title('Cross Correlation Function')
+plt.xlabel('Time lag')
+plt.ylabel('Cross Correlation')
+plt.show()
+#%%
+x = result.negative_rs.fillna(0).values
+y = result.positive_rs.fillna(0).values
+cc1 = np.correlate(x - x.mean(), y - y.mean())[0] # Remove means
+cc1 /= (len(x) * x.std() * y.std()) #Normalise by number of points and product of standard deviations
+cc2 = np.corrcoef(x,y)[0, 1]
+print(cc1,cc2)
+#%%
+data = resampled_day.battery_level.values
+
+length = max(map(len, data))
+y = np.array([xi+[None]*(length-len(xi)) for xi in data])
+
+#%% Create decomposed dataframe
+
+decomp_mat = np.zeros((230,56))
+i = 0
+for name in active_df.columns.to_list():
+    decomp = STL_decomposition(active_df[name].values,'{}'.format(name))
+    decomp_mat[:,i] = decomp.trend
+    i += 1
+    
+    
+test_df = pd.DataFrame(data = decomp_mat,    # values
+                            index = active_df.index,   # 1st column as index
+                            columns = active_df.columns)
+
+xcorr = test_df.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe trend crosscorrelations")
+
+xcorr = active_df.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe (Raw) crosscorrelations")
+
+#%% test with gaussian smoothing
+smooth = active_df.rolling(window=30, win_type='gaussian', center=True).mean()
+
+trend_removed = active_df - smooth
+
+xcorr = trend_removed.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe Gaussian smoothing (window=30) crosscorrelations")
+
+#%% ewm
+exp_smooth = active_df.ewm(halflife='2 days', times = active_df.index).mean()
+
+trend_removed = active_df - exp_smooth
+
+xcorr = trend_removed.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe Exponential smoothing crosscorrelations")
+
+#%% test
+trend_removed = active_df - exp_smooth
+xcorr = trend_removed.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe Exponential smoothing tredn removed crosscorrelations")
+
+#%% median smooth
+smooth = active_df.rolling(window=30).mean()
+
+trend_removed = active_df - smooth
+
+xcorr = trend_removed.corr()
+
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe Mean Smoothing (windows=30) crosscorrelations")
+
+#%%
+df2 = df['2020-06-26':'2021-02-09']
+
+from sklearn import preprocessing
+
+X = df2.values
+min_max_scaler = preprocessing.MinMaxScaler()
+x_scaled = min_max_scaler.fit_transform(X)
+
+test_df = pd.DataFrame(data = x_scaled,    # values
+                       index = df2.index,   # 1st column as index
+                       columns = df2.columns)
+
+test_df['battery_cluster'] = clusters
+filt = (clusters == 1).astype(int)
+test_df['norm_day'] = filt
+
+# fix this!!!
+test_df['bat_stab'] = stab
+#%%
+fig,ax = plt.subplots(2,1,figsize=(10,10))
+test_df.negative.rolling(14).mean().plot(ax=ax[0])
+test_df.positive.rolling(14).mean().plot(ax=ax[1])
+
+#%%
+fig,ax = plt.subplots(2,1,figsize=(10,10))
+test_df.negative[3:-3].rolling(14).mean().plot(ax=ax[0])
+test_df['bat_stab'][3:-3].plot(ax=ax[1])
+
+#%%
+for i in range(230):
+   plt.plot(data[i].cumsum() / data[i].sum())
+plt.show()
+
+for i in range(230):
+    plt.plot(data[i])
+plt.show()
+    
+for i in range(230):
+    plt.plot(s_data_cumsum[i])
+plt.show()
+    
+#%%
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(sim, cmap='RdBu_r',annot=False,ax=ax)
+ax.set(title="Dataframe Exponential smoothing crosscorrelations")
+#%%
 if __name__ == "__main__":
     main()

@@ -89,15 +89,19 @@ def process_battery(df,FIGPATH):
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
-    clusters = cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=2)
+    clusters = cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=3)
 
-    filt_1 = clusters > 0
-    filt_2 = clusters < 1
+    filt_1 = clusters == 0
+    filt_2 = clusters == 1
+    filt_3 = clusters == 2
+    #filt_4 = clusters == 3
     
     clust_1 = data[filt_1]
     clust_2 = data[filt_2]
+    clust_3 = data[filt_3]
+    #clust_4 = data[filt_4]
     
-    fig,ax = plt.subplots(2,1,figsize=(10,7))
+    fig,ax = plt.subplots(3,1,figsize=(10,7))
     fig.suptitle("Battery level clusters / hourly average",fontsize=20)
     
     ax[0].plot(np.mean(clust_1,axis=0))
@@ -110,6 +114,21 @@ def process_battery(df,FIGPATH):
     ax[1].set_title("Cluster 2")
     ax[1].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
     ax[1].set(ylim=(30,100))
+    
+    
+    ax[2].plot(np.mean(clust_3,axis=0))
+    ax[2].set_title("Cluster 3")
+    ax[2].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[2].set(ylim=(30,100))
+    
+    '''
+    ax[3].plot(np.mean(clust_4,axis=0))
+    ax[3].set_title("Cluster 3")
+    ax[3].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[3].set(ylim=(30,100))
+    '''
+    
+    
     fig.tight_layout(pad=1.0)
     
     plt.show()
@@ -137,12 +156,22 @@ def process_battery(df,FIGPATH):
                                            ordered=True)
     wd3 = wd3.sort_index()
     wd3.plot(kind='bar',title="Cluster 1 / daily counts",ylabel='Count')
+    
+    wd4 = weekdays[weekdays['clusters'] == 2]
+    wd4['date'] = wd4.index
+    wd4['date'] = pd.to_datetime(wd4['date'])
+    
+    wd5 = weekdays.groupby(wd4['date'].dt.day_name()).count()
+    wd5.index = pd.Categorical(wd5.index, categories= ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday', 'Sunday'],
+                                           ordered=True)
+    wd5 = wd5.sort_index()
+    wd5.plot(kind='bar',title="Cluster 2 / daily counts",ylabel='Count')
         
     fig,ax = plt.subplots(figsize=[10,4])
     weekdays.plot(style='o',ax=ax)
-    ax.set_yticks([0,1])
+    ax.set_yticks([0,1,2])
     ax.set(title='Battery level clustered time series',ylabel='Cluster')
-    ax.set(ylim=(-0.5,1.5))
+    ax.set(ylim=(-1,3))
     plt.show()
     
     #%%
