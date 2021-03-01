@@ -13,6 +13,8 @@ import numpy as np
 from Source.Utils.argument_loader import setup_pd, setup_np
 import pytest
 
+
+
 def calculate_similarity(X,metric='Euclidean'):        
     """
     Calculate similarity matrix. Utilize numpy pdist function. 

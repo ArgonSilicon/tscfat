@@ -120,17 +120,28 @@ df_bat['time'] = pd.to_datetime(df_bat['time'],unit='s')
 df_bat = df_bat.set_index(df_bat['time'])
 bat_re = df_bat.filter(['battery_level'])
 bat_re = bat_re.resample('H').mean()
+bat_re = bat_re.interpolate()
+
 bat_re_day = bat_re.resample('D').apply(list)
 bat_re_day = bat_re_day['2020-06-26':'2021-02-09']
 data = np.stack(bat_re_day.battery_level.values)
-#data = np.stack(bat_re_day.battery_level.values[1:-1])
-bat_re_day['Min'] = bat_re.resample('D').min()
-bat_re_day['Max'] = bat_re.resample('D').max()
-bat_re_day['Var'] = bat_re.resample('D').var()
-bat_re_day = bat_re_day.reindex(ix)
+
+bat_sum = bat_re.groupby(bat_re.index).battery_level.sum()
+bat_cumsum = bat_re.groupby([bat_re.index.day,bat_re.index.month]).cumsum()
+bat_cumsum_day = bat_cumsum.resample('D').apply(list)
+bat_cumsum_day = bat_cumsum_day['2020-06-26':'2021-02-09']
+bat_data_cumsum = np.stack(bat_cumsum_day.battery_level.values)
+bat_data_cumsum_norm = bat_data_cumsum / bat_data_cumsum.max(axis=1).reshape(-1,1)
+#%% show daily cumsums
+for i in range(229):
+    plt.plot(bat_data_cumsum_norm[i])
+plt.show()
 
 #%%
-
+df['Battery_stability'] = stab
+#%%
+df.to_csv(r'/home/arsi/Documents/Data/Combined_data.csv', header=True)
+#%%
 screen_path = Path('/home/arsi/Documents/Data/Screen.csv')
 df_screen = pd.read_csv(screen_path)
 df_screen['time'] = pd.to_datetime(df_screen['time'],unit='s')
@@ -158,18 +169,33 @@ df_apps['is_active'] = temp
 df_apps_filt = df_apps[df_apps['is_active'] == True]
 #print(df_filt.shape)
 df_apps_filt = df_apps_filt.filter(['Communication','Entertainment','Other','Shop','Social_media','Sports','Transportation','Travel','Work/Study','Health'])
-resampled = df_apps_filt.resample("H").sum()
+apps_resampled = df_apps_filt.resample("H").sum()
 #resampled = resampled.drop(columns='Other')
 # daily / hours for similarity calulation
-resampled['total'] = resampled.sum(axis=1)
+apps_resampled['total'] = apps_resampled.sum(axis=1)
 
-df = resampled.groupby(resampled.index).total.sum()
-df = df.groupby(df.index.day).cumsum()
-df.groupby(['Category','scale']).sum().groupby('Category').cumsum()
+#%% CUMULATIVE SUMS FOR CLUSTERING / DISTANCE CALCULATION?
+#df = resampled.groupby(resampled.index).total.sum()
+#df = df.groupby(df.index.day).cumsum()
+#df.groupby(['Category','scale']).sum().groupby('Category').cumsum()
 
+#TODO create a cumsum / stability for app notifications 
+app_re_day = apps_resampled.resample('D').apply(list)
+app_re_day = app_re_day['2020-06-26':'2021-02-09']
+data = np.stack(app_re_day.total.values)
 
-resampled_day = resampled.resample('D').sum()
-resampled_re = resampled_day.reindex(ix)
+#%%
+app_sum = apps_resampled.groupby(apps_resampled.index).total.sum()
+app_cumsum = app_sum.groupby([app_sum.index.day,app_sum.index.month]).cumsum()
+app_cumsum_day = app_cumsum.resample('D').apply(list)
+app_cumsum_day = app_cumsum_day['2020-06-26':'2021-02-09']
+app_data_cumsum = np.stack(app_cumsum_day.values)
+app_data_cumsum_norm = np.divide(app_data_cumsum, app_data_cumsum.max(axis=1).reshape(-1,1), out = np.zeros_like(app_data_cumsum), where = (app_data_cumsum.max(axis=1).reshape(-1,1)) != 0)
+
+#%%
+for i in range(229):
+    plt.plot(app_data_cumsum_norm[i])
+plt.show()
 
 #%% screen cumsums
 screen_filt = df_screen[df_screen['screen_status'] == 3]
@@ -180,8 +206,17 @@ screen_filt = screen_filt['2020-06-26':'2021-02-09']
 screen_data = screen_filt.screen_status.values
 s_data = screen_data.reshape(-1,24)
 #%%
-df = screen_filt.groupby(screen_filt.index).screen_status.sum()
-df = df.groupby([df.index.day,df.index.month]).cumsum()
+screen_sum = screen_filt.groupby(screen_filt.index).screen_status.sum()
+screen_cumsum = screen_sum.groupby([screen_sum.index.day,screen_sum.index.month]).cumsum()
+screen_cumsum_data = np.stack(screen_cumsum.values)
+screen_cumsum_data = screen_cumsum_data.reshape(-1,24)
+screen_cumsum_data_norm = screen_cumsum_data / screen_cumsum_data.max(axis=1).reshape(-1,1)
+
+#%%
+for i in range(229):
+    plt.plot(screen_cumsum_data_norm[i])
+plt.show()
+#%%
 df.plot()
 df_a = df.resample('H').sum()
 activations = df.values
@@ -547,7 +582,7 @@ def main():
 
     #xmat = xcorr.to_numpy()
     #%% save the result as csv
-    result.to_csv(r'/home/arsi/Documents/Data/Combined_data.csv', header=True)
+    df.to_csv(r'/home/arsi/Documents/Data/Combined_data.csv', header=True)
     
     #%%
     for pair in combinations: 
@@ -941,8 +976,20 @@ test_df.positive.rolling(14).mean().plot(ax=ax[1])
 
 #%%
 fig,ax = plt.subplots(2,1,figsize=(10,10))
-test_df.negative[3:-3].rolling(14).mean().plot(ax=ax[0])
-test_df['bat_stab'][3:-3].plot(ax=ax[1])
+df.negative[7:-7].rolling(14).mean().plot(ax=ax[0])
+df['Battery_stability'][7:-7].plot(ax=ax[1])
+#%%
+fig,ax = plt.subplots(2,1,figsize=(10,10))
+df.positive[7:-7].rolling(14).mean().plot(ax=ax[0])
+df['Battery_stability'][7:-7].plot(ax=ax[1])
+#%%
+fig,ax = plt.subplots(2,1,figsize=(10,10))
+df.negative[7:-7].rolling(14).mean().plot(ax=ax[0])
+df['app_stability'][7:-7].plot(ax=ax[1])
+#%%
+fig,ax = plt.subplots(2,1,figsize=(10,10))
+df.positive[7:-7].rolling(14).mean().plot(ax=ax[0])
+df['app_stability'][7:-7].plot(ax=ax[1])
 
 #%%
 for i in range(230):
@@ -961,6 +1008,22 @@ plt.show()
 fig,ax = plt.subplots(1,1,figsize=(15,14))
 sns.heatmap(sim, cmap='RdBu_r',annot=False,ax=ax)
 ax.set(title="Dataframe Exponential smoothing crosscorrelations")
+
+#%%
+col_names = df.columns.to_list()
+#%%
+for name in col_names:
+    
+    #res = STL_decomposition(df[name].values,'{}'.format(name))
+    #_ = summary_statistics(df[name],"Time series summary",False,False)
+    FIGPATH = Path.cwd() / 'Results' / 'RollingStatistics'
+    #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/RollingStatistics')
+    FIGNAME = "Battery_level_Rolling_Statistics"
+    
+    _ = rolling_statistics(df[name].to_frame(),14,FIGNAME,FIGPATH)
+    
+    #TODO clustering
+    #TODO similarity / novelty / stability
 #%%
 if __name__ == "__main__":
     main()

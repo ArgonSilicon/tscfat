@@ -14,6 +14,7 @@ Created on Fri Jul  3 15:08:26 2020
 
 # standard library imports
 from pathlib import Path
+import copy
 
 # third party imports
 import numpy as np
@@ -75,11 +76,13 @@ def process_battery(df,FIGPATH):
     FIGPATH = Path.cwd() / 'Results' / 'Similarity'
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Similarity')
     FIGNAME = "Battery_level_similarity"
-    AXIS = resampled_day[1:-1].index.strftime('%m-%d')
+    AXIS = None #resampled_day[1:-1].index.strftime('%m-%d')
     
-    sim = calculate_similarity(data,'cosine')
+    sim = calculate_similarity(data)
+    #sim = calculate_similarity(data)
+    stab = compute_stability(sim)
     nov, kernel = compute_novelty(sim,edge=7)
-    plot_similarity(sim,nov,"Battery level (cosine distance)",FIGPATH,FIGNAME,(0,0.04),0.9,AXIS,kernel)
+    plot_similarity(copy.deepcopy(sim),nov,"Battery level (euclidean distance)",FIGPATH,FIGNAME,(0,0.06),0.8,AXIS,kernel)
 
     #%%
     # Timeseries clustering

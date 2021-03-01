@@ -24,6 +24,7 @@ plt.rcParams.update({'figure.max_open_warning': 0})
 @plot_decorator
 def plot_similarity(sim,
                     nov,
+                    stab,
                     title="Similarity and novelty",
                     savepath = False, 
                     savename = False,
@@ -43,6 +44,8 @@ def plot_similarity(sim,
         m x m array containing similarity values
     nov : Numpy ndarray
         m x 1 array containing  novelty scores
+    stab : Numpy ndarray
+        m x 1 array containing  stability scores
         
     title : str, optional
             Similarity plot title. The default is "Similarity and novelty".
@@ -79,14 +82,17 @@ def plot_similarity(sim,
      
     assert isinstance(sim,np.ndarray), "Similarity matrix type is not np.ndarray."
     assert isinstance(nov,np.ndarray), "Novelty score array type is not np.ndarray."
-
+    assert isinstance(stab,np.ndarray), "Stability score array type is not np.ndarray."
+    
+    
     sim[sim < threshold] = 0
     # plot it
-    fig, ax = plt.subplots(4,4,figsize=(10,10),sharex=True)  
-    gridsize = (4,4)
+    fig, ax = plt.subplots(5,4,figsize=(10,12),sharex=True)  
+    gridsize = (5,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
     ax2 = plt.subplot2grid(gridsize, (1,3), colspan=1,rowspan=1)
     ax3 = plt.subplot2grid(gridsize, (3,0), colspan=4,rowspan=1)
+    ax4 = plt.subplot2grid(gridsize, (4,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
     ax1.set_title("Similarity matrix", fontsize=18)
@@ -114,7 +120,13 @@ def plot_similarity(sim,
         ax3.legend(fontsize=16)
         ax3.set_ylim(ylim)
         #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
-
+        
+        ax4.plot(nov,label="Stability")
+        ax4.set_title("Stability score", fontsize=18)
+        ax4.set_xlabel('Time (day)',fontsize=16)
+        ax4.set_ylabel('Stability',fontsize=16)
+        ax4.legend(fontsize=16)
+        ax4.set_ylim((np.min(stab[7:-7]),np.max(stab[7:-7])))
     else:
         ax3.plot(nov,label="Novelty")
         ax3.set_title("Novelty score", fontsize=18)
@@ -126,6 +138,13 @@ def plot_similarity(sim,
         #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
         ax3.legend(fontsize=16)
         ax3.set_ylim(ylim)
+        
+        ax4.plot(stab,label="Stability")
+        ax4.set_title("Stability score", fontsize=18)
+        ax4.set_xlabel('Time (day)',fontsize=16)
+        ax4.set_ylabel('Stability',fontsize=16)        
+        ax4.legend(fontsize=16)
+        ax4.set_ylim((0.95*np.min(stab[7:-7]),1.05*(np.max(stab[7:-7]))))
         
     
     #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
