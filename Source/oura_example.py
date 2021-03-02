@@ -552,9 +552,10 @@ def main():
     active_df = pd.DataFrame(data = res3.observed - res3.trend,    # values
                             index = result.index,   # 1st column as index
                             columns = ['active'])
-    
+    #%%
+    result = df
     x = result.values #returns a numpy array
-    min_max_scaler = preprocessing.MinMaxScaler()
+    min_max_scaler = MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(x)
     
     rezult = pd.DataFrame(data = x_scaled,    # values
@@ -562,7 +563,7 @@ def main():
                           columns = result.columns)
     
     
-    
+    #%%
     for i in range(rezult.shape[1]):
         fig,ax = plt.subplots(1,1,figsize=(10,10))
         rezult[['negative_rs','positive_rs']].rolling(14).mean().plot(marker='.',linestyle='none',ax=ax)
@@ -822,36 +823,51 @@ plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
 plt.grid()
 
 plt.show()
-#%%
+#%% JOINTPLOTS ARE HERE!!!!
+'''
 fig, ax = plt.subplots(1,1,figsize=(10,10))
 sns.regplot(x = "positive_rs", 
             y = "negative_rs",  
             data = df,
             ax=ax) 
 plt.show()
+'''
+#neg_comb = [('negative',i) for i in rezult.columns.to_list()]
+#pos_comb = [('positive',i) for i in rezult.columns.to_list()]
+pos_comb = [('positive','norm_day')]
 
-fig, ax = plt.subplots(1,1,figsize=(10,10))
-graph = sns.jointplot(data = rezult,
-                      x = 'negative_rs', 
-                      y = 'Awake Time',  
-                      kind="reg")
+for comb in pos_comb:
+    X = comb[1]
+    Y = comb[0]
+    
+    fig, ax = plt.subplots(1,1,figsize=(15,15))
+    graph = sns.jointplot(data = rezult[7:-7].diff().fillna(0),
+                          x = X, 
+                          y = Y,  
+                          kind="reg",
+                          )
+    
+    graph.fig.suptitle("{} vs. {} regression plot".format(X,Y))
+    #graph.ax_joint.collections[0].set_alpha(0)
+    graph.fig.tight_layout()
+    graph.fig.subplots_adjust(top=0.95) # Reduce plot to make room
+    r, p = stats.pearsonr(rezult[X][7:-7].diff().fillna(0),rezult[Y][7:-7].diff().fillna(0))
+    
+    # if you choose to write your own legend, then you should adjust the properties then
+    phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
+    # here graph is not a ax but a joint grid, so we access the axis through ax_joint method
+    
+    graph.ax_joint.legend([phantom],['r={:2f}, p={:2f}'.format(r,p)])
+    plt.show()
 
-r, p = stats.pearsonr(df.negative_rs.fillna(0), df['Awake Time'].fillna(0))
-
-# if you choose to write your own legend, then you should adjust the properties then
-phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
-# here graph is not a ax but a joint grid, so we access the axis through ax_joint method
-
-graph.ax_joint.legend([phantom],['r={:2f}, p={:2f}'.format(r,p)])
-plt.show()
-
+'''
 fig, ax = plt.subplots(1,1,figsize=(10,10))
 sns.jointplot(data = df,
               x = 'positive_rs', 
               y = 'negative_rs',  
               kind="reg").annotate(stats.pearsonr)
 plt.show()
-
+'''
 #%% Cross correlation function`???
 
 def ccf(x, y, lag_max = 100):
@@ -965,7 +981,7 @@ test_df = pd.DataFrame(data = x_scaled,    # values
 
 test_df['battery_cluster'] = clusters
 filt = (clusters == 1).astype(int)
-test_df['norm_day'] = filt
+rezult['norm_day'] = filt
 
 # fix this!!!
 test_df['bat_stab'] = stab

@@ -23,7 +23,7 @@ import pandas as pd
 
 # Local application import
 from Source.Analysis.calculate_similarity import calculate_similarity
-from Source.Analysis.calculate_novelty import compute_novelty
+from Source.Analysis.calculate_novelty import compute_novelty, compute_stability
 from Source.Analysis.decompose_timeseries import STL_decomposition#, detect_steps
 from Source.Analysis.plot_similarity import plot_similarity
 from Source.Analysis.cluster_timeseries import cluster_timeseries
