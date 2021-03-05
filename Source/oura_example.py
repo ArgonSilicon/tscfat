@@ -561,6 +561,14 @@ def main():
     rezult = pd.DataFrame(data = x_scaled,    # values
                           index = result.index,   # 1st column as index
                           columns = result.columns)
+    #%%
+    X = df[['positive','negative']].values
+    min_max_scaler = MinMaxScaler()
+    X_scaled = min_max_scaler.fit_transform(X)
+    
+    #%%
+    df['positive'] = X_scaled[:,0]
+    df['negative'] = X_scaled[:,1]
     
     
     #%%
@@ -834,14 +842,16 @@ plt.show()
 '''
 #neg_comb = [('negative',i) for i in rezult.columns.to_list()]
 #pos_comb = [('positive',i) for i in rezult.columns.to_list()]
-pos_comb = [('positive','norm_day')]
+pos_comb = [('positive','screen_stability')]
+
+df_detrend = df - df.rolling(14).mean()
 
 for comb in pos_comb:
     X = comb[1]
     Y = comb[0]
     
     fig, ax = plt.subplots(1,1,figsize=(15,15))
-    graph = sns.jointplot(data = rezult[7:-7].diff().fillna(0),
+    graph = sns.jointplot(data = df[7:-7],
                           x = X, 
                           y = Y,  
                           kind="reg",
@@ -851,7 +861,31 @@ for comb in pos_comb:
     #graph.ax_joint.collections[0].set_alpha(0)
     graph.fig.tight_layout()
     graph.fig.subplots_adjust(top=0.95) # Reduce plot to make room
-    r, p = stats.pearsonr(rezult[X][7:-7].diff().fillna(0),rezult[Y][7:-7].diff().fillna(0))
+    r, p = stats.pearsonr(df[X][7:-7],df[Y][7:-7])
+    
+    # if you choose to write your own legend, then you should adjust the properties then
+    phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
+    # here graph is not a ax but a joint grid, so we access the axis through ax_joint method
+    
+    graph.ax_joint.legend([phantom],['r={:2f}, p={:2f}'.format(r,p)])
+    plt.show()
+
+for comb in pos_comb:
+    X = comb[1]
+    Y = comb[0]
+    
+    fig, ax = plt.subplots(1,1,figsize=(15,15))
+    graph = sns.jointplot(data = df[7:-7].diff().fillna(0),
+                          x = X, 
+                          y = Y,  
+                          kind="reg",
+                          )
+    
+    graph.fig.suptitle("{} vs. {} regression plot".format(X,Y))
+    #graph.ax_joint.collections[0].set_alpha(0)
+    graph.fig.tight_layout()
+    graph.fig.subplots_adjust(top=0.95) # Reduce plot to make room
+    r, p = stats.pearsonr(df[X][7:-7].diff().fillna(0),df[Y][7:-7].diff().fillna(0))
     
     # if you choose to write your own legend, then you should adjust the properties then
     phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)

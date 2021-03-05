@@ -20,15 +20,17 @@ import matplotlib.pyplot as plt
 from Source.Utils.argument_loader import setup_ps, setup_pd
 import pytest
 from Source.Utils.plot_decorator import plot_decorator
+from matplotlib import gridspec
 
+plt.style.use('seaborn')
 
 @plot_decorator
 def _plot_summary(series,
-                   title,
-                   savepath=False,
-                   savename=False,
-                   test = False
-                   ):
+                  title,
+                  savepath = False,
+                  savename = False,
+                  test = False
+                  ):
     """
     
     Parameters
@@ -47,36 +49,59 @@ def _plot_summary(series,
     None.
 
     """
+
     
     fig,ax = plt.subplots(3,2,figsize=(10,10))
     fig.suptitle(title,fontsize=20,y=1)
     
-    ax[0,0].plot(series)
-    #ax[0,0].plot(x = series.index, y = series.values)
-    ax[0,0].set_title('Original timeseries')
-    ax[0,0].tick_params('x', labelrotation=45)
+    gridsize = (3,2)
+    ax1 = plt.subplot2grid(gridsize, (0,0), colspan=2,rowspan=1)
+    ax2 = plt.subplot2grid(gridsize, (1,0), colspan=1,rowspan=1)
+    ax3 = plt.subplot2grid(gridsize, (1,1), colspan=1,rowspan=1)
+    ax4 = plt.subplot2grid(gridsize, (2,0), colspan=1,rowspan=1)
+    ax5 = plt.subplot2grid(gridsize, (2,1), colspan=1,rowspan=1)
     
-    ax[0,1].hist(series,20)
-    ax[0,1].set_title("Histogram")
-
+    ax1.plot(series)
+    ax1.set_title('Original timeseries')
+    ax1.tick_params('x', labelrotation=45)
     
-    pd.plotting.lag_plot(series,lag=1,ax=ax[1,0])
-    ax[1,0].set_title('Lag plot / lag 1')
-    ax[1,0].set_box_aspect(1)
-    #ax[1,0].set(adjustable='box-forced', aspect='equal')
+    series.rolling(14).mean().plot(ax=ax2)
+    #sm.graphics.tsa.plot_pacf(series,lags=30,ax=ax5)
+    ax2.set(title='Rolling Average',xlabel='date',ylabel='rolling average')
     
+    ax3.hist(series,20)
+    ax3.set_title("Histogram")
+  
+    pd.plotting.lag_plot(series,lag=1,ax=ax4)
+    ax4.set_title('Lag plot / lag 1')
+    ax4.set_box_aspect(1)
+    #ax3.set(adjustable='box-forced', aspect='equal')
+      
+    pd.plotting.autocorrelation_plot(series,ax=ax5)
+    ax5.set_xlim([0,30])
+    ax5.set_title('Autocorrelation')
     
-    pd.plotting.autocorrelation_plot(series,ax=ax[1,1])
-    ax[1,1].set_xlim([0,240])
-    ax[1,1].set_title('Autocorrelation')
+    #series.rolling(14).mean().plot(ax=ax5)
+    #sm.graphics.tsa.plot_pacf(series,lags=30,ax=ax5)
+    #ax5.set(xlabel='lag',ylabel='rolling average')
     
-    sm.graphics.tsa.plot_pacf(series,lags=30,ax=ax[2,0])
-    ax[2,0].set(xlabel='lag',ylabel='correlation')
-    
-    sm.graphics.tsa.plot_acf(series,lags=30,ax=ax[2,1])
-    ax[2,1].set(xlabel='lag',ylabel='correlation')
+    #sm.graphics.tsa.plot_acf(series,lags=30,ax=ax[2,1])
+    #ax[2,1].set(xlabel='lag',ylabel='correlation')
     
     fig.tight_layout(pad=1.0)
+    
+    #%%
+    if all((savename,savepath)):
+        
+        assert isinstance(savename,str), "Invalid savename type."
+    
+        if savepath.exists():
+            with open(savepath / (savename + "_summary.png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
     
     return fig
 

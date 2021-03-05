@@ -15,10 +15,12 @@ import numpy as np
 #from arma_model import autocorr
 from Source.Analysis.fluctuation_intensity import fluctuation_intensity
 from scipy.stats import entropy
-import nolds
+#import nolds
 import pytest
 from Source.Utils.plot_decorator import plot_decorator
 
+#TODO! why pandas dataframe is rewuired!!!!
+#TODO! the plot decorator is not working anymore
 def _autocorr(series, t=1):
     """ Calculate autocorrelation for given timeseries
     
@@ -99,9 +101,16 @@ def rolling_statistics(ts,
     ent = ts.rolling(window = w).apply(entropy)
     #ent = ts.rolling(window = w).apply(nolds.sampen)
     
+    var1 = variance = ts.diff(1).fillna(0).rolling(window = w).var()
+    var2 = variance = ts.diff(1).diff(7).fillna(0).rolling(window = w).var()
+    var3 = variance = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).var()
     
-    fig,ax = plt.subplots(4,2,figsize=(10,10))
-    fig.suptitle("Rolling Statistics {}".format(ts.columns[0]),fontsize=20,y=1.0)
+    ac1 = ts.diff(1).fillna(0).rolling(window = w).apply(_autocorr)
+    ac2 = ts.diff(1).diff(7).fillna(0).rolling(window = w).apply(_autocorr)
+    ac3 = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).apply(_autocorr)
+    
+    fig,ax = plt.subplots(5,2,figsize=(20,20))
+    fig.suptitle("{} Rolling Statistics".format(ts.columns[0]),fontsize=20,y=1.0)
     
     ax[0,0].plot(ts)
     ax[0,0].set_title('Original timeseries',fontsize=16)
@@ -127,30 +136,52 @@ def rolling_statistics(ts,
     ax[1,1].set_ylabel('Value')
     ax[1,1].tick_params('x', labelrotation=45)
     
-    ax[2,0].plot(skew)
-    ax[2,0].set_title('Skewness',fontsize=16)
+    ax[2,0].plot(var1)
+    ax[2,0].set_title('Variance, diff(1)',fontsize=16)
     ax[2,0].set_xlabel('Date')
     ax[2,0].set_ylabel('Value')
     ax[2,0].tick_params('x', labelrotation=45)
     
-    ax[2,1].plot(kurt)
-    ax[2,1].set_title('Kurtosis',fontsize=16)
+    ax[2,1].plot(ac1)
+    ax[2,1].set_title('Autocorrelation, diff(1)',fontsize=16)
     ax[2,1].set_xlabel('Date')
     ax[2,1].set_ylabel('Value')
     ax[2,1].tick_params('x', labelrotation=45)
     
-    ax[3,0].plot(flu_int)
-    ax[3,0].set_title('Fluctuation intensity',fontsize=16)
+    ax[3,0].plot(var2)
+    ax[3,0].set_title('Variance, diff(1,7)',fontsize=16)
     ax[3,0].set_xlabel('Date')
     ax[3,0].set_ylabel('Value')
     ax[3,0].tick_params('x', labelrotation=45)
     
-    ax[3,1].plot(ent)
-    ax[3,1].set_title('Entropy',fontsize=16)
+    ax[3,1].plot(ac2)
+    ax[3,1].set_title('Autocorrelation, diff(1,7)',fontsize=16)
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     ax[3,1].tick_params('x', labelrotation=45)
     
+    ax[4,0].plot(var3)
+    ax[4,0].set_title('Variance, diff(1,7,28)',fontsize=16)
+    ax[4,0].set_xlabel('Date')
+    ax[4,0].set_ylabel('Value')
+    ax[4,0].tick_params('x', labelrotation=45)
+    
+    ax[4,1].plot(ac3)
+    ax[4,1].set_title('Autocorrelation, diff(1,7,28)',fontsize=16)
+    ax[4,1].set_xlabel('Date')
+    ax[4,1].set_ylabel('Value')
+    ax[4,1].tick_params('x', labelrotation=45)
+    
     plt.tight_layout(pad=1)
   
+    if all((savename,savepath)):
 
+        assert isinstance(savename,str), "Invalid savename type."
+    
+        if savepath.exists():
+            with open(savepath / (savename + "_rolling.png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")

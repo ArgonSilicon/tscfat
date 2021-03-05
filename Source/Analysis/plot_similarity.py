@@ -21,6 +21,9 @@ import pytest
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
+#TODO! fix xlabel
+#TODO! remove ylim
+#TODO! fix plot decorator!!!
 @plot_decorator
 def plot_similarity(sim,
                     nov,
@@ -137,7 +140,7 @@ def plot_similarity(sim,
         #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
         #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
         ax3.legend(fontsize=16)
-        ax3.set_ylim(ylim)
+        ax3.set_ylim((0.95*np.min(nov[7:-7]),1.05*(np.max(nov[7:-7]))))
         
         ax4.plot(stab,label="Stability")
         ax4.set_title("Stability score", fontsize=18)
@@ -156,6 +159,22 @@ def plot_similarity(sim,
     plt.grid(True)
     plt.tight_layout(pad=1)
     
+    
+     #%%
+     
+    print('boo')
+    if all((savename,savepath)):
+        print('yaa')
+        assert isinstance(savename,str), "Invalid savename type."
+    
+        if savepath.exists():
+            with open(savepath / (savename + "_similarity.png"), mode="wb") as outfile:
+                plt.savefig(outfile, format="png")
+        else:
+            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
+    else:
+        raise Exception("Arguments were not given correctly.")
+      
     return fig
 
 '''

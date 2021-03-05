@@ -10,13 +10,19 @@ Function wrapper for plotting the figure or saving it to the destined folder.
 import matplotlib.pyplot as plt
 import functools
 
+
+# TODO: fix the decorator -> cannot find kwargs??!!
+
 def plot_decorator(func):
     @functools.wraps(func)
     def wrapper(*args,**kwargs):
         fig = func(*args,**kwargs)
         
+        print(repr(kwargs))
+        
         sn = ()
         sp = ()
+        
         if 'savename' in kwargs:
             sn = kwargs.get('savename')
         if 'savepath' in kwargs:
