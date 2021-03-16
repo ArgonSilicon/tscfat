@@ -82,7 +82,7 @@ def process_battery(df,FIGPATH):
     #sim = calculate_similarity(data)
     stab = compute_stability(sim)
     nov, kernel = compute_novelty(sim,edge=7)
-    plot_similarity(copy.deepcopy(sim),nov,"Battery level (euclidean distance)",FIGPATH,FIGNAME,(0,0.06),0.8,AXIS,kernel)
+    plot_similarity(copy.deepcopy(sim),stab,nov,"Battery level (euclidean distance)",FIGPATH,FIGNAME,(0,0.06),0.8,AXIS,kernel)
 
     #%%
     # Timeseries clustering
@@ -105,24 +105,28 @@ def process_battery(df,FIGPATH):
     #clust_4 = data[filt_4]
     
     fig,ax = plt.subplots(3,1,figsize=(10,7))
-    fig.suptitle("Battery level clusters / hourly average",fontsize=20)
+    #fig.suptitle("Battery level clusters / hourly average",fontsize=20)
+    fig.suptitle("Unlock events / daily counts",fontsize=20)
     
     ax[0].plot(np.mean(clust_1,axis=0))
     ax[0].set_title('Clusters 1')
-    ax[0].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
-    ax[0].set(ylim=(30,100))
+    #ax[0].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[0].set(xlabel = "Time (Hour)",ylabel="Event count")
+    #ax[0].set(ylim=(30,100))
     
         
     ax[1].plot(np.mean(clust_2,axis=0))
     ax[1].set_title("Cluster 2")
-    ax[1].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
-    ax[1].set(ylim=(30,100))
+    #ax[1].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[1].set(xlabel = "Time (Hour)",ylabel="Event count")
+    #ax[1].set(ylim=(30,100))
     
     
     ax[2].plot(np.mean(clust_3,axis=0))
     ax[2].set_title("Cluster 3")
-    ax[2].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
-    ax[2].set(ylim=(30,100))
+    #ax[2].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[2].set(xlabel = "Time (Hour)",ylabel="Event count")
+    #ax[2].set(ylim=(30,100))
     
     '''
     ax[3].plot(np.mean(clust_4,axis=0))
@@ -136,8 +140,9 @@ def process_battery(df,FIGPATH):
     
     plt.show()
     
+    #%%
     weekdays = pd.DataFrame(data = clusters,    # values
-                            index = resampled_day[1:-1].index,   # 1st column as index
+                            index = bat_re_day.index,   # 1st column as index
                             columns = ['clusters']) # 1st row as the column names
     
     wd1 = weekdays[weekdays['clusters'] == 0]
@@ -173,14 +178,15 @@ def process_battery(df,FIGPATH):
     fig,ax = plt.subplots(figsize=[10,4])
     weekdays.plot(style='o',ax=ax)
     ax.set_yticks([0,1,2])
-    ax.set(title='Battery level clustered time series',ylabel='Cluster')
+    #ax.set(title='Battery level clustered time series',ylabel='Cluster')
+    ax.set(title='Unlock event clusters',ylabel='Cluster')
     ax.set(ylim=(-1,3))
     plt.show()
     
     #%%
     
-    fig,ax = plt.subplots(2,1,figsize=(10,7))
-    fig.suptitle("Cluster weekday distribution",fontsize=20)
+    fig,ax = plt.subplots(3,1,figsize=(10,7))
+    fig.suptitle("Unlock event clusters / weekday distribution",fontsize=20)
     
     wd.plot(kind='bar',ax = ax[0])
     ax[0].set_title('Clusters 0')
@@ -192,9 +198,20 @@ def process_battery(df,FIGPATH):
     ax[1].set_title("Cluster 1")
     ax[1].set(xlabel = "Weekday",ylabel="Count")
     ax[1].set(ylim=(0,35))
+    
+    wd5.plot(kind='bar',ax = ax[2])
+    ax[2].set_title("Cluster 2")
+    ax[2].set(xlabel = "Weekday",ylabel="Count")
+    ax[2].set(ylim=(0,35))
+    
     fig.tight_layout(pad=1.0)
     
     plt.show()
+    
+    #%%
+    df_clusters = pd.concat([wd,wd3,wd5])
+    sns.factorplot(data=df_clusters, kind='bar', ci=None, aspect=3, size=7);
+    plt.xticks(rotation=45);
     #%%
     return df, timeseries, data
 
