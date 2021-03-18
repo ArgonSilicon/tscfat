@@ -15,6 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from datetime import datetime
+from matplotlib.dates import date2num
 from Source.Utils.plot_decorator import plot_decorator
 import pytest
 
@@ -101,6 +102,7 @@ def plot_similarity(sim,
     ax1.set_title("Similarity matrix", fontsize=18)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
     ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
+    ax1.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     #ax1.text(-0.1, 1.05, "A", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     
@@ -139,6 +141,7 @@ def plot_similarity(sim,
         #ax3.set_xticklabels(axis[::7])
         #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
         #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
+        ax3.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
         ax3.legend(fontsize=16)
         ax3.set_ylim((0.95*np.min(nov[7:-7]),1.05*(np.max(nov[7:-7]))))
         
@@ -146,6 +149,7 @@ def plot_similarity(sim,
         ax4.set_title("Stability score", fontsize=18)
         ax4.set_xlabel('Time (day)',fontsize=16)
         ax4.set_ylabel('Stability',fontsize=16)        
+        ax4.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
         ax4.legend(fontsize=16)
         ax4.set_ylim((0.95*np.min(stab[7:-7]),1.05*(np.max(stab[7:-7]))))
         

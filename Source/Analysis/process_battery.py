@@ -92,21 +92,23 @@ def process_battery(df,FIGPATH):
     #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Results/Clusters')
     FIGNAME = "Clustered_timeseries"
     
-    clusters = cluster_timeseries(data,FIGNAME, FIGPATH, title="Battery level clustered timeseries",n=3)
+    clusters = cluster_timeseries(data,FIGNAME, FIGPATH, title="Screen unlock events clustered timeseries",n=5)
 
     filt_1 = clusters == 0
     filt_2 = clusters == 1
     filt_3 = clusters == 2
-    #filt_4 = clusters == 3
+    filt_4 = clusters == 3
+    filt_5 = clusters == 4
     
     clust_1 = data[filt_1]
     clust_2 = data[filt_2]
     clust_3 = data[filt_3]
-    #clust_4 = data[filt_4]
+    clust_4 = data[filt_4]
+    clust_5 = data[filt_5]
     
-    fig,ax = plt.subplots(3,1,figsize=(10,7))
+    fig,ax = plt.subplots(5,1,figsize=(10,20))
     #fig.suptitle("Battery level clusters / hourly average",fontsize=20)
-    fig.suptitle("Unlock events / daily counts",fontsize=20)
+    fig.suptitle("Screen unlock events / daily counts",fontsize=20)
     
     ax[0].plot(np.mean(clust_1,axis=0))
     ax[0].set_title('Clusters 1')
@@ -128,12 +130,19 @@ def process_battery(df,FIGPATH):
     ax[2].set(xlabel = "Time (Hour)",ylabel="Event count")
     #ax[2].set(ylim=(30,100))
     
-    '''
+    
     ax[3].plot(np.mean(clust_4,axis=0))
-    ax[3].set_title("Cluster 3")
-    ax[3].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
-    ax[3].set(ylim=(30,100))
-    '''
+    ax[3].set_title("Cluster 4")
+    #ax[3].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[3].set(xlabel = "Time (Hour)",ylabel="Event count")
+    #ax[3].set(ylim=(30,100))
+    
+    ax[4].plot(np.mean(clust_5,axis=0))
+    ax[4].set_title("Cluster 5")
+    #ax[4].set(xlabel = "Time (Hour)",ylabel="Battery level (%)")
+    ax[4].set(xlabel = "Time (Hour)",ylabel="Event count")
+    #ax[4].set(ylim=(30,100))
+    
     
     
     fig.tight_layout(pad=1.0)
@@ -214,6 +223,6 @@ def process_battery(df,FIGPATH):
     plt.xticks(rotation=45);
     #%%
     return df, timeseries, data
-
+    '''
 if __name__ == "__main__":
     pass

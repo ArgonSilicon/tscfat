@@ -18,6 +18,8 @@ from scipy.stats import entropy
 #import nolds
 import pytest
 from Source.Utils.plot_decorator import plot_decorator
+from datetime import datetime
+from matplotlib.dates import date2num
 
 #TODO! why pandas dataframe is rewuired!!!!
 #TODO! the plot decorator is not working anymore
@@ -101,9 +103,9 @@ def rolling_statistics(ts,
     ent = ts.rolling(window = w).apply(entropy)
     #ent = ts.rolling(window = w).apply(nolds.sampen)
     
-    var1 = variance = ts.diff(1).fillna(0).rolling(window = w).var()
-    var2 = variance = ts.diff(1).diff(7).fillna(0).rolling(window = w).var()
-    var3 = variance = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).var()
+    var1 = ts.diff(1).fillna(0).rolling(window = w).var()
+    var2 = ts.diff(1).diff(7).fillna(0).rolling(window = w).var()
+    var3 = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).var()
     
     ac1 = ts.diff(1).fillna(0).rolling(window = w).apply(_autocorr)
     ac2 = ts.diff(1).diff(7).fillna(0).rolling(window = w).apply(_autocorr)
@@ -117,60 +119,70 @@ def rolling_statistics(ts,
     ax[0,0].set_xlabel('Date')
     ax[0,0].set_ylabel('Value')
     ax[0,0].tick_params('x', labelrotation=45)
+    ax[0,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[0,1].plot(mean)
     ax[0,1].set_title('Mean',fontsize=16)
     ax[0,1].set_xlabel('Date')
     ax[0,1].set_ylabel('Value')
     ax[0,1].tick_params('x', labelrotation=45)
+    ax[0,1].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1,0].plot(variance)
     ax[1,0].set_title('Variance',fontsize=16)
     ax[1,0].set_xlabel('Date')
     ax[1,0].set_ylabel('Value')
     ax[1,0].tick_params('x', labelrotation=45)
+    ax[1,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1,1].plot(autocorrelation)
     ax[1,1].set_title('Autocorrelation',fontsize=16)
     ax[1,1].set_xlabel('Date')
     ax[1,1].set_ylabel('Value')
     ax[1,1].tick_params('x', labelrotation=45)
+    ax[1,1].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2,0].plot(var1)
     ax[2,0].set_title('Variance, diff(1)',fontsize=16)
     ax[2,0].set_xlabel('Date')
     ax[2,0].set_ylabel('Value')
     ax[2,0].tick_params('x', labelrotation=45)
+    ax[2,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2,1].plot(ac1)
     ax[2,1].set_title('Autocorrelation, diff(1)',fontsize=16)
     ax[2,1].set_xlabel('Date')
     ax[2,1].set_ylabel('Value')
     ax[2,1].tick_params('x', labelrotation=45)
+    ax[2,1].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[3,0].plot(var2)
     ax[3,0].set_title('Variance, diff(1,7)',fontsize=16)
     ax[3,0].set_xlabel('Date')
     ax[3,0].set_ylabel('Value')
     ax[3,0].tick_params('x', labelrotation=45)
+    ax[3,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[3,1].plot(ac2)
     ax[3,1].set_title('Autocorrelation, diff(1,7)',fontsize=16)
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     ax[3,1].tick_params('x', labelrotation=45)
+    ax[3,1].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[4,0].plot(var3)
     ax[4,0].set_title('Variance, diff(1,7,28)',fontsize=16)
     ax[4,0].set_xlabel('Date')
     ax[4,0].set_ylabel('Value')
     ax[4,0].tick_params('x', labelrotation=45)
+    ax[4,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[4,1].plot(ac3)
     ax[4,1].set_title('Autocorrelation, diff(1,7,28)',fontsize=16)
     ax[4,1].set_xlabel('Date')
     ax[4,1].set_ylabel('Value')
     ax[4,1].tick_params('x', labelrotation=45)
+    ax[4,1].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     plt.tight_layout(pad=1)
   

@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Source.Utils.plot_decorator import plot_decorator
 import pytest
+from datetime import datetime
+from matplotlib.dates import date2num
 
 @plot_decorator
 def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False, test=False):
@@ -39,10 +41,12 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fal
     
     fig = plt.figure(figsize=(10,10))
     
-    plt.plot(clusters,'o:')
+    plt.plot(clusters +1 ,'o:')
+    plt.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
+    plt.yticks(np.arange(1,6))
     
     return fig
     

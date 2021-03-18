@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import copy
 
+from datetime import datetime
+from matplotlib.dates import date2num
+
 # Local application import
 from Source.Analysis.calculate_similarity import calculate_similarity
 from Source.Analysis.calculate_novelty import compute_novelty, compute_stability
@@ -36,6 +39,71 @@ df = pd.read_csv(df_path)
 df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
 df = df.drop(columns=['date','Other','Work/Study'])
+
+#%% normalize the dataframe
+df2 = df['2020-06-26':'2021-02-09']
+
+from sklearn import preprocessing
+
+X = df2.values
+min_max_scaler = preprocessing.MinMaxScaler()
+x_scaled = min_max_scaler.fit_transform(X)
+
+test_df = pd.DataFrame(data = x_scaled,    # values
+                       index = df2.index,   # 1st column as index
+                       columns = df2.columns)
+
+#%% select columns
+cols = ['Sleep Score', 'Average Resting Heart Rate', 'Awake Time',
+       'Respiratory Rate', 'Sleep Efficiency', 'Sleep Latency',
+       'Total Bedtime', 'Total Sleep Time', 'Average HRV',
+       'Lowest Resting Heart Rate', 'Temperature Deviation (°C)',
+       'Activity Score', 'Activity Burn', 'Inactive Time', 'Rest Time',
+       'Total Burn', 'Non-wear Time', 'Steps', 'Readiness Score', 'active',
+       'determined', 'attentive', 'inspired', 'alert', 'afraid', 'nervous',
+       'upset', 'hostile', 'ashamed', 'stressed', 'distracted','negative','positive',
+       'Communication', 'Entertainment', 'Shop', 'Social_media', 'Sports',
+       'Transportation', 'Travel', 'Health', 'Notifications_total',
+       'sms_out', 'sms_total', 'sms_in',
+       'call_out_duration', 'call_in_duration', 'call_total_duration',
+       'call_out_count', 'call_in_count', 'call_total_count',
+       'Battery_average','screen_activations', ]
+
+df_sel = test_df[cols]
+
+#%% check some correlations
+
+smooth = df_sel.rolling(window=30).mean()
+
+trend_removed = df_sel - smooth
+
+
+xcorr = trend_removed['2020-06-26':'2020-09-30'].corr()
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+plt.title("Cross-correlations '2020-06-26':'2020-09-30'",fontsize=20)
+
+xcorr = trend_removed['2020-10-1':'2020-12-24'].corr()
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+plt.title("Cross-correlations '2020-10-1':'2020-12-24'",fontsize=20)
+
+xcorr = trend_removed['2020-02-25':'2021-02-9'].corr()
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(xcorr, cmap='RdBu_r',annot=False,ax=ax)
+plt.title("Cross-correlations '2020-02-25':'2021-02-9'",fontsize=20)
+
+#%% plot some
+
+
+for col in cols:
+    fig,ax  = plt.subplots(figsize=(15,10))
+    test_df[['negative','positive']].rolling(14).mean().plot(style='--', color=['r','g'],ax=ax,ylim=(-0.1,1.1),ylabel='Value',title="Rolling window mean {} : {} : {}".format('negative','positive',col))
+    #test_df[col].rolling(14).mean().plot(color='k',ax=ax)
+    (bat_re_day['Norm Cluster'].rolling(14).sum() / 14).plot(color='k',ax=ax)
+    ax.axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    plt.show()
+
 
 #%% SUMMARY STATISTICS
 for name in df.columns.to_list():
@@ -62,7 +130,7 @@ for name in df.columns.to_list():
     sim = calculate_similarity(ser.values.reshape(-1,1))
     stab = compute_stability(sim)
     nov, ker = compute_novelty(sim,edge=7)
-    plot_similarity(copy.deepcopy(sim),nov,stab,"{} similarity, novelty, and stability".format(name),SAVEPATH3,SAVENAME3,(0,0.06),0.8,AXIS,ker,False)
+    plot_similarity(copy.deepcopy(sim),nov,stab,"{} similarity, novelty, and stability".format(name),SAVEPATH3,SAVENAME3,(0,0.06),0.3,AXIS,ker,False)
     
 #%% ROLLING STATISTICS 
 for name in df.columns.to_list():
@@ -73,3 +141,19 @@ for name in df.columns.to_list():
     FIGNAME = name + '_rolling'
     
     _ = rolling_statistics(ser.to_frame(), w, FIGNAME, FIGPATH)
+    
+#%% CLUSTERING
+colz = ['negative','positive','Sleep Score', 'Average Resting Heart Rate', 'Awake Time',
+       'Respiratory Rate', 'Sleep Efficiency', 'Sleep Latency',
+       'Total Bedtime', 'Total Sleep Time', 'Average HRV',
+       'Lowest Resting Heart Rate', 'Temperature Deviation (°C)',
+       'Activity Score', 'Activity Burn', 'Inactive Time', 'Rest Time',
+       'Total Burn', 'Non-wear Time', 'Steps', 'Readiness Score', 'active',
+       'determined', 'attentive', 'inspired', 'alert', 'afraid', 'nervous',
+       'upset', 'hostile', 'ashamed', 'stressed', 'distracted', 'light',
+       'Communication', 'Entertainment', 'Shop', 'Social_media', 'Sports',
+       'Transportation', 'Travel', 'Health', 'Notifications_total',
+       'battery_level', 'screen_status', 'sms_out', 'sms_total', 'sms_in',
+       'call_out_duration', 'call_in_duration', 'call_total_duration',
+       'call_out_count', 'call_in_count', 'call_total_count',  'Battery_average', 'Battery_stability',
+       'screen_activations','screen_stability','app_sum','app_stability',]
