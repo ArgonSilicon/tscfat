@@ -113,16 +113,29 @@ for name in df.columns.to_list():
     ser = df[name]   
     _ = summary_statistics(ser,"{} summary".format(name), savepath = SAVEPATH, savename = SAVENAME, test = False)
 
-#%% DECOMPOSITION
+#%% STL_DECOMPOSITION
 for name in df.columns.to_list(): 
+    
     ser = df[name]
     SAVEPATH2 = Path('/home/arsi/Documents/tscfat/Results/Decomposition')
     SAVENAME2 = name + '_decomposition'
     _  = STL_decomposition(ser.values,"{} timeseries decomposition".format(name), False, SAVEPATH2, SAVENAME2, ylabel = 'Value', xlabel = 'Date')
     
+
+#%% ROLLING STATISTICS 
+for name in df.columns.to_list():
+    
+    w = 28
+    #ser = df[name].diff(1).diff(7).diff(27).fillna(0)
+    ser = df[name]
+    FIGPATH = Path('/home/arsi/Documents/tscfat/Results/RollingStatistics')
+    FIGNAME = name + '_rolling'
+    
+    _ = rolling_statistics(ser.to_frame(), w, FIGNAME, FIGPATH)
     
 #%% SIMILARITY / NOVELTY / STABILITY
 for name in df.columns.to_list():
+    
     ser = df[name]
     SAVEPATH3 = Path('/home/arsi/Documents/tscfat/Results/Similarity')
     SAVENAME3 = name + '_similarity'
@@ -132,28 +145,38 @@ for name in df.columns.to_list():
     nov, ker = compute_novelty(sim,edge=7)
     plot_similarity(copy.deepcopy(sim),nov,stab,"{} similarity, novelty, and stability".format(name),SAVEPATH3,SAVENAME3,(0,0.06),0.3,AXIS,ker,False)
     
-#%% ROLLING STATISTICS 
-for name in df.columns.to_list():
-    w = 28
-    #ser = df[name].diff(1).diff(7).diff(27).fillna(0)
-    ser = df[name]
-    FIGPATH = Path('/home/arsi/Documents/tscfat/Results/RollingStatistics')
-    FIGNAME = name + '_rolling'
-    
-    _ = rolling_statistics(ser.to_frame(), w, FIGNAME, FIGPATH)
+
     
 #%% CLUSTERING
-colz = ['negative','positive','Sleep Score', 'Average Resting Heart Rate', 'Awake Time',
-       'Respiratory Rate', 'Sleep Efficiency', 'Sleep Latency',
-       'Total Bedtime', 'Total Sleep Time', 'Average HRV',
-       'Lowest Resting Heart Rate', 'Temperature Deviation (°C)',
-       'Activity Score', 'Activity Burn', 'Inactive Time', 'Rest Time',
-       'Total Burn', 'Non-wear Time', 'Steps', 'Readiness Score', 'active',
-       'determined', 'attentive', 'inspired', 'alert', 'afraid', 'nervous',
-       'upset', 'hostile', 'ashamed', 'stressed', 'distracted', 'light',
-       'Communication', 'Entertainment', 'Shop', 'Social_media', 'Sports',
-       'Transportation', 'Travel', 'Health', 'Notifications_total',
-       'battery_level', 'screen_status', 'sms_out', 'sms_total', 'sms_in',
-       'call_out_duration', 'call_in_duration', 'call_total_duration',
-       'call_out_count', 'call_in_count', 'call_total_count',  'Battery_average', 'Battery_stability',
-       'screen_activations','screen_stability','app_sum','app_stability',]
+bat_path = Path('/home/arsi/Documents/Data/Battery.csv')
+df_bat = pd.read_csv(bat_path)
+df_bat['time'] = pd.to_datetime(df_bat['time'],unit='s')
+df_bat = df_bat.set_index(df_bat['time'])
+bat_re = df_bat.filter(['battery_level'])
+bat_re = bat_re.resample('H').mean()
+bat_re = bat_re.interpolate()
+
+bat_re_day = bat_re.resample('D').apply(list)
+bat_re_day = bat_re_day['2020-06-26':'2021-02-09']
+data = np.stack(bat_re_day.battery_level.values)
+
+
+FIGPATH = Path.cwd() / 'Results' / 'Clusters'
+FIGNAME = "Clustered_timeseries"
+# Number of clusters
+N = 5 
+# max iterations
+MI = 5 
+# number of iterations for the barycenter
+MIB = 5 
+# random state
+RS = 0
+# metric
+METRIC = "dtw"  
+# highlight
+HL = (98,182)
+#%% 
+clusters = cluster_timeseries(data, FIGNAME, FIGPATH, title="Battery level clustered timeseries", n = N, mi = MI, mib = MIB, rs = RS, metric = METRIC, highlight = HL)
+
+
+    
