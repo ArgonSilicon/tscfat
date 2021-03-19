@@ -23,6 +23,7 @@ from Source.Analysis.plot_similarity import plot_similarity
 from Source.Analysis.cluster_timeseries import cluster_timeseries
 from Source.Analysis.rolling_statistics import rolling_statistics
 from Source.Analysis.summary_statistics import summary_statistics
+from Source.Analysis.plot_timeseries import plot_timeseries
 
 #from arma_model import autocorr
 from Source.Analysis.fluctuation_intensity import fluctuation_intensity
@@ -162,7 +163,7 @@ data = np.stack(bat_re_day.battery_level.values)
 
 
 FIGPATH = Path.cwd() / 'Results' / 'Clusters'
-FIGNAME = "Clustered_timeseries"
+FIGNAME = "Battery_level_clustered_timeseries"
 # Number of clusters
 N = 5 
 # max iterations
@@ -175,8 +176,18 @@ RS = 0
 METRIC = "dtw"  
 # highlight
 HL = (98,182)
+# ylim
+YL = (-1,101)
 #%% 
-clusters = cluster_timeseries(data, FIGNAME, FIGPATH, title="Battery level clustered timeseries", n = N, mi = MI, mib = MIB, rs = RS, metric = METRIC, highlight = HL)
+clusters = cluster_timeseries(data, FIGNAME, FIGPATH, title="Battery level clustered timeseries", n = N, mi = MI, mib = MIB, rs = RS, metric = METRIC, highlight = HL, ylim_ = YL)
 
+#%% PLOT TIMESERIES
+columns = ['positive','negative']
+#%%
+#plot_timeseries(test_df, columns, 'test', roll = 14)
 
+FIGPATH = Path.cwd() / 'Results' / 'Timeseries'
+FIGNAME = "{}_timeseries".format('_'.join(columns))
+
+_ = plot_timeseries(test_df, columns, title = 'test plot', roll = 14, xlab = "Date", ylab = "Value", ylim = (0,1), savename = FIGNAME, savepath = FIGPATH, highlight = HL, test=False)
     

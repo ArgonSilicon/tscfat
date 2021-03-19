@@ -196,4 +196,32 @@ def test_create_kernel():
     # Check if the raised ValueError contains the correct message
     assert exc_info.match(expected_error_msg)
     
+def test_compute_stability():
+    """
+    Test create kernel function:
+        - Proper arguments yield an N x N numpy array
+        - Edge given as float raises an error
+        - Negative edge lenght raises an error
+
+    Returns
+    -------
+    None.
+
+    """
+    res = _create_kernel(7)
+    assert isinstance(res,np.ndarray), "Kernel is not a numpy array."
+    assert (np.ndim(res) == 2), "Kernel is not a 2D array."
+    assert res.shape[0]  == res.shape[1], "Kernel is not a square matrix." 
     
+    # Store information about raised ValueError in exc_info
+    with pytest.raises(AssertionError) as exc_info:
+        _create_kernel(float(1))
+    expected_error_msg = "Edge is not an integer."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)
+    
+    with pytest.raises(AssertionError) as exc_info:
+        _create_kernel(-1)
+    expected_error_msg = "Edge should be positive, non zero integer."
+    # Check if the raised ValueError contains the correct message
+    assert exc_info.match(expected_error_msg)

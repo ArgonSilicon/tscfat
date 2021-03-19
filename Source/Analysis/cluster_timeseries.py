@@ -53,7 +53,7 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fal
     return fig
 
 @plot_decorator
-def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", ylab = None, savename = False, savepath = False, test=False):
+def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", ylab = None, ylim_ = None, savename = False, savepath = False, test=False):
     """
     Plot a scatterplot showing the clusters.
 
@@ -90,15 +90,15 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", ylab 
         ax[i].plot(np.mean(data[filt[i]], axis = 0))
         ax[i].set_title('Cluster {} average'.format(i))
         ax[i].set(xlabel = xlab, ylabel = ylab) 
+        if ylim_:
+            ax[i].set(ylim = ylim_)
         
     fig.tight_layout(pad=1.0)
-        
-    plt.show()   
-            
+                      
     return fig    
     
 
-def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0, metric = "dtw", highlight = None):
+def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0, metric = "dtw", highlight = None, ylim_ = None):
    """
     Parameters
     ----------
@@ -114,6 +114,8 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
         DESCRIPTION. The default is 0.
     metric : TYPE. optional
         DESCRIPTION. The default is "dtw".
+    highlight : TYPE, optional
+        DESCRIPTION. The default is None
     highlight : TYPE, optional
         DESCRIPTION. The default is None
         
@@ -137,10 +139,12 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
     
    labels = km.labels_
    
-   #TODO fix title!
+   #TODO fix x-axis
    
-   _plot_clusters(labels, title=title, xlab="Timepoint", ylab="Cluster", savename = FIGNAME, savepath = FIGPATH, highlight = highlight, test=False)
-   _plot_cluster_averages(ts, labels, n, title, xlab = "Time (hour)", ylab = None, savename = False, savepath = False, test=False)
+   _plot_clusters(labels, title=title, xlab="Timepoint", ylab="Cluster", savename = FIGNAME, savepath = FIGPATH, highlight = highlight, test = False)
+   if FIGNAME:
+       FIGNAME = FIGNAME + '_cluster_averages'
+   _plot_cluster_averages(ts, labels, n, title, xlab = "Time (hour)", ylab = None, ylim_ = ylim_, savename = FIGNAME, savepath = FIGPATH , test = False)
    
    return labels
 

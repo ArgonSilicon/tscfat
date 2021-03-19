@@ -7,7 +7,7 @@ Created on Tue Jul  7 15:36:43 2020
 """
 import pandas as pd
 
-def test_screen_status(screen_df,target):
+def check_screen_status(screen_df,target):
     
     assert isinstance(target, pd._libs.tslibs.timestamps.Timestamp), "Given target \"{}\" is not a pandas Timestamp.".format(target)
     assert isinstance(screen_df, pd.core.frame.DataFrame), "Given dataframe is not a pandas dataframe."
@@ -22,7 +22,7 @@ def test_screen_status(screen_df,target):
     else:
         raise Exception('There is no column named \"screen_status\" in the dataframe.')
 
-def test_battery_status(battery_df, target):
+def check_battery_status(battery_df, target):
     
     assert isinstance(target, pd._libs.tslibs.timestamps.Timestamp), "Given target \"{}\" is not a pandas Timestamp.".format(target)
     assert isinstance(battery_df, pd.core.frame.DataFrame), "Given dataframe is not a pandas dataframe."

@@ -18,7 +18,7 @@ def plot_decorator(func):
     def wrapper(*args,**kwargs):
         fig = func(*args,**kwargs)
         
-        print(repr(kwargs))
+        #print(repr(kwargs))
         
         sn = ()
         sp = ()
