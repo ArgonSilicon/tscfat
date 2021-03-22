@@ -11,53 +11,15 @@ The analysis is conducted in process_battery_level.py.
 The results are stored on disk.
 
 """
-import pandas as pd
+# standard library imports
+import os
+from pathlib import Path
+import re
 
-from Source.Analysis.config import fn, ap, doi
-
-from Source.Analysis.summary_statistics import summary_statistics
-from Source.Analysis.rolling_statistics import rolling_statistics
-
-
-#%%
-print(fn.csv_path)
-print(fn.list_filenames())
-
-#%% LOAD THE DATA FRAME
-df = pd.read_csv(fn.csv_path)
-df['date'] = pd.to_datetime(df['date'])
-df = df.set_index(df['date'])
-df = df.drop(columns=['date','Other','Work/Study'])
-
-#%% SUMMARY STATISTICS
-for name in df.columns.to_list():        
-    ser = df[name] 
-    savename = fn.summary_base + '_' + name
-    _ = summary_statistics(ser,
-                           "{} summary".format(name),
-                           ap.summary_window,
-                           savepath = fn.summary_out,
-                           savename = savename,
-                           test = False)
-
-#%% ROLLING STATISTICS 
-for name in df.columns.to_list():
-    ser = df[name] 
-    savename = fn.rolling_base + '_' + name
-    _ = rolling_statistics(ser.to_frame(),
-                           ap.rolling_window,
-                           doi = doi,
-                           savename = savename,
-                           savepath = fn.rolling_out,
-                           test = False)
-    
-#%%
-
-'''
 def main():
     # change correct working directory
     #WORK_DIR = Path(r'F:\tscfat') # <- WINDOWS
-    WORK_DIR = Path('/u/26/ikaheia1/data/Documents/tscfat')
+    WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
     #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
     
@@ -99,4 +61,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-'''

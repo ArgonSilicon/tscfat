@@ -5,7 +5,16 @@ Created on Fri Dec 18 13:45:10 2020
 
 @author: arsii
 
-Calculate rolling windows statistic for the given time series and plot them.
+Calculate rolling windows statistics for the given time series and plot them.
+
+The following are calculated using rolling window lenght(n):
+    1) Average
+    2) Variance
+    3) Autocorrelation
+    4) Mean square of successive differences (MSDD)
+    5) Probability of acte change (PAC)
+
+
 
 """
 
@@ -57,6 +66,7 @@ def _autocorr(series, t=1):
 @plot_decorator
 def rolling_statistics(ts,
                        w,
+                       doi = None,
                        savename = False,
                        savepath = False,
                        test = False):
@@ -69,6 +79,8 @@ def rolling_statistics(ts,
         A dataframe containing time as index and one column of data
     w : int
         Rolling statistics window size
+    doi : tuple 
+        A tuple containing tuples of dates. The default is None. 
     savename : str (default = False)
         Name used as plot save name. Has to be a type of str
     savepath : Path -object (default = False)
@@ -93,6 +105,7 @@ def rolling_statistics(ts,
     assert isinstance(ts,pd.DataFrame), "Timeseries is not a pandas dataframe."
     assert isinstance(w,int), "Window size is not an integer."
     assert (w <= ts.shape[0]), "Window length is larger than the time series length."
+    # TODO! assert doi!!!
     
     variance = ts.rolling(window = w).var()
     autocorrelation = ts.rolling(window = w).apply(_autocorr)
@@ -119,7 +132,9 @@ def rolling_statistics(ts,
     ax[0,0].set_xlabel('Date')
     ax[0,0].set_ylabel('Value')
     ax[0,0].tick_params('x', labelrotation=45)
-    ax[0,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    if doi is not None:
+        #ax[0,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+        ax[0,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[0,1].plot(mean)
     ax[0,1].set_title('Mean',fontsize=16)

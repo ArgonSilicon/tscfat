@@ -27,6 +27,7 @@ plt.style.use('seaborn')
 @plot_decorator
 def _plot_summary(series,
                   title,
+                  window = 14,
                   savepath = False,
                   savename = False,
                   test = False
@@ -39,6 +40,8 @@ def _plot_summary(series,
         A time series for which the surrary is calculated 
     title : str, optional
         Summary plot title. The default is "Time series summary".
+    window : int
+        Rolling window size. The default is 14.
     savepath : Path object, optional
         Figure save path. The default is False.
     savename : Path object, optional
@@ -65,7 +68,7 @@ def _plot_summary(series,
     ax1.set_title('Original timeseries')
     ax1.tick_params('x', labelrotation=45)
     
-    series.rolling(14).mean().plot(ax=ax2)
+    series.rolling(window).mean().plot(ax=ax2)
     #sm.graphics.tsa.plot_pacf(series,lags=30,ax=ax5)
     ax2.set(title='Rolling Average',xlabel='date',ylabel='rolling average')
     
@@ -108,6 +111,7 @@ def _plot_summary(series,
 
 def summary_statistics(series,
                        title = "Time series summary",
+                       window = 14,
                        savepath = False,
                        savename = False,
                        test = False):
@@ -117,9 +121,11 @@ def summary_statistics(series,
     Parameters
     ----------
     series : Pandas Series
-        A time series for which the surrary is calculated 
+        A time series for which the summary is calculated 
     title : str, optional
         Summary plot title. The default is "Time series summary".
+    window : int
+        Rolling window size. The default is 14.
     savepath : Path object, optional
         Figure save path. The default is False.
     savename : Path object, optional
@@ -135,7 +141,7 @@ def summary_statistics(series,
     
     assert isinstance(series, pd.Series), "Series is not a pandas Series."
     
-    _plot_summary(series,title,savepath,savename,test=False)
+    _plot_summary(series,title,window,savepath,savename,test=False)
 
     
 def test_Summary_statistics():

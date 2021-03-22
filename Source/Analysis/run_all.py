@@ -34,7 +34,8 @@ from Source.Utils.plot_decorator import plot_decorator
 
 #%% LOAD THE DATA FRAME
 
-df_path = Path('/home/arsi/Documents/Data/Combined_data.csv')
+#df_path = Path('/home/arsi/Documents/Data/Combined_data.csv')
+df_path = Path('/u/26/ikaheia1/data/Documents/Data/Combined_data.csv')
 df = pd.read_csv(df_path)
 
 df['date'] = pd.to_datetime(df['date'])
@@ -110,7 +111,8 @@ for col in cols:
 for name in df.columns.to_list():
     
     SAVENAME = name
-    SAVEPATH = Path('/home/arsi/Documents/tscfat/Results/Summary')
+    #SAVEPATH = Path('/home/arsi/Documents/tscfat/Results/Summary')
+    SAVEPATH = Path('/u/26/ikaheia1/unix/Documents/tscfat/Results/Summary')
     ser = df[name]   
     _ = summary_statistics(ser,"{} summary".format(name), savepath = SAVEPATH, savename = SAVENAME, test = False)
 
