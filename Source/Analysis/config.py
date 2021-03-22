@@ -11,13 +11,14 @@ from pathlib import Path
 from Source.Utils.file_names import FileNames
 from Source.Utils.analysis_parameters import AnalysisParameters
 
-#%% Basic variables
+#%% General variables -> CHANGE THESE!!!
 
-# The days of interest
+# The days of interest ((start date), (end date))
+# Use the format: (YEAR,DAY,MONTH,HOUR,MINUTE)
 doi = (2020,10,1),(2020,12,24)
 
 
-#%% Filenames 
+#%% Filenames -> CHANGE THESE!!!
 
 # DATA LOADING:
 # Path to the data file to be imported
@@ -35,7 +36,7 @@ ROLLING_OUT = Path('/u/26/ikaheia1/unix/Documents/tscfat/Results/RollingStatisti
 # BAse name for summary statistics image
 ROLLING_BASE = 'aware_'
 
-#%% Analysis parameters
+#%% Analysis parameters -> CHANGE THESE!!!
 
 # SUMMARY STATISTICS:
 # Rolling window length
@@ -45,7 +46,7 @@ SUMMARY_WINDOW = 14
 # Rolling window length
 ROLLING_WINDOW = 28
 
-#%% Create a filename object
+#%% Create a filename object -> DO NOT CHANGE!!!
 fn = FileNames()
 
 fn.add('csv_path',CSV_PATH)
@@ -57,7 +58,7 @@ fn.add('rolling_out', ROLLING_OUT)
 fn.add('rolling_base', ROLLING_BASE)
 
 
-#%% Analysis Parameters
+#%% Create an Analysis Parameters object -> DO NOT CHANGE!!!
 ap = AnalysisParameters()
 
 ap.add('summary_window', SUMMARY_WINDOW)

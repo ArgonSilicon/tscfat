@@ -18,8 +18,6 @@ def plot_decorator(func):
     def wrapper(*args,**kwargs):
         fig = func(*args,**kwargs)
         
-        #print(repr(kwargs))
-        
         sn = ()
         sp = ()
         
@@ -32,11 +30,11 @@ def plot_decorator(func):
             plt.show()
       
         elif all((sn,sp)):
-        
             assert isinstance(sn,str), "Invalid savename type."
         
             if sp.exists():
                 with open(sp / (sn + ".png"), mode="wb") as outfile:
+                    plt.close()
                     plt.savefig(outfile, format="png")
             else:
                 raise Exception("Requested folder: " + str(sp) + " does not exist.")

@@ -14,6 +14,7 @@ the results:
     - Autocorrelation function
     
 """
+
 import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -23,6 +24,7 @@ from Source.Utils.plot_decorator import plot_decorator
 from matplotlib import gridspec
 
 plt.style.use('seaborn')
+plt.ioff()
 
 @plot_decorator
 def _plot_summary(series,
@@ -52,8 +54,7 @@ def _plot_summary(series,
     None.
 
     """
-
-    
+        
     fig,ax = plt.subplots(3,2,figsize=(10,10))
     fig.suptitle(title,fontsize=20,y=1)
     
@@ -64,23 +65,25 @@ def _plot_summary(series,
     ax4 = plt.subplot2grid(gridsize, (2,0), colspan=1,rowspan=1)
     ax5 = plt.subplot2grid(gridsize, (2,1), colspan=1,rowspan=1)
     
-    ax1.plot(series)
+    ax1.plot(series.index,series.values)
     ax1.set_title('Original timeseries')
     ax1.tick_params('x', labelrotation=45)
     
-    series.rolling(window).mean().plot(ax=ax2)
+    ax2.plot(series.index, series.rolling(window).mean())
+    #series.rolling(window).mean().plot(ax=ax2)
     #sm.graphics.tsa.plot_pacf(series,lags=30,ax=ax5)
     ax2.set(title='Rolling Average',xlabel='date',ylabel='rolling average')
     
-    ax3.hist(series,20)
+    ax3.hist(series.values,20)
     ax3.set_title("Histogram")
   
-    pd.plotting.lag_plot(series,lag=1,ax=ax4)
+    ax4.plot(series.values[1:],series.values[:-1],'o')
     ax4.set_title('Lag plot / lag 1')
     ax4.set_box_aspect(1)
     #ax3.set(adjustable='box-forced', aspect='equal')
       
     pd.plotting.autocorrelation_plot(series,ax=ax5)
+    #ax5.plot(series.index, series.values)
     ax5.set_xlim([0,30])
     ax5.set_title('Autocorrelation')
     
@@ -93,6 +96,7 @@ def _plot_summary(series,
     
     fig.tight_layout(pad=1.0)
     
+    ''' 
     #%%
     if all((savename,savepath)):
         
@@ -106,6 +110,8 @@ def _plot_summary(series,
     else:
         raise Exception("Arguments were not given correctly.")
     
+    '''
+    
     return fig
 
 
@@ -114,7 +120,8 @@ def summary_statistics(series,
                        window = 14,
                        savepath = False,
                        savename = False,
-                       test = False):
+                       test = False,
+                       ):
     """
     
 
@@ -141,7 +148,12 @@ def summary_statistics(series,
     
     assert isinstance(series, pd.Series), "Series is not a pandas Series."
     
-    _plot_summary(series,title,window,savepath,savename,test=False)
+    _plot_summary(series,
+                  title,
+                  window,
+                  savepath = savepath,
+                  savename = savename,
+                  test=False)
 
     
 def test_Summary_statistics():

@@ -201,6 +201,7 @@ def rolling_statistics(ts,
     
     plt.tight_layout(pad=1)
   
+    '''
     if all((savename,savepath)):
 
         assert isinstance(savename,str), "Invalid savename type."
@@ -212,3 +213,5 @@ def rolling_statistics(ts,
             raise Exception("Requested folder: " + str(savepath) + " does not exist.")
     else:
         raise Exception("Arguments were not given correctly.")
+        '''
+    return fig

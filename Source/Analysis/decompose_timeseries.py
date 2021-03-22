@@ -19,14 +19,14 @@ from Source.Utils.plot_decorator import plot_decorator
 
 @plot_decorator
 def _plot_decomposition(Result,
-                      title,
-                      savepath = False,
-                      savename = False,
-                      ylabel = "Value",
-                      xlabel  = "Date",
-                      dates = False,
-                      test = False,
-                      ):
+                        title,
+                        savepath = False,
+                        savename = False,
+                        ylabel = "Value",
+                        xlabel  = "Date",
+                        dates = False,
+                        test = False,
+                        ):
     """
     Plot the decomposed time series.
 
