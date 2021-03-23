@@ -84,6 +84,14 @@ ROLLING_WINDOW = 28
 # SIMILARITY, NOVELTY, STABILITY
 # some parameters here
 
+# TIMESERIES CLUSTERING
+
+# TIMESERIES PLOTTING
+# Dataframe columns to be plotted as list of lists
+COLUMN_LIST = [['positive', 'negative', 'Average HRV'],
+               ['positive', 'negative', 'app_sum'],
+               ['positive', 'negative', 'screen_activations'],
+              ]
 #%% Create a filename object -> DO NOT CHANGE!!!
 fn = FileNames()
 
@@ -101,6 +109,9 @@ fn.add('decomposition_base', DECOMPOSITION_BASE)
 fn.add('similarity_out', SIMILARITY_OUT)
 fn.add('similarity_base', SIMILARITY_BASE)
 
+fn.add('plotting_out', PLOT_OUT)
+fn.add('plotting_base', PLOT_BASE)
+
 
 #%% Create an Analysis Parameters object -> DO NOT CHANGE!!!
 ap = AnalysisParameters()
@@ -108,3 +119,5 @@ ap = AnalysisParameters()
 ap.add('summary_window', SUMMARY_WINDOW)
 
 ap.add('rolling_window', ROLLING_WINDOW)
+
+ap.add('plot_cols', COLUMN_LIST)

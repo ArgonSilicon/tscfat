@@ -25,6 +25,7 @@ from Source.Analysis.decompose_timeseries import STL_decomposition
 from Source.Analysis.calculate_similarity import calculate_similarity
 from Source.Analysis.calculate_novelty import compute_novelty, compute_stability
 from Source.Analysis.plot_similarity import plot_similarity
+from Source.Analysis.plot_timeseries import plot_timeseries
 from Source.Utils.doi2int import doi2index
 
 #%%
@@ -121,10 +122,24 @@ for i, name in enumerate(df.columns.to_list()):
 print("\nProcessing timeseries clustering: \n")
 
 for i, name in enumerate(df.columns.to_list()):
-    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
+    print('Column: {:30s} : {}/{}'.format(name , i+1, df.shape[1]))
     
 #%% PLOTTING TIMESERIES
 print("\nProcessing timeseries plotting: \n")
 
-for i, name in enumerate(df.columns.to_list()):
-    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
+for i, name in enumerate(ap.plot_cols):
+    
+    print('Columns: {:60s} : {}/{}'.format(" - ".join(name), i+1, len(ap.plot_cols)))
+    
+    _ = plot_timeseries(df,
+                        name,
+                        title = fn.plotting_base + '_'.join(name),
+                        roll = False, 
+                        xlab = "Time", 
+                        ylab = "Value", 
+                        ylim = False, 
+                        savename = fn.plotting_base + '_'.join(name), 
+                        savepath = fn.plotting_out, 
+                        highlight = False, 
+                        test=False
+                        )
