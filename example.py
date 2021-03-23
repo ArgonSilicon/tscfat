@@ -11,13 +11,21 @@ The analysis is conducted in process_battery_level.py.
 The results are stored on disk.
 
 """
+import os
 import pandas as pd
+from copy import deepcopy
 
-from Source.Analysis.config import fn, ap, doi
+os.chdir('/u/26/ikaheia1/data/Documents/tscfat')  # Provide the new path here
+
+from config import fn, ap, doi
 
 from Source.Analysis.summary_statistics import summary_statistics
 from Source.Analysis.rolling_statistics import rolling_statistics
-
+from Source.Analysis.decompose_timeseries import STL_decomposition
+from Source.Analysis.calculate_similarity import calculate_similarity
+from Source.Analysis.calculate_novelty import compute_novelty, compute_stability
+from Source.Analysis.plot_similarity import plot_similarity
+from Source.Utils.doi2int import doi2index
 
 #%%
 print(fn.csv_path)
@@ -29,83 +37,94 @@ df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
 df = df.drop(columns=['date','Other','Work/Study'])
 
+
+# TODO! Put all for loops in one funtion / wrapper
 #%% SUMMARY STATISTICS
-print('Processing Summary Statistics: ')
-i = 1
-for name in df.columns.to_list():        
-    print('Column: {:30s} : {}/{}'.format(name,i,df.shape[1]))
-    i += 1
+print('Processing Summary Statistics: \n')
+
+for i, name in enumerate(df.columns.to_list()):        
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
     ser = df[name] 
-    sn = fn.summary_base + '_' + name
+    # TODO! add argument names!
+    # TODO! fix number of opened figures warning!
     _ = summary_statistics(ser,
                            "{} summary".format(name),
                            ap.summary_window,
                            fn.summary_out,
-                           sn,
+                           fn.summary_base + name,
                            False)
     
 
 #%% ROLLING STATISTICS 
-print("Processing Rolling Statistics: ")
-i = 1
-for name in df.columns.to_list():
-    print('Column: {:30s} : {}/{}'.format(name,i,df.shape[1]))
-    i += 1
+print("\nProcessing Rolling Statistics: \n")
+
+for i, name in enumerate(df.columns.to_list()):
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
     ser = df[name] 
-    savename = fn.rolling_base + '_' + name
     _ = rolling_statistics(ser.to_frame(),
                            ap.rolling_window,
                            doi = doi,
-                           savename = savename,
+                           savename = fn.rolling_base + name,
                            savepath = fn.rolling_out,
                            test = False)
     
-#%%
+#%% TIMESERIES DECOMPOSITION
+print("\nProcessing Timeseries Decomposition: \n")
 
-'''
-def main():
-    # change correct working directory
-    #WORK_DIR = Path(r'F:\tscfat') # <- WINDOWS
-    WORK_DIR = Path('/u/26/ikaheia1/data/Documents/tscfat')
-    #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
-    os.chdir(WORK_DIR)
+for i, name in enumerate(df.columns.to_list()):
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
+    ser = df[name].values
     
-    # third party imports
-    
-    # Local application imports
-    from Source.Utils.load_csv import load_all_subjects
-    from Source.Analysis.process_battery import process_battery
-    
-    
-    ###############################################################################
-    #%% Load the data into dictionary filenames as keys
-    #DATA_FOLDER = Path(r'F:\tscfat\Data') # <- WINDOWS
-    #DATA_FOLDER = Path(r'/mnt/f/tscfat/Data')
-    DATA_FOLDER = Path.cwd() / 'Data' 
-    DATA_FOLDER = Path('/home/arsi/Documents/Data/')
-    #DATA_FOLDER = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data')
-    csv_dict = load_all_subjects(DATA_FOLDER)
-    dict_keys = list(csv_dict.keys()) 
-    
-    #%% Loop thru keys and assing dataframe if battery data is found
-    for k in dict_keys:
-        if re.search("Battery",k):
-            df1 = csv_dict[k]
-        else:
-            pass
-    
-    #%% Set parameters and paths 
-    # path to folder where plot are saved
-    #FIGPATH = Path(r'F:\tscfat\Results') # <- WINDOWS
-    #FIGPATH = Path(r'/mnt/f/tscfat/Results')
-    FIGPATH = Path.cwd() / 'Results'
-    #FIGPATH = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/Results')
-    
-    #%% Process Battery level
-    
-    _ = process_battery(df1,FIGPATH)
+    # TODO! check additional parameters!
+    _ = STL_decomposition(ser,
+                          title = name + '_decomposition',
+                          test = False,
+                          savepath = fn.decomposition_out,
+                          savename = fn.decomposition_base + name,
+                          ylabel = "{} Level".format(name),
+                          xlabel  = "Date",
+                          dates = False,
+                          )
 
-if __name__ == '__main__':
+#%% SIMILARITY, NOVELTY, AND STABILITY
+print("\nProcessing Similarity, Noveltym and Stability: \n")
 
-    main()
-'''
+for i, name in enumerate(df.columns.to_list()):
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
+    ser = df[name].values.reshape(-1,1)
+    
+    ind_s, ind_e = doi2index(doi,df)
+    
+    # TODO! check todos in plot_similarity.py
+    # TODO! How to fix x-axis labels?
+    # TODO! Check additional parameters
+    # TODO! How to calculate threshold?
+    
+    sim = calculate_similarity(ser)
+    stab = compute_stability(sim)
+    nov, kernel = compute_novelty(sim,edge=7)
+    _ = plot_similarity(deepcopy(sim),
+                        nov,
+                        stab,
+                        title="{} Similarity, Novelty and Stability".format(name),
+                        doi = (ind_s,ind_e),
+                        savepath = fn.similarity_out, 
+                        savename = fn.similarity_base + name,
+                        ylim = (0,0.05),
+                        threshold = 0,
+                        axis = None,
+                        kernel = kernel,
+                        test = False
+                        )
+    
+#%% CLUSTERING
+print("\nProcessing timeseries clustering: \n")
+
+for i, name in enumerate(df.columns.to_list()):
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))
+    
+#%% PLOTTING TIMESERIES
+print("\nProcessing timeseries plotting: \n")
+
+for i, name in enumerate(df.columns.to_list()):
+    print('Column: {:30s} : {}/{}'.format(name,i+1,df.shape[1]))

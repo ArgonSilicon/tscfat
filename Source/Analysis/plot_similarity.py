@@ -24,12 +24,13 @@ plt.rcParams.update({'figure.max_open_warning': 0})
 
 #TODO! fix xlabel
 #TODO! remove ylim
-#TODO! fix plot decorator!!!
+
 @plot_decorator
 def plot_similarity(sim,
                     nov,
                     stab,
                     title="Similarity and novelty",
+                    doi = None,
                     savepath = False, 
                     savename = False,
                     ylim = (0,0.05),
@@ -90,7 +91,7 @@ def plot_similarity(sim,
     
     
     sim[sim < threshold] = 0
-    # plot it
+
     fig, ax = plt.subplots(5,4,figsize=(10,12),sharex=True)  
     gridsize = (5,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
@@ -102,56 +103,37 @@ def plot_similarity(sim,
     ax1.set_title("Similarity matrix", fontsize=18)
     ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
     ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
-    ax1.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
-    #ax1.text(-0.1, 1.05, "A", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
-    
+    if doi is not None:
+        ax1.axvspan(doi[0], doi[1], ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     if type(kernel) != bool:
         ax2.imshow(kernel,cmap='Blues')
         ax2.set_title('Kernel',fontsize=18)
         #ax[1,3].text(-0.1, 1.05, "B", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
-    #ax1 = plt.subplot(gs[1])
- 
-    if axis is not None:
-        ax3.plot(axis,nov,label="Novelty")
-        ax3.set_title("Novelty score", fontsize=18)
-        ax3.set_xlabel('Time (date)',fontsize=16)
-        ax3.set_ylabel('Novelty',fontsize=16)
-        ax3.set_xticks(np.arange(len(axis))[::7])
-        ax3.set_xticklabels(axis[::7])
-        #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-        #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
-        ax3.legend(fontsize=16)
-        ax3.set_ylim(ylim)
-        #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
-        
-        ax4.plot(nov,label="Stability")
-        ax4.set_title("Stability score", fontsize=18)
-        ax4.set_xlabel('Time (day)',fontsize=16)
-        ax4.set_ylabel('Stability',fontsize=16)
-        ax4.legend(fontsize=16)
-        ax4.set_ylim((np.min(stab[7:-7]),np.max(stab[7:-7])))
-    else:
-        ax3.plot(nov,label="Novelty")
-        ax3.set_title("Novelty score", fontsize=18)
-        ax3.set_xlabel('Time (day)',fontsize=16)
-        ax3.set_ylabel('Novelty',fontsize=16)
-        #ax3.set_xticks(np.arange(len(axis))[::7])
-        #ax3.set_xticklabels(axis[::7])
-        #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
-        #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
-        ax3.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
-        ax3.legend(fontsize=16)
-        ax3.set_ylim((0.95*np.min(nov[7:-7]),1.05*(np.max(nov[7:-7]))))
-        
-        ax4.plot(stab,label="Stability")
-        ax4.set_title("Stability score", fontsize=18)
-        ax4.set_xlabel('Time (day)',fontsize=16)
-        ax4.set_ylabel('Stability',fontsize=16)        
-        ax4.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
-        ax4.legend(fontsize=16)
-        ax4.set_ylim((0.95*np.min(stab[7:-7]),1.05*(np.max(stab[7:-7]))))
+    ax3.plot(nov,label="Novelty")
+    ax3.set_title("Novelty score", fontsize=18)
+    ax3.set_xlabel('Time (day)',fontsize=16)
+    ax3.set_ylabel('Novelty',fontsize=16)
+    #ax3.set_xticks(np.arange(len(axis))[::7])
+    #ax3.set_xticklabels(axis[::7])
+    #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
+    #ax3.axvspan(29,43,facecolor="red",alpha=0.15,label="Days of interest")
+    if doi is not None:
+        ax3.axvspan(doi[0], doi[1] ,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    #ax3.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    ax3.legend(fontsize=16)
+    ax3.set_ylim((0.95*np.min(nov[7:-7]),1.05*(np.max(nov[7:-7]))))
+    
+    ax4.plot(stab,label="Stability")
+    ax4.set_title("Stability score", fontsize=18)
+    ax4.set_xlabel('Time (day)',fontsize=16)
+    ax4.set_ylabel('Stability',fontsize=16)        
+    #ax4.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    if doi is not None:
+        ax4.axvspan(doi[0], doi[1], ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    ax4.legend(fontsize=16)
+    ax4.set_ylim((0.95*np.min(stab[7:-7]),1.05*(np.max(stab[7:-7]))))
         
     
     #ax[3,0].set_text(-0.1, 1.05, "C", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
@@ -163,29 +145,9 @@ def plot_similarity(sim,
     plt.grid(True)
     plt.tight_layout(pad=1)
     
-    
-     #%%
-     
-    print('boo')
-    if all((savename,savepath)):
-        print('yaa')
-        assert isinstance(savename,str), "Invalid savename type."
-    
-        if savepath.exists():
-            with open(savepath / (savename + "_similarity.png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
-      
     return fig
 
-'''
-    assert fig is not None, "ohno!"
-    if test == True:
-        return fig
-'''     
+
 def test_Plot_similarity():
     from setup import setup_pd, setup_np
     '''

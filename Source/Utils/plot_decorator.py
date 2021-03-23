@@ -34,7 +34,7 @@ def plot_decorator(func):
         
             if sp.exists():
                 with open(sp / (sn + ".png"), mode="wb") as outfile:
-                    plt.close()
+                    #plt.close()
                     plt.savefig(outfile, format="png")
             else:
                 raise Exception("Requested folder: " + str(sp) + " does not exist.")

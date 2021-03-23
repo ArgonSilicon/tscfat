@@ -133,7 +133,6 @@ def rolling_statistics(ts,
     ax[0,0].set_ylabel('Value')
     ax[0,0].tick_params('x', labelrotation=45)
     if doi is not None:
-        #ax[0,0].axvspan(date2num(datetime(2020,10,1)),date2num(datetime(2020,12,24)),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[0,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[0,1].plot(mean)
