@@ -138,7 +138,7 @@ for i in range(229):
 plt.show()
 
 #%%
-df['Battery_stability'] = stab
+#df['Battery_stability'] = stab
 #%%
 df.to_csv(r'/home/arsi/Documents/Data/Combined_data.csv', header=True)
 #%%
