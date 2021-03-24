@@ -15,7 +15,7 @@ import pytest
 
 
 
-def calculate_similarity(X,metric='Euclidean'):        
+def calculate_similarity(X, metric='Euclidean'):        
     """
     Calculate similarity matrix. Utilize numpy pdist function. 
     Full reference: https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
@@ -45,7 +45,7 @@ def calculate_similarity(X,metric='Euclidean'):
     Y_sim = 1 / (1+Y_square)
     return Y_sim
 
-def calculate_distance(X,metric="Euclidean"):
+def calculate_distance(X, metric="Euclidean"):
     
     """
     Calculate similarity matrix. Utilize numpy pdist function. 

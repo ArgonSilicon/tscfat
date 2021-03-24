@@ -141,10 +141,27 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
    
    #TODO fix x-axis
    
-   _plot_clusters(labels, title=title, xlab="Timepoint", ylab="Cluster", savename = FIGNAME, savepath = FIGPATH, highlight = highlight, test = False)
+   _plot_clusters(labels, 
+                  title=title, 
+                  xlab="Timepoint", 
+                  ylab="Cluster", 
+                  savename = FIGNAME, 
+                  savepath = FIGPATH, 
+                  highlight = highlight, 
+                  test = False)
    if FIGNAME:
        FIGNAME = FIGNAME + '_cluster_averages'
-   _plot_cluster_averages(ts, labels, n, title, xlab = "Time (hour)", ylab = None, ylim_ = ylim_, savename = FIGNAME, savepath = FIGPATH , test = False)
+       
+   _plot_cluster_averages(ts, 
+                          labels, 
+                          n, 
+                          title, 
+                          xlab = "Time (hour)", 
+                          ylab = None, 
+                          ylim_ = ylim_,
+                          savename = FIGNAME, 
+                          savepath = FIGPATH,
+                          test = False)
    
    return labels
 
