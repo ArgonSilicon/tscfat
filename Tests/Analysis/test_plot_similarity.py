@@ -54,6 +54,4 @@ class TestPlotSimilarity(object):
                               test = True
                               )
         
-        #ret = plot_similarity(simmat,novelty, stability, savepath = False, savename = False, kernel = ker, axis = None, test = True)
-        
         assert ret is not None
