@@ -1,6 +1,7 @@
 __pycache__
 Results/
 Experiments/
+Data/
 Source/oura_example.py
 _build/*
 

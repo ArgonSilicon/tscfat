@@ -10,9 +10,6 @@ Function wrapper for plotting the figure or saving it to the destined folder.
 import matplotlib.pyplot as plt
 import functools
 
-
-# TODO: fix the decorator -> cannot find kwargs??!!
-
 def plot_decorator(func):
     @functools.wraps(func)
     def wrapper(*args,**kwargs):
