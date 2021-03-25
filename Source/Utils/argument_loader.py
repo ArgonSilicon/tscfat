@@ -18,7 +18,7 @@ import pandas as pd
 from pathlib import Path
 
 # TODO convert theses into single function!
-
+'''
 def setup_data(open_name, ret_type):
      
     with open_name.open('r') as read_file:
@@ -32,6 +32,7 @@ def setup_data(open_name, ret_type):
             return df['level']
         else:
             return df
+'''
     
 def setup_np():
     """
@@ -48,8 +49,9 @@ def setup_np():
     
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
-        df['time'] = pd.to_datetime(df['time'])
-        df = df.set_index('time')
+        df.index = pd.to_datetime(df.index)
+        #df['time'] = pd.to_datetime(df['time'])
+        #df = df.set_index('time')
         return df['level'].values
     
 
@@ -68,8 +70,9 @@ def setup_ps():
 
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
-        df['time'] = pd.to_datetime(df['time'])
-        df = df.set_index('time')
+        df.index = pd.to_datetime(df.index)
+        #df['time'] = pd.to_datetime(df['time'])
+        #df = df.set_index('time')
         return df['level']
   
 def setup_pd():
@@ -87,6 +90,7 @@ def setup_pd():
 
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
-        df['time'] = pd.to_datetime(df['time'])
-        df = df.set_index('time')
+        df.index = pd.to_datetime(df.index)
+        #df['time'] = pd.to_datetime(df['time'])
+        #df = df.set_index('time')
         return df
