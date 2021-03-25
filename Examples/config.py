@@ -22,7 +22,8 @@ from Source.Utils.analysis_parameters import AnalysisParameters
 
 # The days of interest ((start date), (end date))
 # Use the format: (YEAR,DAY,MONTH,HOUR,MINUTE)
-doi = (2020,10,1),(2020,12,24)
+#doi = (2020,10,1),(2020,12,24)
+doi = (2011,3,1),(2011,6,1)
 # The directory where output figures are stored
 OUTPUT_DIR = Path('/home/arsi/Documents/tscfat/Results')
 
@@ -31,7 +32,8 @@ OUTPUT_DIR = Path('/home/arsi/Documents/tscfat/Results')
 
 # DATA LOADING:
 # Path to the data file to be imported
-CSV_PATH = Path('/home/arsi/Documents/Data/Combined_data.csv')
+#CSV_PATH = Path('/home/arsi/Documents/Data/Combined_data.csv')
+CSV_PATH = Path('/home/arsi/Documents/Data/example_data.csv')
 
 # SUMMARY STATISTICS:
 # Output folder for summary statistics

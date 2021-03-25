@@ -35,8 +35,8 @@ from Source.Utils.process_decorator import process_decorator
 df = pd.read_csv(fn.csv_path)
 df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
-df = df.drop(columns=['date','Other','Work/Study'])
-
+#df = df.drop(columns=['date','Other','Work/Study'])
+df = df.drop(columns=['date'])
 cols = df.columns.to_list()
 
 
