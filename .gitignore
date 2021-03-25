@@ -2,9 +2,9 @@ __pycache__
 Results/
 Experiments/
 Source/oura_example.py
-Analysis/Utils/PAM_ecoder.py
-Analysis/Utils/binned_conversation.py
-Analysis/Utils/load_csv.py
+Source/Utils/PAM_ecoder.py
+Source/Utils/binned_conversation.py
+Source/Utils/load_csv.py
 _build/*
 
 
