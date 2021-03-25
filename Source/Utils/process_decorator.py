@@ -8,10 +8,14 @@ Created on Thu Mar 25 10:23:43 2021
 Function wrapper for iterating dataframe columns.
 """
 import functools
+import pandas as pd
 
 def process_decorator(func):
     @functools.wraps(func)
     def wrapper(df,cols):
+        assert isinstance (df, pd.DataFrame), "Given argument df is not a pandas dataframe."
+        assert isinstance (cols, list), "Given argument cols is not a list."
+        
         for i, name in enumerate(cols):
            
             if type(name) == list:
