@@ -12,10 +12,6 @@ from pathlib import Path
 
 def setup_np():
     
-    #print(Path.cwd())
-    #open_name =  Path(r'F:\tscfat\Data\Battery_test_data_1.csv')
-    #open_name = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data/Battery_test_data_1.csv')
-    #open_name = Path('/home/arsi/Documents/tscfat/Data/') / 'Test_data.csv'
     open_name = Path.cwd() / 'Data' / 'Test_data.csv'
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
@@ -26,11 +22,7 @@ def setup_np():
 
 def setup_ps():
 
-    #print(Path.cwd())
-    # open_name =  Path(r'F:\tscfat\Data\Battery_test_data_1.csv')
     open_name = Path.cwd() / 'Data' / 'Test_data.csv'
-    #open_name = Path('/home/arsi/Documents/tscfat/Data/') / 'Test_data.csv'
-    #open_name = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data/Battery_test_data_1.csv')
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
         df['time'] = pd.to_datetime(df['time'])
@@ -39,12 +31,7 @@ def setup_ps():
   
 def setup_pd():
     
-    #print(Path.cwd())
     open_name = Path.cwd() / 'Data' / 'Test_data.csv'
-    #open_name = Path('/home/arsi/Documents/tscfat/Data/') / 'Test_data.csv'
-    #open_name =  Path(r'F:\tscfat\Data\Battery_test_data_1.csv')
-    #open_name =  Path(r'C:\Users\arsii\Documents\tscfat\Data\Battery_test_data_1.csv')
-    #open_name = Path('/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat/Data/Battery_test_data_1.csv')
     with open_name.open('r') as read_file:
         df = pd.read_csv(read_file, index_col=0)
         df['time'] = pd.to_datetime(df['time'])
