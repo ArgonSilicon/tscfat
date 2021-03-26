@@ -46,9 +46,9 @@ The project dependencies:
 * [Matplotlib][matplotlib]
 * [Statsmodels][statsmodels]
 * [Sklearn][sklearn]
-* Tslearn
-* nolds
-* Pytest
+* [Tslearn][tslearn]
+* [Nolds][nolds]
+* [Pytest][pytest]
 
 
 
@@ -126,3 +126,6 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 [matplotlib]: https://matplotlib.org/
 [statsmodels]: https://www.statsmodels.org/stable/index.html
 [sklearn]: https://scikit-learn.org/stable/
+[tslearn]: https://tslearn.readthedocs.io/en/stable/
+[nolds]: https://pypi.org/project/nolds/
+[pytest]: https://docs.pytest.org/en/stable/
