@@ -7,12 +7,11 @@ A python Toolbox for time series exploratory data analysis.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## What is it for?
-The toolbox is designed for time series exploratory data analysis. The emphasis is on the visualizations.
+The toolbox is designed for exploratory data analysis of Ecological Momentaty Assesment (EMA), Experience Sampling Methods (ESM), and Digital phenotyping data. The toolbox enables the inpection of time series interaction and dynamics by providing methods for summary statistics, trend and periodicity evaluation, and linear and nonlinear dependency assesment. The emphasis of the analysis is on the visualizations. 
 
-Summary statistics
-Trend and periodicity 
-Linear dependency
-Nonlinear methods
+The toolbox has simple user interface, having a single configuration file for filenames, paths, and variables used in the analysis.
+
+For the toolbox testing purposes, anomymized real life test data set is also provided.
 
 ## Main Features
 The toolbox features include:
@@ -29,9 +28,13 @@ The toolbox features include:
 
 ## Installation
 
-Pip install is not implemented yet. 
+Pip install
 
-Meanwhile you can [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
+```sh
+pip install tscfat
+```
+
+You may also [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
 
 The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
 
@@ -41,7 +44,7 @@ OS X & Linux:
 
 ```sh
 pip install tscfat
-```
+
 
 Windows:
 
@@ -67,8 +70,6 @@ The project dependencies:
 
 A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
 
-_For more examples and usage, please refer to the [Docs][docs]._
-
 After cloning, make sure that pipenv is installed:
 ```sh
 pip install pipenv
@@ -81,7 +82,7 @@ Run the example file:
 ```sh
 pipenv run python ./Examples/example_one_subject.py
 ```
-The input data is expected to be in a CSV file, using the following format:
+Each analysis function can be used independently. Functions assume that the input data is expected to be in a CSV file, using the following format:
 
 | Time          | Y_1   | Y_2   | X_1   | X_2   | ...   | X_n   |
 | :-----------: |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
@@ -92,6 +93,8 @@ The input data is expected to be in a CSV file, using the following format:
 
 * The Time column contains timestamps in [unix][unix] format.
 * Rest of the columns contain observations, which should be in numerical format. Each column represents one variable, rows correspond to the sampling timepoint. 
+
+For more examples and usage, please refer to the [Docs][docs].
 <!--
 ## Development setup
 
