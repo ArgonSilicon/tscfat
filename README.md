@@ -19,8 +19,24 @@ A python Toolbox for time series exploratory data analysis.
 
 ## Installation
 
-This is not implemented yet.
+Pip install is not implemented yet. 
 
+Meanwhile you can clone the project and run the example scripts.
+
+After cloning, make sure that pipenv is installed:
+```sh
+pip install pipenv
+```
+Activate the virtual environment:
+```sh
+pipenv install 
+```
+Run the example file:
+```sh
+pipenv run python ./Examples/example_one_subject.py
+```
+
+<!--
 OS X & Linux:
 
 ```sh
@@ -32,6 +48,7 @@ Windows:
 ```sh
 pip install tscfat
 ```
+-->
 
 ## Usage example
 
