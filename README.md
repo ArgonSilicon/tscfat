@@ -5,7 +5,8 @@ A python Toolbox for time series exploratory data analysis.
 [![Build Status](https://travis-ci.org/kevchn/travis-ci-pytest.svg?branch=master)](https://travis-ci.org/kevchn/travis-ci-pytest)
 [![codecov](https://codecov.io/gh/ArgonSilicon/tscfat/branch/master/graph/badge.svg?token=6OG1W7LQPM)](https://codecov.io/gh/ArgonSilicon/tscfat)
 
-## Features
+## What is it for?
+## Main Features
 * Summary statistics
 * Rolling windows statistics
 * Time series decomposition
@@ -21,6 +22,7 @@ A python Toolbox for time series exploratory data analysis.
 
 Pip install is not implemented yet. 
 
+The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
 Meanwhile you can [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
 
 <!--
@@ -36,6 +38,8 @@ Windows:
 pip install tscfat
 ```
 -->
+
+## Dependencies
 
 ## Usage example
 
@@ -55,7 +59,16 @@ Run the example file:
 ```sh
 pipenv run python ./Examples/example_one_subject.py
 ```
+The data is expected to be in CSV file, using the following format:
 
+| Time          | Y_1   | Y_2   | X_1   | X_2   | ...   | X_n   |
+| :-----------: |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+|               |  3    | 5     | 56    |  0.1  | ...   | 0.56  |
+|               |  4    | 3     | 47    |  0.1  | ...   | 0.41  |
+|   :           |  :    | :     |  :    |  :    | :     |   :   |
+|               |  4    | 3     | 47    |  0.1  | ...   | 0.41  |
+
+<!--
 ## Development setup
 
 Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
@@ -64,6 +77,7 @@ Describe how to install all development dependencies and how to run an automated
 make install
 npm test
 ```
+-->
 
 ## Release History
 
