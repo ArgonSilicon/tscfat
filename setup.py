@@ -17,7 +17,7 @@ setup(
   author = 'Arsi Ikaheimonen',                   
   author_email = 'arsi.ikaheimonen@gmail.com',      
   url = 'https://github.com/ArgonSilicon/tscfat',   
-  download_url = 'https://github.com/ArgonSilicon/tscfat/archive/v_01.tar.gz',    
+  download_url = 'https://github.com/ArgonSilicon/tscfat/archive/refs/tags/V0.0.1.tar.gz',
   keywords = ['Timeseries', 'Exploratory', 'Analysis'],  
   install_requires=['nolds',
                     'sklearn',
