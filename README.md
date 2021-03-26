@@ -113,9 +113,9 @@ npm test
 
 ## Meta
 
-Your Name – [@YourTwitter](https://twitter.com/dbader_org) – YourEmail@example.com
+Arsi Ikäheimonen – arsi.ikaheimonen@gmail.com
 
-Distributed under the XYZ license. See ``LICENSE`` for more information.
+Distributed under the MIT license. See ``LICENSE`` for more information.
 
 [https://github.com/ArgonSilicon/tscfat](https://github.com/ArgonSilicon/)
 
