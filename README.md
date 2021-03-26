@@ -68,8 +68,8 @@ The input data is expected to be in a CSV file, using the following format:
 |   :           |  :    | :     |  :    |  :    | :     |   :   |
 | 1478037600    |  4    | 2     | 99    |  0.2  | ...   | 0.71  |
 
-Time column contains timestamps in [unix][unix] format.
-
+* The Time column contains timestamps in [unix][unix] format.
+* Rest of the columns contain observations, which should be in numerical format. Each column represents one variable, rows correspond to the sampling timepoint. 
 <!--
 ## Development setup
 
