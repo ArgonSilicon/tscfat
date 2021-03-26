@@ -6,7 +6,15 @@ A python Toolbox for time series exploratory data analysis.
 [![codecov](https://codecov.io/gh/ArgonSilicon/tscfat/branch/master/graph/badge.svg?token=6OG1W7LQPM)](https://codecov.io/gh/ArgonSilicon/tscfat)
 
 ## What is it for?
+The toolbox is designed for time series exploratory data analysis. The emphasis is on the visualizations.
+
+Summary statistics
+Trend and periodicity 
+Linear dependency
+Nonlinear methods
+
 ## Main Features
+The toolbox features include:
 * Summary statistics
 * Rolling windows statistics
 * Time series decomposition
