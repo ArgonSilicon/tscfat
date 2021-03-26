@@ -1,0 +1,8 @@
+nolds
+sklearn
+pytest
+numpy
+matplotlib
+pandas
+statsmodels
+tslearn

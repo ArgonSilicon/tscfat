@@ -7,10 +7,11 @@ Created on Mon Jan 18 14:06:42 2021
 """
 
 from distutils.core import setup
+from setuptools import find_packages
 
 setup(
   name = 'tscfat',         
-  packages = ['tscfat'],   
+  packages = find_packages(),   
   version = '0.0.1',      
   license='MIT',        
   description = 'A time series co-fluctuation analysis toolbox',   
@@ -29,8 +30,8 @@ setup(
                     'tslearn'],
   classifiers=[
     'Development Status :: 3 - Alpha',      
-    'Intended Audience :: Researchers',      
-    'Topic :: Mood research :: Time series analysis', #?
+    'Intended Audience :: Science/Research',      
+    'Topic :: Scientific/Engineering :: Medical Science Apps.', #?
     'License :: OSI Approved :: MIT License',   #P
     'Programming Language :: Python :: 3',      
     'Programming Language :: Python :: 3.6',
