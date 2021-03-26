@@ -21,20 +21,7 @@ A python Toolbox for time series exploratory data analysis.
 
 Pip install is not implemented yet. 
 
-Meanwhile you can clone the project and run the example scripts.
-
-After cloning, make sure that pipenv is installed:
-```sh
-pip install pipenv
-```
-Activate the virtual environment:
-```sh
-pipenv install 
-```
-Run the example file:
-```sh
-pipenv run python ./Examples/example_one_subject.py
-```
+Meanwhile you can [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
 
 <!--
 OS X & Linux:
@@ -55,6 +42,19 @@ pip install tscfat
 A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
 
 _For more examples and usage, please refer to the [Wiki][wiki]._
+
+After cloning, make sure that pipenv is installed:
+```sh
+pip install pipenv
+```
+Activate the virtual environment:
+```sh
+pipenv install 
+```
+Run the example file:
+```sh
+pipenv run python ./Examples/example_one_subject.py
+```
 
 ## Development setup
 
@@ -91,5 +91,5 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 [npm-url]: https://npmjs.org/package/datadog-metrics
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki -->
+[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics -->
+[wiki]: https://tscfat.readthedocs.io/en/latest/index.html 
