@@ -59,7 +59,7 @@ Run the example file:
 ```sh
 pipenv run python ./Examples/example_one_subject.py
 ```
-The data is expected to be in CSV file, using the following format:
+The input data is expected to be in a CSV file, using the following format:
 
 | Time          | Y_1   | Y_2   | X_1   | X_2   | ...   | X_n   |
 | :-----------: |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
@@ -67,6 +67,8 @@ The data is expected to be in CSV file, using the following format:
 | 1472763600    |  4    | 3     | 47    |  0.1  | ...   | 0.41  |
 |   :           |  :    | :     |  :    |  :    | :     |   :   |
 | 1478037600    |  4    | 2     | 99    |  0.2  | ...   | 0.71  |
+
+Time column contains timestamps in [unix][unix] format.
 
 <!--
 ## Development setup
@@ -106,4 +108,5 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics -->
-[docs]: https://tscfat.readthedocs.io/en/latest/index.html 
+[docs]: https://tscfat.readthedocs.io/en/latest/index.html
+[unix]: https://en.wikipedia.org/wiki/Unix_time
