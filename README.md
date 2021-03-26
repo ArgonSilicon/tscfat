@@ -40,6 +40,17 @@ pip install tscfat
 -->
 
 ## Dependencies
+The project dependencies:
+* [Pandas][pandas] 
+* [Numpy][numpy]
+* [Matplotlib][matplotlib]
+* [Statsmodels][statsmodels]
+* [Sklearn][sklearn]
+* Tslearn
+* nolds
+* Pytest
+
+
 
 ## Usage example
 
@@ -110,3 +121,8 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics -->
 [docs]: https://tscfat.readthedocs.io/en/latest/index.html
 [unix]: https://en.wikipedia.org/wiki/Unix_time
+[pandas]: https://pandas.pydata.org/
+[numpy]: https://numpy.org/
+[matplotlib]: https://matplotlib.org/
+[statsmodels]: https://www.statsmodels.org/stable/index.html
+[sklearn]: https://scikit-learn.org/stable/
