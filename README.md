@@ -22,8 +22,10 @@ A python Toolbox for time series exploratory data analysis.
 
 Pip install is not implemented yet. 
 
-The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
 Meanwhile you can [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
+
+The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
+
 
 <!--
 OS X & Linux:
