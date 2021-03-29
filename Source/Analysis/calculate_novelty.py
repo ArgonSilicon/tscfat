@@ -3,7 +3,7 @@
 """
 Created on Thu Jul  2 13:54:12 2020
 
- 
+Function for time series novelty score calculation.
 """
 
 import numpy as np

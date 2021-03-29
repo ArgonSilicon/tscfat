@@ -4,24 +4,27 @@
 Created on Fri Feb 26 09:57:53 2021
 
 @author: arsi
+
+Calculate a rolling window satbility index value for given timeseries. 
 """
 import numpy as np
 
 def compute_stability(simmat, edge = 7):
-    """ Calculate stability index for given similarity matrix.
+    """ Calculate stability index for given similarity matrix, representing
+    a time series.
     
 
     Parameters
     ----------
-    simmat : TYPE
-        DESCRIPTION.
-    edge : TYPE, optional
-        DESCRIPTION. The default is 7.
+    simmat : np.array
+        Similarity / self-similarity matrix
+    edge : int, optional
+        Window size used for stability calculation. The default is 7.
 
     Returns
     -------
-    stability : TYPE
-        DESCRIPTION.
+    stability : np.array
+        An array containing the rolling stability index values..
 
     """
     

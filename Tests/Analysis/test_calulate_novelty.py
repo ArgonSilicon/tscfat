@@ -4,6 +4,8 @@
 Created on Tue Jan 19 12:19:57 2021
 
 @author: arsii
+
+Test function for novelty calculation.
 """
 
 import pytest

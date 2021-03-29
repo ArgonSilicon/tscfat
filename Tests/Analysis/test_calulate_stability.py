@@ -4,6 +4,9 @@
 Created on Mon Mar 29 15:43:00 2021
 
 @author: arsii
+
+Test function for stability calculation.
+
 """
 
 import pytest
@@ -15,6 +18,21 @@ from Source.Analysis.calculate_stability import compute_stability
 class TestCalculateStability(object):
     
     def test_compute_stability(self):
+        """
+        Test compute stability function:
+            - Proper arguments return non-empty stability score.
+            - Self similarity matrix given as array raises an error
+            - 1D self similarity matrix raises an error
+            - Non-square self similarity matrix raises an error
+            - Kernel size larger than the self similarity matrix raises an error
+            - Edge given as float raises an error
+            - Edge given as negative integer raises an error
+    
+        Returns
+        -------
+        None.
+    
+        """
         
         test_argument = np.random.rand(5,5)
         np.fill_diagonal(test_argument,1)
