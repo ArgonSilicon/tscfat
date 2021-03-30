@@ -65,6 +65,7 @@ The project dependencies:
 * [Tslearn][tslearn]
 * [Nolds][nolds]
 * [Pytest][pytest]
+* [Seaborn][seaborn]
 
 
 
@@ -145,3 +146,4 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 [tslearn]: https://tslearn.readthedocs.io/en/stable/
 [nolds]: https://pypi.org/project/nolds/
 [pytest]: https://docs.pytest.org/en/stable/
+[seaborn]: https://seaborn.pydata.org/
