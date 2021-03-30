@@ -65,7 +65,7 @@ The project dependencies:
 * [Tslearn][tslearn]
 * [Nolds][nolds]
 * [Pytest][pytest]
-* [Seaborn[[seaborn]
+* [Seaborn][seaborn]
 
 
 
