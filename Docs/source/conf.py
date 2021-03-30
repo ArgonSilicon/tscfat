@@ -24,6 +24,8 @@ author = 'Arsi Ikäheimonen'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
+# master document (needed for read the docs)
+master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
 
