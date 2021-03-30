@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Source.Utils package &mdash; tscfat 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> tscfat
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Source.Utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.analysis_parameters">Source.Utils.analysis_parameters module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.argument_loader">Source.Utils.argument_loader module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.doi2int">Source.Utils.doi2int module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.file_names">Source.Utils.file_names module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.plot_decorator">Source.Utils.plot_decorator module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils.process_decorator">Source.Utils.process_decorator module</a></li>
+<li><a class="reference internal" href="#module-Source.Utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">tscfat</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Source.Utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Source.Utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="source-utils-package">
+<h1>Source.Utils package<a class="headerlink" href="#source-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-Source.Utils.analysis_parameters">
+<span id="source-utils-analysis-parameters-module"></span><h2>Source.Utils.analysis_parameters module<a class="headerlink" href="#module-Source.Utils.analysis_parameters" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Mar 22 11:26:36 2021</p>
+<p>&#64;author: ikaheia1</p>
+<p>A helper class for storing the parameters used in the analysis.
+The parameters are stored in the __dict__ dictionary by using an alias name as
+the key.</p>
+<dl class="py class">
+<dt id="Source.Utils.analysis_parameters.AnalysisParameters">
+<em class="property">class </em><code class="sig-prename descclassname">Source.Utils.analysis_parameters.</code><code class="sig-name descname">AnalysisParameters</code><a class="reference internal" href="_modules/Source/Utils/analysis_parameters.html#AnalysisParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.analysis_parameters.AnalysisParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="Source.Utils.analysis_parameters.AnalysisParameters.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span></em>, <em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/analysis_parameters.html#AnalysisParameters.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.analysis_parameters.AnalysisParameters.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new key : value pair in __dict__ dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alias</strong> (<em>str</em>) – Alias name / key for the parameter</p></li>
+<li><p><strong>parameter</strong> (<em>str / int / list</em>) – A parameter used as an argument for analysis functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Source.Utils.analysis_parameters.AnalysisParameters.list_parameters">
+<code class="sig-name descname">list_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/analysis_parameters.html#AnalysisParameters.list_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.analysis_parameters.AnalysisParameters.list_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionaty containing the key : value pairs used as function
+parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>names</strong> – key : value pairs used as function arguments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils.argument_loader">
+<span id="source-utils-argument-loader-module"></span><h2>Source.Utils.argument_loader module<a class="headerlink" href="#module-Source.Utils.argument_loader" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Nov 20 14:31:11 2020</p>
+<p>&#64;author: ikaheia1</p>
+<p>Helper functions for pytest test data loading.
+Load a csv file and convert it using separate loading functions for:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Numpy array format</p></li>
+<li><p>Pandas series format</p></li>
+<li><p>Pandas dataframe format</p></li>
+</ol>
+</div></blockquote>
+<dl class="py function">
+<dt id="Source.Utils.argument_loader.setup_np">
+<code class="sig-prename descclassname">Source.Utils.argument_loader.</code><code class="sig-name descname">setup_np</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/argument_loader.html#setup_np"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.argument_loader.setup_np" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the test data and convert the values into 1D numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A 1D numpy array containing the test data time series.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>_ = numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Source.Utils.argument_loader.setup_pd">
+<code class="sig-prename descclassname">Source.Utils.argument_loader.</code><code class="sig-name descname">setup_pd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/argument_loader.html#setup_pd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.argument_loader.setup_pd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the test data and convert the values into pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A pandas DataFrame containing the test data time series.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>_ = pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Source.Utils.argument_loader.setup_ps">
+<code class="sig-prename descclassname">Source.Utils.argument_loader.</code><code class="sig-name descname">setup_ps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/argument_loader.html#setup_ps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.argument_loader.setup_ps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the test data and convert the values into pandas Series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A pandas series containing the test data time series.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>_ = pandas Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils.doi2int">
+<span id="source-utils-doi2int-module"></span><h2>Source.Utils.doi2int module<a class="headerlink" href="#module-Source.Utils.doi2int" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Mar 23 11:46:24 2021</p>
+<p>&#64;author: ikaheia1</p>
+<dl class="py function">
+<dt id="Source.Utils.doi2int.doi2index">
+<code class="sig-prename descclassname">Source.Utils.doi2int.</code><code class="sig-name descname">doi2index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doi</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/doi2int.html#doi2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.doi2int.doi2index" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doi</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>df</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ind_s</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>ind_e</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils.file_names">
+<span id="source-utils-file-names-module"></span><h2>Source.Utils.file_names module<a class="headerlink" href="#module-Source.Utils.file_names" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Mar 22 11:26:36 2021</p>
+<p>&#64;author: ikaheia1</p>
+<p>A helper class for storing the filenames / paths used in the analysis.
+The filenames are stored in the __dict__ dictionary by using an alias name as
+the key.</p>
+<dl class="py class">
+<dt id="Source.Utils.file_names.FileNames">
+<em class="property">class </em><code class="sig-prename descclassname">Source.Utils.file_names.</code><code class="sig-name descname">FileNames</code><a class="reference internal" href="_modules/Source/Utils/file_names.html#FileNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.file_names.FileNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="Source.Utils.file_names.FileNames.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/file_names.html#FileNames.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.file_names.FileNames.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new key : value pair in __dict__ dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alias</strong> (<em>str</em>) – Alias name / key for the filename</p></li>
+<li><p><strong>parameter</strong> (<em>str / Path</em>) – A parameter used as a filename / Path for saving the figures.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Source.Utils.file_names.FileNames.list_filenames">
+<code class="sig-name descname">list_filenames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/file_names.html#FileNames.list_filenames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.file_names.FileNames.list_filenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionaty containing the key : value pairs used as filenames
+or paths for data loading and saving the plotted figures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>names</strong> – key : value pairs used as filenames.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils.plot_decorator">
+<span id="source-utils-plot-decorator-module"></span><h2>Source.Utils.plot_decorator module<a class="headerlink" href="#module-Source.Utils.plot_decorator" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jan  8 15:49:55 2021</p>
+<p>&#64;author: ikaheia1</p>
+<p>Function wrapper for plotting the figure or saving it to the destined folder.</p>
+<dl class="py function">
+<dt id="Source.Utils.plot_decorator.plot_decorator">
+<code class="sig-prename descclassname">Source.Utils.plot_decorator.</code><code class="sig-name descname">plot_decorator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/plot_decorator.html#plot_decorator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.plot_decorator.plot_decorator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils.process_decorator">
+<span id="source-utils-process-decorator-module"></span><h2>Source.Utils.process_decorator module<a class="headerlink" href="#module-Source.Utils.process_decorator" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Mar 25 10:23:43 2021</p>
+<p>&#64;author: arsi</p>
+<p>Function wrapper for iterating dataframe columns.</p>
+<dl class="py function">
+<dt id="Source.Utils.process_decorator.process_decorator">
+<code class="sig-prename descclassname">Source.Utils.process_decorator.</code><code class="sig-name descname">process_decorator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Source/Utils/process_decorator.html#process_decorator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Source.Utils.process_decorator.process_decorator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-Source.Utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-Source.Utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Arsi Ikäheimonen
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
