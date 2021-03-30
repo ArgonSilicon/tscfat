@@ -6,6 +6,6 @@ Source/Utils/PAM_ecoder.py
 Source/Utils/binned_conversation.py
 Source/Utils/load_csv.py
 _build/*
-
+/Docs/build/
 
 
