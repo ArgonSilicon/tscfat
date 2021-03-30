@@ -25,7 +25,7 @@ author = 'Arsi Ikäheimonen'
 release = '0.0.1'
 
 # master document (needed for read the docs)
-master_doc = 'index'
+master_doc = 'contents'
 
 # -- General configuration ---------------------------------------------------
 
