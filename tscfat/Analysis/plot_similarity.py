@@ -9,22 +9,16 @@ Plot and save self similarity matrix, convolution kernel and novelty score.
  
 """
 
-
-from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from datetime import datetime
-from matplotlib.dates import date2num
-from Source.Utils.plot_decorator import plot_decorator
-import pytest
-
+from tscfat.Utils.plot_decorator import plot_decorator
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
 #TODO! fix xlabel
 #TODO! remove ylim
 #TODO! fix documentation!
+#TODO! clean the code
 
 @plot_decorator
 def plot_similarity(sim,
@@ -52,33 +46,34 @@ def plot_similarity(sim,
         m x 1 array containing  novelty scores
     stab : Numpy ndarray
         m x 1 array containing  stability scores
-        
+    doi : tuple
+        (float, float) values used to highlight certain region of interest. 
     title : str, optional
-            Similarity plot title. The default is "Similarity and novelty".
-    
+        Similarity plot title. The default is "Similarity and novelty".
     savepath : Path object, optional
-            Path for figure saving. The default is False.
-    
+        Path for figure saving. The default is False.
     savename : str object, optional
-            Savename for the figure. The default is False.
-    
+        Savename for the figure. The default is False.
     ylim : tuple, optional
-            (float,float) ylimits for the plot. The default is (0,0.05).
-    
+        (float,float) ylimits for the plot. The default is (0,0.05).
     threshold : float, optional
-            Similarity score threshold for showing in the plot. The default is 0.
-    
+        Similarity score threshold for showing in the plot. The default is 0.
     axis : pandas.core.indexes.base.Index, optional
-            Date range used in the novelty score plot. The default is False.
-    
+        Date range used in the novelty score plot. The default is False.
     kernel : Numpy ndarray, optional
-            m x m convolution kernel used for novelty score calculation. The default is False.
-
+        m x m convolution kernel used for novelty score calculation. T
+        he default is False.
+    test : boolean
+        Indicates whether the function is tested by pytest.
+        he default is False.
+        
     Raises
     ------
     Exception
         - Requested save folder does not exist
         - Savename and/or savename are not given
+        - Novelty score is not a numpy array
+        - Stability score is not a numpy array
 
     Returns
     -------

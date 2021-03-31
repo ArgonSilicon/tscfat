@@ -19,8 +19,8 @@ os.chdir('/u/26/ikaheia1/data/Documents/tscfat')  # Provide the new path here
 
 from config_clustering import fn, ap, doi
 
-from Source.Analysis.cluster_timeseries import cluster_timeseries
-from Source.Utils.doi2int import doi2index
+from tscfat.Analysis.cluster_timeseries import cluster_timeseries
+from tscfat.Utils.doi2int import doi2index
 
 
 #%% LOAD THE DATA FRAME

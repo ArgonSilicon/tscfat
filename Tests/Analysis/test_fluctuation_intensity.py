@@ -3,12 +3,16 @@
 Created on Tue Jan 19 12:20:14 2021
 
 @author: arsii
+
+Test for fluctuation intensity calculation.
+
 """
 import numpy as np
 import pytest
 
-from Source.Analysis.fluctuation_intensity import fluctuation_intensity
+from tscfat.Analysis.fluctuation_intensity import fluctuation_intensity
 
+#TODO! write the docstings
 class TestFluctuationIntensity(object):
     
     def test_fluctuation_intensity(self):

@@ -6,14 +6,14 @@ Created on Wed Jul  1 14:40:46 2020
 @author: arsi
 
 Calculate STL decomposition for given time series and plot the components.
+The decomposition is based on statsmodels STL decomposition. Full reference:
+https://www.statsmodels.org/devel/generated/statsmodels.tsa.seasonal.STL.html
 
 """
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import STL
-from Source.Utils.argument_loader import setup_np, setup_pd
-import pytest
-from Source.Utils.plot_decorator import plot_decorator
+from tscfat.Utils.plot_decorator import plot_decorator
 
 #TODO! = fix the xlabels 
 
@@ -27,8 +27,7 @@ def _plot_decomposition(Result,
                         dates = False,
                         test = False,
                         ):
-    """
-    Plot the decomposed time series.
+    """ Plot the decomposed time series.
 
     Parameters
     ----------
@@ -114,10 +113,10 @@ def STL_decomposition(series,
                       xlabel  = "Date",
                       dates = False,
                       ):
-    """
-    STL Decompose timeseries into Model, Trend, Seasonal and Residual parts.
+    """ Decompose timeseries into Model, Trend, Seasonal and Residual parts.
     Plot the components and their distributions. Optionally save the figure.
     
+        
     Parameters
     ----------
     series : Numpy ndarray
@@ -144,7 +143,7 @@ def STL_decomposition(series,
     Returns
     -------
     Result : statsmodels.tsa.seasonal.DecomposeResult object
-        Object containing the decomposition results
+        Object containing the decomposition results.
 
     """
     assert isinstance(series, np.ndarray), "Series is not a numpy array."
@@ -174,28 +173,5 @@ def STL_decomposition(series,
         
     return Result
     
-def test_STL():
-    """
-    Test STL_decomposition function. Test passes with proper arguments and 
-    raises an AssertionError if the input time series is not numpy array.
 
-    Returns
-    -------
-    None.
-
-    """
-    res = STL_decomposition(setup_np(),'Test title', test=True) 
-    assert res is not None
-    assert res.observed.all() is not None
-    assert res.trend.all() is not None
-    assert res.seasonal.all() is not None
-    assert res.resid.all() is not None
-    
-    test_argument = setup_pd()
-    # Store information about raised ValueError in exc_info
-    with pytest.raises(AssertionError) as exc_info:
-        STL_decomposition(test_argument,'Test title', test=True)
-    expected_error_msg = "Series is not a numpy array."
-    # Check if the raised ValueError contains the correct message
-    assert exc_info.match(expected_error_msg)
         

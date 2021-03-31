@@ -4,12 +4,17 @@
 Created on Tue Jan 19 12:20:15 2021
 
 @author: arsii
+
+Test for similarity plotting.
+
 """
 import pytest
 import numpy as np
 
-from Source.Utils.argument_loader import setup_np, setup_pd
-from Source.Analysis.plot_similarity import plot_similarity
+from tscfat.Utils.argument_loader import setup_np, setup_pd
+from tscfat.Analysis.plot_similarity import plot_similarity
+
+#TODO! write docstrings
 
 class TestPlotSimilarity(object):
     

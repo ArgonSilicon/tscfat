@@ -6,19 +6,17 @@ Created on Thu Jul  2 12:28:09 2020
 @author: arsi
 
 Functions for distance matrix and similarity matrix calculation.
+Numpy pdist function is used for the calculation. Full reference: 
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
 
 """
+
 from scipy.spatial.distance import pdist, squareform
 import numpy as np
-from Source.Utils.argument_loader import setup_pd, setup_np
-import pytest
-
-
 
 def calculate_similarity(X, metric='Euclidean'):        
-    """
-    Calculate similarity matrix. Utilize numpy pdist function. 
-    Full reference: https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
+    """ Calculate a distance matrix.  
+    
 
     Parameters
     ----------
@@ -47,10 +45,8 @@ def calculate_similarity(X, metric='Euclidean'):
 
 def calculate_distance(X, metric="Euclidean"):
     
-    """
-    Calculate similarity matrix. Utilize numpy pdist function. 
-    Full reference: https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
-
+    """ Calculate a similarity matrix. 
+    
     Parameters
     ----------
     X : Numpy ndarray

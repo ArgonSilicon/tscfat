@@ -12,8 +12,7 @@ Test function for stability calculation.
 import pytest
 import numpy as np
 
-from Source.Analysis.calculate_stability import compute_stability
-
+from tscfat.Analysis.calculate_stability import compute_stability
 
 class TestCalculateStability(object):
     

@@ -14,28 +14,24 @@ The following are calculated using rolling window lenght(n):
     4) Mean square of successive differences (MSDD)
     5) Probability of acte change (PAC)
 
-
-
 """
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 #from arma_model import autocorr
-from Source.Analysis.fluctuation_intensity import fluctuation_intensity
+from tscfat.Analysis.fluctuation_intensity import fluctuation_intensity
 from scipy.stats import entropy
 #import nolds
-import pytest
-from Source.Utils.plot_decorator import plot_decorator
+from tscfat.Utils.plot_decorator import plot_decorator
 from datetime import datetime
 from matplotlib.dates import date2num
 
 #TODO! why pandas dataframe is rewuired!!!!
-#TODO! the plot decorator is not working anymore
+
 def _autocorr(series, t=1):
     """ Calculate autocorrelation for given timeseries
     
-
     Parameters
     ----------
     series : pandas series or numpy array
@@ -70,8 +66,7 @@ def rolling_statistics(ts,
                        savename = False,
                        savepath = False,
                        test = False):
-    """
-    Calculate and plot several rolling statistics.
+    """ Calculate and plot several rolling statistics.
 
     Parameters
     ----------
@@ -110,10 +105,10 @@ def rolling_statistics(ts,
     variance = ts.rolling(window = w).var()
     autocorrelation = ts.rolling(window = w).apply(_autocorr)
     mean = ts.rolling(window = w).mean() 
-    skew = ts.rolling(window = w).skew()
-    kurt = ts.rolling(window = w).kurt()
-    flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
-    ent = ts.rolling(window = w).apply(entropy)
+    #skew = ts.rolling(window = w).skew()
+    #kurt = ts.rolling(window = w).kurt()
+    #flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
+    #ent = ts.rolling(window = w).apply(entropy)
     #ent = ts.rolling(window = w).apply(nolds.sampen)
     
     var1 = ts.diff(1).fillna(0).rolling(window = w).var()
@@ -200,17 +195,4 @@ def rolling_statistics(ts,
     
     plt.tight_layout(pad=1)
   
-    '''
-    if all((savename,savepath)):
-
-        assert isinstance(savename,str), "Invalid savename type."
-    
-        if savepath.exists():
-            with open(savepath / (savename + "_rolling.png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
-        '''
     return fig

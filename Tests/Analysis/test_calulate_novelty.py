@@ -6,12 +6,13 @@ Created on Tue Jan 19 12:19:57 2021
 @author: arsii
 
 Test function for novelty calculation.
+
 """
 
 import pytest
 import numpy as np
 
-from Source.Analysis.calculate_novelty import compute_novelty, _create_kernel
+from tscfat.Analysis.calculate_novelty import compute_novelty, _create_kernel
 
 class TestCalculateNovelty(object):
     

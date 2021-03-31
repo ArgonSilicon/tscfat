@@ -9,8 +9,8 @@ Created on Thu Mar 25 16:08:46 2021
 import pytest
 import numpy as np
 
-from Source.Utils.process_decorator import process_decorator
-from Source.Utils.argument_loader import setup_pd
+from tscfat.Utils.process_decorator import process_decorator
+from tscfat.Utils.argument_loader import setup_pd
 
 class TestProcessDecorator(object):
     

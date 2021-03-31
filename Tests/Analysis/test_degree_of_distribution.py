@@ -4,13 +4,17 @@
 Created on Tue Jan 19 12:20:13 2021
 
 @author: arsii
+
+Test for degree distribution calculation.
+
 """
 
 import numpy as np
 import pytest
 
-from Source.Analysis.degree_of_distribution import distribution_degree
+from tscfat.Analysis.degree_of_distribution import distribution_degree
 
+#TODO! write docstings
 class TestDegreeOfDistribution(object):
     
     def test_distribution_degree(self):

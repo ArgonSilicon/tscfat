@@ -4,19 +4,22 @@
 Created on Tue Jan 19 12:20:09 2021
 
 @author: arsii
+
+Test for time series decomposition.
+
 """
 
 import pytest
 
-from Source.Utils.argument_loader import setup_np, setup_pd
-from Source.Analysis.decompose_timeseries import STL_decomposition, _plot_decomposition
+from tscfat.Utils.argument_loader import setup_np, setup_pd
+from tscfat.Analysis.decompose_timeseries import STL_decomposition, _plot_decomposition
 
 class TestDecomposeTimeseries(object):
                 
     def test_STL_decomposition(self):
-        """
-        Test STL_decomposition function. Test passes with proper arguments and 
-        raises an AssertionError if the input time series is not numpy array.
+        """ Test STL_decomposition function. Test passes with proper arguments
+        and raises an AssertionError if the input time series is not numpy 
+        array.
     
         Returns
         -------
@@ -40,6 +43,14 @@ class TestDecomposeTimeseries(object):
         assert exc_info.match(expected_error_msg)
 
     def test_plot_decomposition(self):
+        """ Test that the _plot_decomposition returns something.
+        
+
+        Returns
+        -------
+        None.
+
+        """
         
         test_argument = setup_np()
         res = STL_decomposition(test_argument,'Test title', test=True)

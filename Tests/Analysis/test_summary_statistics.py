@@ -4,11 +4,14 @@
 Created on Tue Jan 19 12:20:16 2021
 
 @author: arsii
+
+Test for summary statistics.
+
 """
 import pytest
 
-from Source.Analysis.summary_statistics import summary_statistics, _plot_summary 
-from Source.Utils.argument_loader import setup_pd, setup_ps
+from tscfat.Analysis.summary_statistics import summary_statistics, _plot_summary 
+from tscfat.Utils.argument_loader import setup_pd, setup_ps
 
 
 class TestSummaryStatistics(object):
@@ -16,7 +19,7 @@ class TestSummaryStatistics(object):
     def test_summary_statistics(self):
         """
         Test Summary_statistics function. Test that Pandas data frame as an
-        Sargument raises an error.
+        argument raises an error.
     
         Returns
         -------
@@ -34,6 +37,14 @@ class TestSummaryStatistics(object):
 class TestSummaryPlot(object):
     
     def test_summary_plot(self):
+        """
+        Test that _plot_summary function returns something.
+
+        Returns
+        -------
+        None.
+
+        """
         
         test_argument = setup_ps()
         res = _plot_summary(test_argument, title="test", test=True)

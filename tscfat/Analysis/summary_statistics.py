@@ -15,16 +15,14 @@ the results:
     
 """
 
-import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
-from Source.Utils.argument_loader import setup_ps, setup_pd
-import pytest
-from Source.Utils.plot_decorator import plot_decorator
-from matplotlib import gridspec
+from tscfat.Utils.plot_decorator import plot_decorator
 
 plt.style.use('seaborn')
 plt.ioff()
+
+#TODO! clean the code!
 
 @plot_decorator
 def _plot_summary(series,
@@ -34,7 +32,7 @@ def _plot_summary(series,
                   savename = False,
                   test = False
                   ):
-    """
+    """ Plot summary statistic for the given timeseries.
     
     Parameters
     ----------
@@ -95,23 +93,7 @@ def _plot_summary(series,
     #ax[2,1].set(xlabel='lag',ylabel='correlation')
     
     fig.tight_layout(pad=1.0)
-    
-    ''' 
-    #%%
-    if all((savename,savepath)):
         
-        assert isinstance(savename,str), "Invalid savename type."
-    
-        if savepath.exists():
-            with open(savepath / (savename + "_summary.png"), mode="wb") as outfile:
-                plt.savefig(outfile, format="png")
-        else:
-            raise Exception("Requested folder: " + str(savepath) + " does not exist.")
-    else:
-        raise Exception("Arguments were not given correctly.")
-    
-    '''
-    
     return fig
 
 
@@ -122,9 +104,8 @@ def summary_statistics(series,
                        savename = False,
                        test = False,
                        ):
-    """
+    """ Calculate summary statistics for the give timeseries.
     
-
     Parameters
     ----------
     series : Pandas Series
@@ -156,20 +137,3 @@ def summary_statistics(series,
                   test=False)
 
     
-def test_Summary_statistics():
-    """
-    Test Summary_statistics function. Test that Pandas data frame as an
-    Sargument raises an error.
-
-    Returns
-    -------
-    None.
-
-    """
-    
-    # Store information about raised ValueError in exc_info
-    with pytest.raises(AssertionError) as exc_info:
-        summary_statistics(setup_pd(),'Test title', savepath = False, savename = False, test = True)
-    expected_error_msg = "Series is not a pandas Series."
-    # Check if the raised ValueError contains the correct message
-    assert exc_info.match(expected_error_msg)

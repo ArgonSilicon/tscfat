@@ -3,12 +3,17 @@
 Created on Fri Jan 15 15:15:03 2021
 
 @author: arsii
+
+Test for rolling statistics.
+
 """
 import pytest
 
-from Source.Utils.argument_loader import setup_np, setup_pd
-#from Source.Utils.arg_loader import ArgLoader
-from Source.Analysis.rolling_statistics import rolling_statistics
+from tscfat.Utils.argument_loader import setup_np, setup_pd
+from tscfat.Analysis.rolling_statistics import rolling_statistics
+
+#TODO! write docstrings
+#TODO! check test with proper arguments
 
 class TestRollingStatistics(object):
     
@@ -28,8 +33,7 @@ class TestRollingStatistics(object):
         print(type(res))
         assert res is not None, 'Function returned a None object.' 
     '''
-    
-    
+        
     def test_rolling_statistics_ts(self):
         """
         Given a numpy array, Rolling_statistics raises an error.

@@ -3,7 +3,11 @@
 """
 Created on Thu Jul  2 13:54:12 2020
 
-Function for time series novelty score calculation.
+Function for time series novelty score calculation. Function requires a 
+similairty matrix and calculates the novelty score with sliding windows 
+gaussian kernel. For further reference, check:
+https://www.audiolabs-erlangen.de/resources/MIR/FMP/C4/C4S4_NoveltySegmentation.html   
+
 """
 
 import numpy as np

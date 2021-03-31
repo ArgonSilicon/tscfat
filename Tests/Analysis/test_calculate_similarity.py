@@ -6,12 +6,13 @@ Created on Tue Jan 19 12:19:59 2021
 @author: arsii
 
 Test function for similarity calculation.
+
 """
 
 import pytest
 
-from Source.Utils.argument_loader import setup_np, setup_pd
-from Source.Analysis.calculate_similarity import calculate_similarity, calculate_distance
+from tscfat.Utils.argument_loader import setup_np, setup_pd
+from tscfat.Analysis.calculate_similarity import calculate_similarity, calculate_distance
 
 class TestCalculateSimilarity(object):
     

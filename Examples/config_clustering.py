@@ -15,8 +15,8 @@ Configuration file for datframe containing data from single subject.
 
 # imports
 from pathlib import Path
-from Source.Utils.file_names import FileNames
-from Source.Utils.analysis_parameters import AnalysisParameters
+from tscfat.Utils.file_names import FileNames
+from tscfat.Utils.analysis_parameters import AnalysisParameters
 
 #%% General variables -> CHANGE THESE!!!
 

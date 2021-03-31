@@ -4,21 +4,21 @@
 Created on Thu Dec 17 12:29:57 2020
 
 @author: arsii
+
+Functions for time series clustering and for cluster visualization.
+Plot decorartor is used to handle image saving.
 """
 
 from tslearn.clustering import TimeSeriesKMeans
 import matplotlib.pyplot as plt
 import numpy as np
-from Source.Utils.plot_decorator import plot_decorator
-import pytest
-from datetime import datetime
-from matplotlib.dates import date2num
-from collections import Counter
+from tscfat.Utils.plot_decorator import plot_decorator
 
 @plot_decorator
-def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = False, savepath = False, highlight = False, test=False):
-    """
-    Plot a scatterplot showing the clusters.
+def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",
+                   savename = False, savepath = False, highlight = False, 
+                   test=False):
+    """ Plot a scatterplot showing the clusters.
 
     Parameters
     ----------
@@ -44,7 +44,8 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fal
     
     plt.plot(clusters +1 ,'o:')
     if highlight:
-        plt.axvspan(highlight[0],highlight[1],ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+        plt.axvspan(highlight[0],highlight[1],ymin=0, ymax=1,
+                    facecolor="yellow",alpha=0.13,label="Days of interest")
     plt.title(title)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
@@ -53,9 +54,10 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",savename = Fal
     return fig
 
 @plot_decorator
-def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", ylab = None, ylim_ = None, savename = False, savepath = False, test=False):
-    """
-    Plot a scatterplot showing the clusters.
+def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", 
+                           ylab = None, ylim_ = None, savename = False, 
+                           savepath = False, test=False):
+    """ Plot a scatterplot showing the clusters.
 
     Parameters
     ----------
@@ -98,50 +100,61 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)", ylab 
     return fig    
     
 
-def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, mi=5, mib=5, rs=0, metric = "dtw", highlight = None, ylim_ = None):
-   """
+def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3,
+                       mi=5, mib=5, rs=0, metric = "dtw", highlight = None, 
+                       ylim_ = None):
+    """ Cluster timeseries given as an numpy array.
+    Function uses tslearn TimeSeriesKMeans. For full reference check:
+    https://tslearn.readthedocs.io/en/stable/gen_modules/clustering/tslearn.clustering.TimeSeriesKMeans.html
+
     Parameters
     ----------
-    ts : TYPE
-        DESCRIPTION.
-    n : TYPE, optional
-        DESCRIPTION. The default is 3.
-    mi : TYPE, optional
-        DESCRIPTION. The default is 5.
-    mib : TYPE, optional
-        DESCRIPTION. The default is 5.
-    rs : TYPE, optional
-        DESCRIPTION. The default is 0.
-    metric : TYPE. optional
-        DESCRIPTION. The default is "dtw".
+    ts : numpy array
+        A m x n matrix containing the data points
+    FIGNAME : str
+        Figure savename
+    FIGPATH : path object
+        Figure savepath
+    title : str
+        Figure title
+    n : int, optional
+        Number of clusters. The default is 3.
+    mi : int, optional
+        Maximum number of iterations for the algorithm. The default is 5.
+    mib : int, optional
+        N iter used for the barycenter calculation. The default is 5.
+    rs : int, optional
+        A random state used to initialize the centers. The default is 0.
+    metric : str. optional
+        Metric used for the cluster assigment. The default is "dtw".
     highlight : TYPE, optional
         DESCRIPTION. The default is None
-    highlight : TYPE, optional
-        DESCRIPTION. The default is None
+    ylim_ : tuple 
+        Tuple containing the y-limit values.
         
     Returns
     -------
-    labels : TYPE
-        DESCRIPTION.
+    labels : numpy array
+        An array containing the assigned cluster labels.
 
     """
     
-   assert isinstance(ts,np.ndarray), "Timeseries array type is not np.ndarray."
-   assert ts.ndim == 2, "Timeseries array dimensions is not equal to 2"
+    assert isinstance(ts,np.ndarray), "Timeseries array type is not np.ndarray."
+    assert ts.ndim == 2, "Timeseries array dimensions is not equal to 2"
     
     
-   km = TimeSeriesKMeans(n_clusters = n, 
+    km = TimeSeriesKMeans(n_clusters = n, 
                           metric = metric, 
                           max_iter = mi,
                           max_iter_barycenter = mib,
                           random_state = rs,
                           ).fit(ts)
     
-   labels = km.labels_
+    labels = km.labels_
    
-   #TODO fix x-axis
+    #TODO fix x-axis
    
-   _plot_clusters(labels, 
+    _plot_clusters(labels, 
                   title=title, 
                   xlab="Timepoint", 
                   ylab="Cluster", 
@@ -149,10 +162,10 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
                   savepath = FIGPATH, 
                   highlight = highlight, 
                   test = False)
-   if FIGNAME:
-       FIGNAME = FIGNAME + '_cluster_averages'
+    if FIGNAME:
+        FIGNAME = FIGNAME + '_cluster_averages'
        
-   _plot_cluster_averages(ts, 
+    _plot_cluster_averages(ts, 
                           labels, 
                           n, 
                           title, 
@@ -163,14 +176,8 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3, 
                           savepath = FIGPATH,
                           test = False)
    
-   return labels
+    return labels
 
 
-def test_cluster_timeseries():
-    import numpy as np
 
-    sample = np.array([[1,1,1,2,2,2],[2,2,2,3,3,3],[1,2,3,4,5,6],[4,5,6,7,8,9]],np.int32)
-    clusters = cluster_timeseries(sample, False, False, title="Clustered timeseries", n=2, mi=5, mib=5, rs=0)
-    np.testing.assert_array_equal(clusters,np.array([0,0,1,1])), "Clusters are not correctly assigned."
-  
 
