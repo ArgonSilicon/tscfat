@@ -41,6 +41,21 @@ class TestDecomposeTimeseries(object):
         expected_error_msg = "Series is not a numpy array."
         # Check if the raised ValueError contains the correct message
         assert exc_info.match(expected_error_msg)
+        
+    def test_STL_decomposition_proper(self):
+        """ Test that the STL_decomposition returns something.
+        
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        test_argument = setup_np()
+        res = STL_decomposition(test_argument,'Test title', test=True)
+        
+        assert res is not None
 
     def test_plot_decomposition(self):
         """ Test that the _plot_decomposition returns something.
