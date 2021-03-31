@@ -8,16 +8,17 @@ Test for rolling statistics.
 
 """
 import pytest
+import numpy as np
 
-from tscfat.Utils.argument_loader import setup_np, setup_pd
-from tscfat.Analysis.rolling_statistics import rolling_statistics
+from tscfat.Utils.argument_loader import setup_np, setup_pd, setup_ps
+from tscfat.Analysis.rolling_statistics import rolling_statistics, _autocorr
 
 #TODO! write docstrings
 #TODO! check test with proper arguments
 
 class TestRollingStatistics(object):
     
-    '''
+    
     def test_rolling_statistics(self):
         """
         Test with proper arguments.
@@ -28,11 +29,11 @@ class TestRollingStatistics(object):
     
         """
         test_argument = setup_pd()
-        test_argument = test_argument['battery_level'].to_frame()
-        res = rolling_statistics(test_argument, w = 7*24, savename = False, savepath = False, test = True)
+        test_argument = test_argument['level'].to_frame()
+        res = rolling_statistics(test_argument, w = 7, savename = False, savepath = False, test = True)
         print(type(res))
         assert res is not None, 'Function returned a None object.' 
-    '''
+    
         
     def test_rolling_statistics_ts(self):
         """
@@ -85,4 +86,9 @@ class TestRollingStatistics(object):
         expected_error_msg = "Window length is larger than the time series length."
         # Check if the raised ValueError contains the correct message
         assert exc_info.match(expected_error_msg)
+        
+    def test_autocorr(self):
+        test_argument = setup_ps()
+        ac = _autocorr(test_argument)
+        assert isinstance(ac, np.float64)
     
