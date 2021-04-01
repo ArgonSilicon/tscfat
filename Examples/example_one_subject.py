@@ -16,7 +16,7 @@ import pandas as pd
 from copy import deepcopy
 
 # TODO! Fix this!?
-os.chdir('/home/arsi/Documents/tscfat')  # Provide the new path here
+os.chdir('/home/arsii/tscfat')  # Provide the new path here
 
 from Examples.config import fn, ap, doi
 
@@ -24,7 +24,8 @@ from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics
 from tscfat.Analysis.decompose_timeseries import STL_decomposition
 from tscfat.Analysis.calculate_similarity import calculate_similarity
-from tscfat.Analysis.calculate_novelty import compute_novelty, compute_stability
+from tscfat.Analysis.calculate_novelty import compute_novelty
+from tscfat.Analysis.calculate_stability import compute_stability
 from tscfat.Analysis.plot_similarity import plot_similarity
 from tscfat.Analysis.plot_timeseries import plot_timeseries
 from tscfat.Utils.doi2int import doi2index

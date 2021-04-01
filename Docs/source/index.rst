@@ -9,6 +9,8 @@ Welcome to tscfat's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+   feature-a
 
 
 

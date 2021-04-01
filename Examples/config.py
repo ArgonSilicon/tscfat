@@ -13,8 +13,13 @@ Configuration file for datframe containing data from single subject.
 
 """
 
-# imports
+# imports 
+import os
 from pathlib import Path
+
+# TODO! Fix this!?
+os.chdir('/home/arsii/tscfat') 
+
 from tscfat.Utils.file_names import FileNames
 from tscfat.Utils.analysis_parameters import AnalysisParameters
 
@@ -25,7 +30,7 @@ from tscfat.Utils.analysis_parameters import AnalysisParameters
 #doi = (2020,10,1),(2020,12,24)
 doi = (2011,3,1),(2011,6,1)
 # The directory where output figures are stored
-OUTPUT_DIR = Path('/home/arsi/Documents/tscfat/Results')
+OUTPUT_DIR = Path('/home/arsii/tscfat/Results')
 
 
 #%% Filenames -> CHANGE THESE!!!
@@ -33,7 +38,7 @@ OUTPUT_DIR = Path('/home/arsi/Documents/tscfat/Results')
 # DATA LOADING:
 # Path to the data file to be imported
 #CSV_PATH = Path('/home/arsi/Documents/Data/Combined_data.csv')
-CSV_PATH = Path('/home/arsi/Documents/Data/example_data.csv')
+CSV_PATH = Path('/home/arsii/tscfat/Data/one_subject_data.csv')
 
 # SUMMARY STATISTICS:
 # Output folder for summary statistics
