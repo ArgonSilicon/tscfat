@@ -15,8 +15,11 @@ from tscfat.Utils.plot_decorator import plot_decorator
 
 @plot_decorator
 def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "Value", ylim = False, savename = False, savepath = False, highlight = False, test=False):
-    """ Plot the selected columns of the given dataframe.  
+    """ 
+    Plot the selected columns of the given dataframe.  
     The dataframe index should be datetime object.
+    
+    
     Parameters
     ----------
     data : pandas dataframe
