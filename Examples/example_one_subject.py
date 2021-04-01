@@ -47,7 +47,7 @@ print('Processing Summary Statistics: \n')
 def summary(df,name):
     ser = df[name] 
     _ = summary_statistics(ser,
-                           "{} summary".format(name),
+                           "test_title",
                            ap.summary_window,
                            fn.summary_out,
                            fn.summary_base + name,
