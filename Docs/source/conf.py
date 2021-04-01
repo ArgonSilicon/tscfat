@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -24,7 +24,7 @@ author = 'Arsi Ikäheimonen'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
-# master document (needed for read the docs)
+# master document
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
