@@ -10,8 +10,12 @@ Function for plotting dataframe columns containing the timeseries.
 """
 
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 from tscfat.Utils.plot_decorator import plot_decorator
+
+
+sns.set_theme()
 
 @plot_decorator
 def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "Value", ylim = False, savename = False, savepath = False, highlight = False, test=False):
