@@ -6,14 +6,30 @@ This section describes how to run each analysis function independently.
 Calculate similarity
 --------------------
 
+The example code::
+	
+	import pandas as pd
+
 Calculate Novelty
 -----------------
+
+The example code::
+
+	import pandas as pd
 
 Calculate Stability
 -------------------
 
+The example code::
+
+	import pandas as pd
+
 Plot Similarity
 ---------------
+
+The example code::
+
+	import pandas as pd
 
 Timeseries Decomposition
 ------------------------
@@ -59,14 +75,72 @@ The output image:
 Timeseries Clustering
 ---------------------
 
+The example code::
+
+	import pandas as pd
+	
 Degree of Distribution
 ----------------------
+	
+	import pandas as pd
+	
+The example code::
 
 Fluctuation Intensity
 ---------------------
 
+	
+	
+The example code::
+
+	import pandas as pd
+
+
 Plot Timeseries
 ---------------
+
+The example code::
+
+	"""
+	Created on Fri Apr  2 12:14:27 2021
+
+	@author: arsi
+	"""
+
+	import pandas as pd
+
+	from tscfat.Analysis.plot_timeseries import plot_timeseries
+		
+	# load a dataframe and convert the index to datetime
+	df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
+	df.index = pd.to_datetime(df.index)
+		
+	# A list containing column names
+	cols = ['positive','negative']
+
+	# Rolling window size
+	window = 14
+
+
+	_ = plot_timeseries(df,
+		            cols,
+		            title = 'Positive and negative affects',
+		            roll = window, 
+		            xlab = "Time", 
+		            ylab = "Value", 
+		            ylim = False, 
+		            savename = False,
+		            savepath = False, 
+		            highlight = False, 
+		            test = False
+		            )
+
+The output image:
+
+.. image:: ../images/timeseries.png
+  :width: 800
+  :alt: Alternative text
+
 
 Rolling Statistics
 ------------------
@@ -104,7 +178,35 @@ The output image:
 Summary Statistics
 ------------------
 
+The example code::
 
+	import pandas as pd
+	
+	from tscfat.Analysis.summary_statistic import summary_statistics
+	
+	# load a dataframe and convert the index to datetime
+	df = pd.read_csv('/home/arsii/tscfat/Data/one_subject_data.csv',index_col=0)
+	df.index = pd.to_datetime(df.index)
+	
+	# dataframe can contain only one column
+	df = df.filter(['positive'])
+	
+	# rolling window length
+	window = 14
+
+	_ = rolling_statistics(df,
+		               window,
+		               doi = None,
+		               savename = False,
+		               savepath = False,
+		               test = False,
+		               )
+	
+The output image:
+
+.. image:: ../images/summary.png
+  :width: 800
+  :alt: Alternative text
 
 
 
