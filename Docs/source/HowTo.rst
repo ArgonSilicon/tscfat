@@ -8,7 +8,36 @@ Calculate similarity
 
 The example code::
 	
+	"""
+	Created on Sat Apr  3 23:48:38 2021
+
+	@author: arsi
+	"""
+
 	import pandas as pd
+
+	from tscfat.Analysis.calculate_similarity import calculate_similarity
+		
+	# load a dataframe and convert the index to datetime
+	df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
+	df.index = pd.to_datetime(df.index)
+
+	# convert one column to a numpy array
+	name = 'positive'
+	ser = df[name].values.reshape(-1,1)
+
+	sim = calculate_similarity(ser)
+
+The similarity matrix::
+
+	print(sim)
+	[[1.         0.8962963  0.8962963  ... 0.78317152 0.75467775 0.81208054]
+	 [0.8962963  1.         0.81208054 ... 0.86120996 0.82687927 0.8962963 ]
+	 [0.8962963  0.81208054 1.         ... 0.71810089 0.69407266 0.74233129]
+	 ...
+	 [0.78317152 0.86120996 0.71810089 ... 1.         0.95400788 0.95652174]
+	 [0.75467775 0.82687927 0.69407266 ... 0.95400788 1.         0.91435768]
+	 [0.81208054 0.8962963  0.74233129 ... 0.95652174 0.91435768 1.        ]]
 
 Calculate Novelty
 -----------------
