@@ -9,7 +9,10 @@ Created on Sat Apr  3 23:48:38 2021
 import pandas as pd
 
 from tscfat.Analysis.calculate_similarity import calculate_similarity
-	
+from tscfat.Analysis.calculate_novelty import compute_novelty
+from tscfat.Analysis.calculate_stability import compute_stability
+from tscfat.Analysis.plot_similarity import plot_similarity
+
 # load a dataframe and convert the index to datetime
 df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
 df.index = pd.to_datetime(df.index)
@@ -17,6 +20,24 @@ df.index = pd.to_datetime(df.index)
 # convert one column to a numpy array
 name = 'positive'
 ser = df[name].values.reshape(-1,1)
+# kernel edge length -> window = 2*edge + 1
+edge = 7
 
+# similarity, stability and novelty
 sim = calculate_similarity(ser)
-    
+stab = compute_stability(sim)
+nov, kernel = compute_novelty(sim, edge = edge)
+
+_ = plot_similarity(deepcopy(sim),
+                        nov,
+                        stab,
+                        title="{} Similarity, Novelty and Stability".format(name),
+                        doi = (ind_s,ind_e),
+                        savepath = fn.similarity_out, 
+                        savename = fn.similarity_base + name,
+                        ylim = (0,0.05),
+                        threshold = 0,
+                        axis = None,
+                        kernel = kernel,
+                        test = False
+                        )

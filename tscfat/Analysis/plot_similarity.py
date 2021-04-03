@@ -136,8 +136,9 @@ def plot_similarity(sim,
     ax[0,3].set_axis_off()
     ax[2,3].set_axis_off()
     
-    plt.suptitle(title + " Daily Patterns",fontsize=20,y=1)
-    plt.suptitle(title,fontsize=20,y=1)
+    
+    #plt.suptitle(title + " Daily Patterns",fontsize=20,y=1)
+    plt.suptitle(title, fontsize=20, y = 1.02)
     plt.grid(True)
     plt.tight_layout(pad=1)
     
