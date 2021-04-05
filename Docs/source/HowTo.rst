@@ -219,10 +219,41 @@ The example code::
 	
 Degree of Distribution
 ----------------------
-	
-	import pandas as pd
-	
+		
 The example code::
+
+	"""
+	Created on Mon Apr  5 21:18:34 2021
+
+	@author: arsi
+	"""
+	  
+	import pandas as pd
+	   
+	from tscfat.Analysis.degree_of_distribution import distribution_degree
+
+	# load a dataframe and convert the index to datetime
+	df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
+	df.index = pd.to_datetime(df.index)
+	   
+	# set range of fluctuation
+	scale = 1
+	   
+	# window
+	w = 14
+	   
+	# calculate distribution degree
+	dist_deg = df.positive.rolling(window = w).apply(lambda x: distribution_degree(x.values,scale,w))
+	   
+	# plot the result
+	ax = dist_deg.plot()
+	ax.set(ylabel='Distribution Degree', title="Positive Affect Distribution Degree")
+	
+The output image:
+
+.. image:: ../images/distribution_degree.png
+  :width: 800
+  :alt: Alternative text
 
 Fluctuation Intensity
 ---------------------
@@ -243,7 +274,7 @@ The example code::
 	df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
 	df.index = pd.to_datetime(df.index)
 
-	# set range for fluatuation
+	# set range of fluctuation
 	scale = 1
 
 	# window
