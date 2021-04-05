@@ -15,7 +15,7 @@ import os
 import pandas as pd
 import numpy as np
 
-os.chdir('/u/26/ikaheia1/data/Documents/tscfat')  # Provide the new path here
+os.chdir('/home/arsi/Documents/tscfat')  # Provide the new path here
 
 from config_clustering import fn, ap, doi
 
