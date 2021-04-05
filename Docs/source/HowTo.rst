@@ -226,13 +226,42 @@ The example code::
 
 Fluctuation Intensity
 ---------------------
-
-	
 	
 The example code::
 
+	"""
+	Created on Sat Apr  3 23:48:38 2021
+
+	@author: arsi
+	"""
+
 	import pandas as pd
 
+	from tscfat.Analysis.fluctuation_intensity import fluctuation_intensity
+
+	# load a dataframe and convert the index to datetime
+	df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
+	df.index = pd.to_datetime(df.index)
+
+	# set range for fluatuation
+	scale = 1
+
+	# window
+	w = 14
+
+	# calculate fluctuation intensity
+	flu_int = df.positive.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,scale,w))
+
+	# plot the result
+	ax = flu_int.plot()
+	ax.set(ylabel='Fluctuation Intensity', title="Positive Affect Fluctuation Intensity")	
+
+The output image:
+
+.. image:: ../images/fluctuation_intensity.png
+  :width: 800
+  :alt: Alternative text
+  
 
 Plot Timeseries
 ---------------

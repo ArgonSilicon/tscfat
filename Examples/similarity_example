@@ -7,37 +7,24 @@ Created on Sat Apr  3 23:48:38 2021
 """
 
 import pandas as pd
+import seaborn as sns
+sns.set_style()
 
-from tscfat.Analysis.calculate_similarity import calculate_similarity
-from tscfat.Analysis.calculate_novelty import compute_novelty
-from tscfat.Analysis.calculate_stability import compute_stability
-from tscfat.Analysis.plot_similarity import plot_similarity
+from tscfat.Analysis.fluctuation_intensity import fluctuation_intensity
 
 # load a dataframe and convert the index to datetime
 df = pd.read_csv('/home/arsi/Documents/tscfat/Data/one_subject_data.csv',index_col=0)
 df.index = pd.to_datetime(df.index)
 
-# convert one column to a numpy array
-name = 'positive'
-ser = df[name].values.reshape(-1,1)
-# kernel edge length -> window = 2*edge + 1
-edge = 7
+# set range for fluatuation
+scale = 1
 
-# similarity, stability and novelty
-sim = calculate_similarity(ser)
-stab = compute_stability(sim)
-nov, kernel = compute_novelty(sim, edge = edge)
+# window
+w = 14
 
-_ = plot_similarity(deepcopy(sim),
-                        nov,
-                        stab,
-                        title="{} Similarity, Novelty and Stability".format(name),
-                        doi = (ind_s,ind_e),
-                        savepath = fn.similarity_out, 
-                        savename = fn.similarity_base + name,
-                        ylim = (0,0.05),
-                        threshold = 0,
-                        axis = None,
-                        kernel = kernel,
-                        test = False
-                        )
+# calculate fluctuation intensity
+flu_int = df.positive.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,scale,w))
+
+# plot the result
+ax = flu_int.plot()
+ax.set(ylabel='Fluctuation Intensity', title="Positive Affect Fluctuation Intensity")
