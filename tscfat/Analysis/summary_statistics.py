@@ -54,7 +54,7 @@ def _plot_summary(series,
     """
         
     fig,ax = plt.subplots(3,2,figsize=(10,10))
-    fig.suptitle(title,fontsize=20,y=1)
+    fig.suptitle(title,fontsize=20,y=1.02)
     
     gridsize = (3,2)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=2,rowspan=1)
@@ -77,7 +77,7 @@ def _plot_summary(series,
   
     ax4.plot(series.values[1:],series.values[:-1],'o')
     ax4.set_title('Lag plot / lag 1')
-    ax4.set_box_aspect(1)
+    ax4.set_aspect(1)
     #ax3.set(adjustable='box-forced', aspect='equal')
       
     pd.plotting.autocorrelation_plot(series,ax=ax5)
