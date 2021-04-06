@@ -7,7 +7,7 @@ Installation
 There are two ways to install the toolbox:
 
 1. Pip install via The Python Package Index `PyPi <https://pypi.org/>`_
-2. `Cloning <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository/>`_ the project from `GitHub <https://github.com/>` repository
+2. `Cloning <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository/>`_ the project from `GitHub <https://github.com/>`_ repository
 
 1. Pip install
 ^^^^^^^^^^^^^^
