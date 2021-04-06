@@ -12,7 +12,7 @@ import numpy as np
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 
 #%% LOAD THE DATA FRAME
-df = pd.read_csv('/home/arsii/tscfat/Data/Battery_test_data.csv',index_col=0)
+df = pd.read_csv('/home/arsi/Documents/tscfat/Data/Battery_test_data.csv',index_col=0)
 
 df.index = pd.to_datetime(df.index)
 
