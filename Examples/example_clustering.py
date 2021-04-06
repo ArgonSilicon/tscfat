@@ -24,7 +24,7 @@ from tscfat.Utils.doi2int import doi2index
 
 
 #%% LOAD THE DATA FRAME
-df = pd.read_csv(fn.csv_path)
+df = pd.read_csv('/home/arsii/Data/Battery.csv')
 df['time'] = pd.to_datetime(df['time'],unit='s')
 df = df.set_index(df['time'])
 df = df.filter(['battery_level'])
