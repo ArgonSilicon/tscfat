@@ -86,7 +86,7 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)",
         filt[i,:] = clusters == i
             
     fig,ax = plt.subplots(n,1,figsize=(10,20))
-    fig.suptitle(title + '\n cluster averages', fontsize = 20, y=1)
+    fig.suptitle(title + ' cluster averages', fontsize = 20, y=1.02)
     
     for i in range(n):
         ax[i].plot(np.mean(data[filt[i]], axis = 0))

@@ -243,14 +243,15 @@ The example code::
 	clusters = cluster_timeseries(data,
 		                      FIGNAME = False,
 		                      FIGPATH = False,
-		                      title = 'Battery Level Clustering Example', 
+		                      title = 'Battery Level', 
 		                      n = 5, 
 		                      mi = 5, 
 		                      mib = 5, 
 		                      rs = 0, 
 		                      metric = 'dtw', 
 		                      highlight = None,
-		                      ylim_ = None)
+		                      ylim_ = (0,100)
+		                      )
 
 The output images:  
 
