@@ -20,8 +20,7 @@ os.chdir('/home/arsii/tscfat')  # Provide the new path here
 cwd = os.getcwd()
 print(cwd)
 
-from Examples.config import fn, ap, doi
-
+from tscfat.Examples.config import fn, ap, doi
 from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics
 from tscfat.Analysis.decompose_timeseries import STL_decomposition
