@@ -1,5 +1,7 @@
-Toolbox installation, dependencies, and virtual environment
-===========================================================
+Toolbox
+=======
+
+This section provides instructions for the toolbox installation, virtual environment usage, and running the unit tests. Python package dependencies are also listed.
 
 Installation
 ------------
@@ -41,12 +43,12 @@ The cloned respository should have the following folder structure::
 	
 Here the most important subfolders are:
 	 
-	* Data folder contains example data sets
-	* Docs folder contains the toolbox documentation
-	* Examples folder contain example scripts for toolbox tutorials
-	* Results is the default analysis output folder 
-	* Tests contains pytest tests
-	* tscfat contains the Python modules and utility functions needed for the analysis
+* Data folder contains example data sets
+* Docs folder contains the toolbox documentation
+* Examples folder contain example scripts for toolbox tutorials
+* Results is the default analysis output folder 
+* Tests contains pytest tests
+* tscfat contains the Python modules and utility functions needed for the analysis
 	
 	
 Dependencies
@@ -67,7 +69,7 @@ The toolbox requires Python version 3.7. or higher to work. In addition, it is d
 Virtual environment
 -------------------
 
-Requirements can be fullfilled by using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
+Dependencies can be installed by using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
 
 Pipenv can be installed by using pip install::
 	
