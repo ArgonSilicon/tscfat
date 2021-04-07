@@ -81,4 +81,10 @@ Running the python scripts inside the environment::
 
 	pipenv run python <... /python_script.py>
 	
+Running unit tests
+------------------
+
+Inside the tscfat root folder, you may run pytest unittests using the activated virtual environment::
+
+	pipenv run pytest
 
