@@ -22,19 +22,19 @@ from tscfat.Utils.analysis_parameters import AnalysisParameters
 
 # The days of interest ((start date), (end date))
 # Use the format: (YEAR,DAY,MONTH,HOUR,MINUTE)
-doi = (2020,10,1),(2020,12,24)
+doi = (2015,7,25),(2015,10,15)
 
 
 #%% Filenames -> CHANGE THESE!!!
 
 # DATA LOADING:
 # Path to the data file to be imported
-CSV_PATH = Path('/u/26/ikaheia1/data/Documents/Data/Battery.csv')
+CSV_PATH = Path('/home/arsii/tscfat/Data/Battery_test_data.csv')
 
 # TIMESERIES CLUSTERING
 # Output folder for similarity plot
-CLUSTERING_OUT = Path('/u/26/ikaheia1/unix/Documents/tscfat/Results/Clustering')
-# BAse name for summary statistics image
+CLUSTERING_OUT = Path('/home/arsii/tscfat/Results/Clustering')
+# Base name for summary statistics image
 CLUSTERING_BASE = 'aware_clusters_'
 
 #%% Analysis parameters -> CHANGE THESE!!!

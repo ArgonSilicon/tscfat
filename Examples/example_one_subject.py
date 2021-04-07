@@ -17,6 +17,8 @@ from copy import deepcopy
 
 # TODO! Fix this!?
 os.chdir('/home/arsii/tscfat')  # Provide the new path here
+cwd = os.getcwd()
+print(cwd)
 
 from Examples.config import fn, ap, doi
 
