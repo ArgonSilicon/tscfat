@@ -1,5 +1,5 @@
-Toolbox
-=======
+Toolbox Installation
+====================
 
 This section provides instructions for the toolbox installation, virtual environment usage, and running the unit tests. Python package dependencies are also listed.
 
