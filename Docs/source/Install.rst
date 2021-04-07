@@ -21,8 +21,34 @@ Pip install::
 2. Cloning the repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
+The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>. To clone the repository, open the terminal and change your current working directory to the location where you want to clone the repository directory. Then type in the following clone command::
 
+	git clone https://github.com/ArgonSilicon/tscfat
+	
+The cloned respository should have the following folder structure::
+
+	tscfat
+	├── Data
+	├── Docs
+	├── Examples
+	├── Results
+	├── Tests
+	├── __pycache__
+	├── _build
+	├── dist
+	├── tscfat
+	└── tscfat.egg-info
+	
+Here the most important subfolders are:
+	 
+	* Data folder contains example data sets
+	* Docs folder contains the toolbox documentation
+	* Examples folder contain example scripts for toolbox tutorials
+	* Results is the default analysis output folder 
+	* Tests contains pytest tests
+	* tscfat contains the Python modules and utility functions needed for the analysis
+	
+	
 Dependencies
 ------------
 
