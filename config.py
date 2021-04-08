@@ -10,7 +10,6 @@ Configuration file for datframe containing data from single subject.
     1) General variables
     2) Filenames and paths
     3) Analysis parameters
-
 """
 
 from pathlib import Path
@@ -92,9 +91,10 @@ ROLLING_WINDOW = 28
 COLUMN_LIST = [['positive', 'negative', 'Average HRV'],
                ['positive', 'negative', 'app_sum'],
                ['positive', 'negative', 'screen_activations'],
+              ]
 
-######################################################              ]
-#%% Create a filename object -> DO NOT CHANGE THESE!!!
+######################################################              
+# Create a filename object -> DO NOT CHANGE THESE!!!
 fn = FileNames()
 
 fn.add('csv_path',CSV_PATH)
