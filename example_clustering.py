@@ -15,9 +15,6 @@ import os
 import pandas as pd
 import numpy as np
 
-#
-#os.chdir('/home/arsii/tscfat')  # Provide the new path here
-
 from config_clustering import fn, ap, doi
 
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries

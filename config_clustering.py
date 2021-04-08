@@ -28,11 +28,11 @@ doi = (2015,8,1),(2015,10,20)
 
 # DATA LOADING:
 # Path to the data file to be imported
-CSV_PATH = Path('C:/Users/arsii/Documents/kokeilu/tscfat/Data/Battery_test_data.csv')
+CSV_PATH = Path(' ... /tscfat/Data/Battery_test_data.csv')
 
 # TIMESERIES CLUSTERING
 # Output folder for similarity plot
-CLUSTERING_OUT = Path('C:/Users/arsii/Documents/kokeilu/tscfat/Results/Clustering')
+CLUSTERING_OUT = Path(' ... /tscfat/Results/Clustering')
 
 # BAse name for summary statistics image
 CLUSTERING_BASE = 'aware_clusters_'
