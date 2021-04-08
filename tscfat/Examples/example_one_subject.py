@@ -11,15 +11,15 @@ The analysis is conducted in process_battery_level.py.
 The results are stored on disk.
 
 """
-import os, sys
+import os
 import pandas as pd
 from copy import deepcopy
 
 # TODO! Fix this!?
 os.chdir('/home/arsii/tscfat')  # Provide the new path here
-sys.path.append('./Examples')
+#sys.path.append('./Examples')
 
-from .Examples.config import fn, ap, doi
+from tscfat.Examples.config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics
