@@ -15,22 +15,24 @@ import os
 import pandas as pd
 import numpy as np
 
-os.chdir('/home/arsii/tscfat/tscfat')  # Provide the new path here
-cwd = os.getcwd()
-print(cwd)
+os.chdir('/home/arsi/Documents/tscfat')  # Provide the new path here
 
-from Examples.config_clustering import fn, ap, doi
+from config_clustering import fn, ap, doi
+
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 from tscfat.Utils.doi2int import doi2index
 
 
 #%% LOAD THE DATA FRAME
-df = pd.read_csv(fn.csv_path,index_col = 0)
-df.index = pd.to_datetime(df.index)
+df = pd.read_csv('/home/arsii/Data/Battery.csv')
+df['time'] = pd.to_datetime(df['time'],unit='s')
+df = df.set_index(df['time'])
+df = df.filter(['battery_level'])
 df = df.resample('H').mean()
 df = df.interpolate()
+
 df = df.resample('D').apply(list)
-df = df['2015-03-26':'2015-12-03']
+df = df['2020-06-2':'2021-02-09']
 data = np.stack(df.battery_level.values)
 
 #%%

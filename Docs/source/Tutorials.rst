@@ -6,7 +6,7 @@ The toobox comes with two test datasets. The first dataset ontains multimodal da
 One subject data
 ----------------
 
-First step in the tutorial is to clone the respository.
+First step in the tutorial is to clone the respository. This step is also covered in Toolbox Installation section.
 
 Open the terminal and change your current working directory to the location where you want to clone the repository directory. Type in the following clone command::
 
@@ -31,7 +31,7 @@ After repository cloning, make sure that pipenv is installed::
 	
 	pip install pipenv
 
-CD into tscfat root folder and activate the virtual environment::
+Make sure your current working directory is the tscfat root folder and activate the virtual environment::
 
 	pipenv install 
 
@@ -67,7 +67,7 @@ Each analysis function can also be used independently. The input data is expecte
 | 1478037600    |  4    | 2     | 99    |  0.2  | ...   | 0.71  |
 +---------------+-------+-------+-------+-------+-------+-------+
 
-* The Time column contains timestamps in [unix][unix] format. The timestamps should be uniformly distributed.
+* The Time column contains timestamps in `Unix <https://en.wikipedia.org/wiki/Unix_time>`_ time format. The timestamps should be uniformly distributed.
 * Rest of the columns contain observations, which should be in numerical format. Each column represents one variable, rows correspond to the sampling timepoint. Make sure to impute any missing datapoints before running the analysis.
 
 For more examples and usage, please refer to the HowTo section.
@@ -75,3 +75,25 @@ For more examples and usage, please refer to the HowTo section.
 
 Clustering example
 ------------------
+
+tscfat/Examples folder contain a file config_clustering.py. Open it in a text editor and replace following paths.
+
+Fill in the correct path for data loading::
+	
+	# DATA LOADING:
+	# Path to the data file to be imported
+	CSV_PATH = Path(' ... /tscfat/Data/Battery_test_data.csv')
+
+Fill in the correct path for the output directory::
+
+	# TIMESERIES CLUSTERING
+	# Output folder for similarity plot
+	CLUSTERING_OUT = Path(' ... /tscfat/Results/Clustering') # <- replace with the correct path!
+	
+While in tscfat root folder, you may run the example file::
+
+	pipenv run python ./Examples/example_clustering.py
+
+The script will run clustering analysis on dataset, saving the resulting figures in dedicated folders.
+
+
