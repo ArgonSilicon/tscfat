@@ -15,9 +15,6 @@ import os
 import pandas as pd
 from copy import deepcopy
 
-# TODO! Fix this!?
-os.chdir('/home/arsii/tscfat')  # Provide the new path here
-
 from config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
@@ -36,7 +33,6 @@ from tscfat.Utils.process_decorator import process_decorator
 df = pd.read_csv(fn.csv_path)
 df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
-#df = df.drop(columns=['date','Other','Work/Study'])
 df = df.drop(columns=['date'])
 cols = df.columns.to_list()
 
