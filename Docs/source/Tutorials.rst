@@ -28,14 +28,18 @@ Make sure that the tscfat/Results folder contains the following subfolders::
 These are the folders, where the result figures are saved.
 
 After repository cloning, make sure that pipenv is installed::
+
+	pipenv --version
 	
+If not, it can be installed using pip::
+
 	pip install pipenv
 
 Make sure your current working directory is the tscfat root folder and activate the virtual environment::
 
 	pipenv install 
 
-tscfat/Examples folder contain a file conf.py. Open it in a text editor and replace following paths.
+tscfat root folder contain a file config.py. Open it in a text editor and replace following paths.
 
 Fill in the correct path for output directory::
 
@@ -49,11 +53,11 @@ Fill in the correct path for data loading::
 
 While in tscfat root folder, you may run the example file::
 
-	pipenv run python ./Examples/example_one_subject.py
+	pipenv run python example_one_subject.py
 
 The script will run analyisis on each of the dataset columns, saving the resulting figures in dedicated folders.
 
-Each analysis function can also be used independently. The input data is expected to be in a CSV file, using the following format:
+You can use your own data, by changing the input data path (CVS_PATH). The input data is expected to be in a CSV file, using the following format:
 
 +---------------+-------+-------+-------+-------+-------+-------+
 | Time          | Y_1   | Y_2   | X_1   | X_2   | ...   | X_n   |
@@ -70,13 +74,13 @@ Each analysis function can also be used independently. The input data is expecte
 * The Time column contains timestamps in `Unix <https://en.wikipedia.org/wiki/Unix_time>`_ time format. The timestamps should be uniformly distributed.
 * Rest of the columns contain observations, which should be in numerical format. Each column represents one variable, rows correspond to the sampling timepoint. Make sure to impute any missing datapoints before running the analysis.
 
-For more examples and usage, please refer to the HowTo section.
+Each analysis function can also be used independently. For more examples and usage, please refer to the HowTo section.
 
 
 Clustering example
 ------------------
 
-tscfat/Examples folder contain a file config_clustering.py. Open it in a text editor and replace following paths.
+tscfat root folder contain a file config_clustering.py. Open it in a text editor and replace following paths.
 
 Fill in the correct path for data loading::
 	
@@ -92,7 +96,7 @@ Fill in the correct path for the output directory::
 	
 While in tscfat root folder, you may run the example file::
 
-	pipenv run python ./Examples/example_clustering.py
+	pipenv run python example_clustering.py
 
 The script will run clustering analysis on dataset, saving the resulting figures in dedicated folders.
 

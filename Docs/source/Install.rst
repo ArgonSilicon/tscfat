@@ -32,7 +32,6 @@ The cloned respository should have the following folder structure::
 	tscfat
 	├── Data
 	├── Docs
-	├── Examples
 	├── Results
 	├── Tests
 	├── __pycache__
@@ -45,7 +44,6 @@ Here the most important subfolders are:
 	 
 * Data folder contains example data sets
 * Docs folder contains the toolbox documentation
-* Examples folder contain example scripts for toolbox tutorials
 * Results is the default analysis output folder 
 * Tests contains pytest tests
 * tscfat contains the Python modules and utility functions needed for the analysis
@@ -75,7 +73,7 @@ Pipenv can be installed by using pip install::
 	
 	pip install pipenv
 	
-Virtual environment activation (in the tscfat root folder)::
+MAke sure the current working directory is the tscfat root folder and activate the virtual environment::
 
 	pipenv install
 	
