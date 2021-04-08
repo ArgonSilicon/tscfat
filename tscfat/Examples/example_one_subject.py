@@ -18,10 +18,8 @@ from copy import deepcopy
 # TODO! Fix this!?
 os.chdir('/home/arsii/tscfat')  # Provide the new path here
 sys.path.append('./Examples')
-sys.path.append('./Utils')
-sys.path.append('./Analysis')
 
-from config import fn, ap, doi
+from .Examples.config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics

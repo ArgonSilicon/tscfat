@@ -15,9 +15,10 @@ import os
 import pandas as pd
 import numpy as np
 
-#os.chdir('/home/arsii/tscfat/tscfat')  # Provide the new path here
+os.chdir('/home/arsi/Documents/tscfat')  # Provide the new path here
 
-from tscfat.Examples.config_clustering import fn, ap, doi
+from config_clustering import fn, ap, doi
+
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 from tscfat.Utils.doi2int import doi2index
 

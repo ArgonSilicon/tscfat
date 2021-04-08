@@ -20,7 +20,7 @@ from pathlib import Path
 # TODO! Fix this!?
 os.chdir('/home/arsii/tscfat') 
 
-from .Utils.file_names import FileNames
+from tscfat.Utils.file_names import FileNames
 from tscfat.Utils.analysis_parameters import AnalysisParameters
 
 #%% General variables -> CHANGE THESE!!!
