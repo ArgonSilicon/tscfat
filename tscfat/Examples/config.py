@@ -14,15 +14,13 @@ Configuration file for datframe containing data from single subject.
 """
 
 # imports 
-#import os
+import os
 from pathlib import Path
 
 # TODO! Fix this!?
-#os.chdir('/home/arsii/tscfat') 
-#cwd = os.getcwd()
-#print(cwd)
+os.chdir('/home/arsii/tscfat') 
 
-from tscfat.Utils.file_names import FileNames
+from .Utils.file_names import FileNames
 from tscfat.Utils.analysis_parameters import AnalysisParameters
 
 #%% General variables -> CHANGE THESE!!!

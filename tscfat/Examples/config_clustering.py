@@ -15,8 +15,8 @@ Configuration file for datframe containing data from single subject.
 
 # imports
 from pathlib import Path
-from tscfat.Utils.file_names import FileNames
-from tscfat.Utils.analysis_parameters import AnalysisParameters
+from Utils.file_names import FileNames
+from Utils.analysis_parameters import AnalysisParameters
 
 #%% General variables -> CHANGE THESE!!!
 
@@ -29,11 +29,11 @@ doi = (2020,10,1),(2020,12,24)
 
 # DATA LOADING:
 # Path to the data file to be imported
-CSV_PATH = Path('/home/arsii/tscfat/Data/Battery_test_data.csv')
+CSV_PATH = Path('/u/26/ikaheia1/data/Documents/Data/Battery.csv')
 
 # TIMESERIES CLUSTERING
 # Output folder for similarity plot
-CLUSTERING_OUT = Path('/home/arsii/tscfat/Results/Clustering')
+CLUSTERING_OUT = Path('/u/26/ikaheia1/unix/Documents/tscfat/Results/Clustering')
 # BAse name for summary statistics image
 CLUSTERING_BASE = 'aware_clusters_'
 
