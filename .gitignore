@@ -1,5 +1,10 @@
 __pycache__
-Results/
+Results/Clustering/*
+Results/Decomposition/*
+Results/RollingStatistics/*
+Results/Similarity/*
+Results/Summary/*
+Results/Timeseries/*
 Experiments/
 Source/oura_example.py
 Source/Utils/PAM_ecoder.py
