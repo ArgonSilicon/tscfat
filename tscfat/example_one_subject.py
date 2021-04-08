@@ -16,10 +16,14 @@ import pandas as pd
 from copy import deepcopy
 
 # TODO! Fix this!?
+
+
 os.chdir('/home/arsii/tscfat')  # Provide the new path here
-sys.path.append('./Examples')
-sys.path.append('./Utils')
-sys.path.append('./Analysis')
+#sys.path.append('./Examples')
+#sys.path.append('./Utils')
+#sys.path.append('./Analysis')
+
+
 
 from config import fn, ap, doi
 

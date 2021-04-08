@@ -11,15 +11,19 @@ The analysis is conducted in process_battery_level.py.
 The results are stored on disk.
 
 """
-import os, sys
+#import os, sys
 import pandas as pd
 from copy import deepcopy
 
 # TODO! Fix this!?
-os.chdir('/home/arsii/tscfat')  # Provide the new path here
-sys.path.append('./Examples')
-sys.path.append('./Utils')
-sys.path.append('./Analysis')
+
+
+#os.chdir('/home/arsii/tscfat')  # Provide the new path here
+#sys.path.append('./Examples')
+#sys.path.append('./Utils')
+#sys.path.append('./Analysis')
+
+
 
 from config import fn, ap, doi
 
@@ -59,6 +63,7 @@ def summary(df,name):
 
 summary(df,cols)
 
+
 #%% ROLLING STATISTICS 
 print("\nProcessing Rolling Statistics: \n")
 
@@ -95,7 +100,7 @@ def decomposition(df,name):
 decomposition(df,cols)
 
 #%% SIMILARITY, NOVELTY, AND STABILITY
-print("\nProcessing Similarity, Noveltym and Stability: \n")
+print("\nProcessing Similarity, Novelty, and Stability: \n")
 
 @process_decorator
 def similarity(df,name):
