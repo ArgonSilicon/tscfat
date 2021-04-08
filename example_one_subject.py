@@ -18,7 +18,7 @@ from copy import deepcopy
 # TODO! Fix this!?
 os.chdir('/home/arsii/tscfat')  # Provide the new path here
 
-from tscfat.Examples.config import fn, ap, doi
+from config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics
