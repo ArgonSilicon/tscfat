@@ -8,9 +8,12 @@ Created on Tue Jan 19 12:19:59 2021
 Test function for similarity calculation.
 
 """
-
+import os
 import pytest
 import numpy as np
+
+cwd = os.getcwd()
+print(cwd)
 
 from tscfat.Utils.argument_loader import setup_np, setup_pd
 from tscfat.Analysis.calculate_similarity import calculate_similarity, calculate_distance
