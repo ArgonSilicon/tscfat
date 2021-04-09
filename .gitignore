@@ -12,5 +12,8 @@ Source/Utils/binned_conversation.py
 Source/Utils/load_csv.py
 _build/*
 /Docs/build/
-
+process_sl.py
+process_activity_sl.py
+PAM_encoder.py
+binned_conversation.py
 

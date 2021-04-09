@@ -1,8 +1,8 @@
-nolds
-sklearn
-pytest
-numpy
 matplotlib
+nolds
+numpy
 pandas
+pytest
+sklearn
 statsmodels
 tslearn
