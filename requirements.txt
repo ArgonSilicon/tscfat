@@ -7,3 +7,4 @@ pandas
 statsmodels
 tslearn
 seaborn
+tscfat

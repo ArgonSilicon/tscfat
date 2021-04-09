@@ -14,6 +14,7 @@ statsmodels = "*"
 tslearn = "*"
 PyYAML = "*"
 seaborn = "*"
+tscfat = "*"
 
 [dev-packages]
 

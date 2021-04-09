@@ -11,7 +11,7 @@ from setuptools import find_packages
 
 setup(
   name = 'tscfat',         
-  packages = find_packages(),   
+  packages = find_packages(exclude=["Tests",]),   
   version = '0.0.3',      
   license='MIT',        
   description = 'A time series co-fluctuation analysis toolbox',   

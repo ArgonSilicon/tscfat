@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: tscfat
-Version: 0.0.2
+Version: 0.0.3
 Summary: A time series co-fluctuation analysis toolbox
 Home-page: https://github.com/ArgonSilicon/tscfat
 Author: Arsi Ikaheimonen
 Author-email: arsi.ikaheimonen@gmail.com
 License: MIT
-Download-URL: https://github.com/ArgonSilicon/tscfat/archive/refs/tags/0.0.2.tar.gz
+Download-URL: https://github.com/ArgonSilicon/tscfat/archive/refs/tags/0.0.3.tar.gz
 Description: UNKNOWN
 Keywords: Timeseries,Exploratory,Analysis
 Platform: UNKNOWN
