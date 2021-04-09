@@ -24,10 +24,10 @@ from tscfat.Utils.analysis_parameters import AnalysisParameters
 doi = (2011,3,1),(2011,6,1)
 
 # The directory where output figures are stored
-OUTPUT_DIR = Path(' ... /tscfat/Results')
+OUTPUT_DIR = Path('/home/arsii/tscfat/Results')
 
 # Path to the data file to be imported
-CSV_PATH = Path(' ... /tscfat/Data/one_subject_data.csv')
+CSV_PATH = Path('/home/arsii/tscfat/Data/one_subject_data.csv')
 
 
 #%% Filenames -> CHANGE THESE!!!
