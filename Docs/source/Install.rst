@@ -65,7 +65,7 @@ The toolbox requires Python version 3.7. or higher to work. In addition, it is d
 Virtual environment
 -------------------
 
-If the package is not installed via pip, it is possible to run the toolbob using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
+If the package is not installed via pip, it is possible to run the toolbox using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
 
 Pipenv can be installed by using pip install::
 	

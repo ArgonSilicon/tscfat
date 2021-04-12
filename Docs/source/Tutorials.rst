@@ -1,7 +1,7 @@
 Tutorials
 =========
 
-The toobox comes with two test datasets. The datasets can be accessed via cloning the GitHub repository or by copying directly from the GitHub repository `Data <https://github.com/ArgonSilicon/tscfat/tree/master/Data>`_ folder. The first dataset (one_subject_data.csv) contains multimodal data from one subject. The data contains daily aggregated, actively and passively sampled data. The second dataset (Battery_test_data.csv)contains high frequency battery level data. This section contains tutorials, how to run analysis on these datasets. The most important toolbox features are covered in the tutorials.
+The toobox comes with two example datasets. The datasets can be accessed via cloning the GitHub repository or by copying directly from the GitHub repository `Data <https://github.com/ArgonSilicon/tscfat/tree/master/Data>`_ folder. The first dataset (`one_subject_data.csv <https://github.com/ArgonSilicon/tscfat/blob/master/Data/one_subject_data.csv>`_) contains multimodal data from one subject. The data contains daily aggregated, actively and passively sampled data. The second dataset (`Battery_test_data.csv <https://github.com/ArgonSilicon/tscfat/blob/master/Data/Battery_test_data.csv>`_)contains high frequency battery level data. This section contains tutorials, how to run analysis on these datasets. The most important toolbox features are covered in the tutorials.
 
 One subject data
 ----------------
@@ -27,6 +27,8 @@ The examples python scripts are located at the GitHub repository `Examples <http
 	├── example_clustering.py
 	└── example_one_subject.py
 
+To run the example with one subject data, config.py and example_one_subject.py files should be kept in the same folder.
+ 
 Examples folder contains a file config.py. Open it in a text editor and replace following paths.
 
 Fill in the correct path for output directory::
@@ -36,7 +38,7 @@ Fill in the correct path for output directory::
 	
 Fill in the correct path for data loading::
 
-	# Path to the data file to be imported
+	# Path or Url to the data file to be imported
 	CSV_PATH = Path(' ... /tscfat/Data/one_subject_data.csv') 
 	
 By the default, the example data will be loaded from the GitHub repository::
@@ -73,7 +75,9 @@ Each analysis function can also be used independently. For more examples and usa
 Clustering example
 ------------------
 
-tscfat/Examples folder contain a file config_clustering.py. Open it in a text editor and replace the following paths.
+tscfat/Examples folder contain a file config_clustering.py. To run the clustering example, config_clustering.py and example_clustering.py should be kept in the same folder. 
+
+Open the config_clustering.py in a text editor and replace the following paths.
 
 If you have the data stored locally, fill in the correct path for data loading::
 	
@@ -94,7 +98,7 @@ Fill in the correct path for the output directory::
 	# Output folder for similarity plot
 	CLUSTERING_OUT = Path(' ... /tscfat/Results/Clustering') 
 	
-While in tscfat root folder, you may run the example file::
+If you have cloned the repository, you may run the example file from the tscfat root folder::
 
 	python ./Examples/example_clustering.py
 
