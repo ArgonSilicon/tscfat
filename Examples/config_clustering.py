@@ -27,18 +27,14 @@ doi = (2015,8,1),(2015,10,20)
 #%% Filenames -> CHANGE THESE!!!
 
 # DATA LOADING:
-
 # Path to the data file to be imported
-#CSV_PATH = Path('/home/arsii/tscfat/Data/Battery_test_data.csv')
-
-# Url to the data to be downloaded from GitHub
 CSV_PATH = "https://raw.githubusercontent.com/ArgonSilicon/tscfat/master/Data/Battery_test_data.csv"
 
 # TIMESERIES CLUSTERING
 # Output folder for similarity plot
 CLUSTERING_OUT = Path('/home/arsii/tscfat/Results/Clustering')
 
-# BAse name for summary statistics image
+# Base name for summary statistics image
 CLUSTERING_BASE = 'aware_clusters_'
 
 #%% Analysis parameters -> CHANGE THESE!!!

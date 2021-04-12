@@ -26,7 +26,7 @@ doi = (2011,3,1),(2011,6,1)
 # The directory where output figures are stored
 OUTPUT_DIR = Path('/home/arsii/tscfat/Results')
 
-# Path to the data file to be imported
+# Path or Url to the data file to be imported
 #CSV_PATH = Path('/home/arsii/tscfat/Data/one_subject_data.csv')
 CSV_PATH = "https://raw.githubusercontent.com/ArgonSilicon/tscfat/master/Data/one_subject_data.csv"
 

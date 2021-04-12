@@ -7,20 +7,18 @@ Created on Mon Jan 18 14:06:42 2021
 """
 
 from distutils.core import setup
-from setuptools import find_packages
 
 setup(
   name = 'tscfat',  
   package_dir = {'':'tscfat'},       
-  #packages = find_packages('tscfat',exclude=["Tests",]),  
   packages = ['Analysis','Utils'],
   version = '0.0.5',      
   license='MIT',        
-  description = 'A time series co-fluctuation analysis toolbox',   
+  description = 'A time series co-fluctuation analysis toolbox', 
   author = 'Arsi Ikaheimonen',                   
   author_email = 'arsi.ikaheimonen@gmail.com',      
   url = 'https://github.com/ArgonSilicon/tscfat',   
-  download_url = 'https://github.com/ArgonSilicon/tscfat/archive/refs/tags/0.0.3.tar.gz',
+  download_url = 'https://github.com/ArgonSilicon/tscfat/archive/refs/tags/0.0.5.tar.gz',
   keywords = ['Timeseries', 'Exploratory', 'Analysis'],
   include_package_data=True,  
   install_requires=['nolds',
@@ -35,8 +33,8 @@ setup(
   classifiers=[
     'Development Status :: 3 - Alpha',      
     'Intended Audience :: Science/Research',      
-    'Topic :: Scientific/Engineering :: Medical Science Apps.', #?
-    'License :: OSI Approved :: MIT License',   #P
+    'Topic :: Scientific/Engineering :: Medical Science Apps.', 
+    'License :: OSI Approved :: MIT License',   
     'Programming Language :: Python :: 3',      
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',

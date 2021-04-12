@@ -6,21 +6,21 @@ This section provides instructions for the toolbox installation, virtual environ
 Installation
 ------------
 
-There are two ways to install the toolbox:
+The toolbox can be installed via The Python Package Index `PyPi <https://pypi.org/>`_
 
-1. Pip install via The Python Package Index `PyPi <https://pypi.org/>`_
-2. `Cloning <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository/>`_ the project from `GitHub <https://github.com/>`_ repository
+It is also possible to `Clone <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository/>`_ the project from `GitHub <https://github.com/>`_ repository and try it without installation.
 
-1. Pip install
+Pip install
 ^^^^^^^^^^^^^^
 
+Pip installation is the recommended way to install the toolbox.
 
 Pip install::
 
 	pip install tscfat
 	
 
-2. Cloning the repository
+Cloning the repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>. To clone the repository, open the terminal and change your current working directory to the location where you want to clone the repository directory. Then type in the following clone command::
@@ -34,11 +34,9 @@ The cloned respository should have the following folder structure::
 	├── Docs
 	├── Results
 	├── Tests
-	├── __pycache__
 	├── _build
 	├── dist
-	├── tscfat
-	└── tscfat.egg-info
+	└── tscfat
 	
 Here the most important subfolders are:
 	 
@@ -52,7 +50,7 @@ Here the most important subfolders are:
 Dependencies
 ------------
 
-The toolbox requires Python version 3.7. or higher to work. In addition, it is depenedent on the following packages:
+The toolbox requires Python version 3.7. or higher to work. In addition, it is dependent on the following packages:
 
 * `Pandas <https://pandas.pydata.org/>`_
 * `Numpy <https://numpy.org/>`_
@@ -67,7 +65,7 @@ The toolbox requires Python version 3.7. or higher to work. In addition, it is d
 Virtual environment
 -------------------
 
-Dependencies can be installed by using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
+If the package is not installed via pip, it is possible to run the toolbob using the `Pipenv <https://pipenv.pypa.io/en/latest/>`_ virtual environment bundled with the toolbox.
 
 Pipenv can be installed by using pip install::
 	

@@ -1,20 +1,12 @@
 Tutorials
 =========
 
-The toobox comes with two test datasets. The first dataset ontains multimodal data from one subject. The data contains daily aggregated, actively and passively sampled data. The second dataset contains high frequency battery level data. This section contains tutorials, how to run analysis on the datasets. The most important toolbox features are covered in the tutorials
+The toobox comes with two test datasets. The datasets can be accessed via cloning the GitHub repository or by copying directly from the GitHub repository `Data <https://github.com/ArgonSilicon/tscfat/tree/master/Data>`_ folder. The first dataset (one_subject_data.csv) contains multimodal data from one subject. The data contains daily aggregated, actively and passively sampled data. The second dataset (Battery_test_data.csv)contains high frequency battery level data. This section contains tutorials, how to run analysis on these datasets. The most important toolbox features are covered in the tutorials.
 
 One subject data
 ----------------
 
-First step in the tutorial is to clone the respository. This step is also covered in Toolbox Installation section.
-
-Open the terminal and change your current working directory to the location where you want to clone the repository directory. Type in the following clone command::
-
-	git clone https://github.com/ArgonSilicon/tscfat
-	
-For more detailed instructions, refer the GitHub `documentation <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository/>`_. 
-
-Make sure that the tscfat/Results folder contains the following subfolders::
+This tutorial assumes, that the user has already pip installed the tscfat toolbox. If the repository is cloned, it should contain the following subfolders::
 
 	tscfat
 	└── Results
@@ -25,21 +17,17 @@ Make sure that the tscfat/Results folder contains the following subfolders::
 	    ├── Summary
 	    └── Timeseries        
     
-These are the folders, where the result figures are saved.
+These are the folders, where the result figures are saved. If you do not wish to clone the repository, make sure that you create the folders for output figures.
 
-After repository cloning, make sure that pipenv is installed::
-
-	pipenv --version
+The examples python scripts are located at the GitHub repository `Examples <https://github.com/ArgonSilicon/tscfat/tree/master/Examples>`_ folder. These are also included in the cloned respository under tscfat/Examples::
 	
-If not, it can be installed using pip::
+	Examples
+	├── config.py
+	├── config_clustering.py
+	├── example_clustering.py
+	└── example_one_subject.py
 
-	pip install pipenv
-
-Make sure your current working directory is the tscfat root folder and activate the virtual environment::
-
-	pipenv install 
-
-tscfat root folder contain a file config.py. Open it in a text editor and replace following paths.
+Examples folder contains a file config.py. Open it in a text editor and replace following paths.
 
 Fill in the correct path for output directory::
 
@@ -49,13 +37,18 @@ Fill in the correct path for output directory::
 Fill in the correct path for data loading::
 
 	# Path to the data file to be imported
-	CSV_PATH = Path(' ... /tscfat/Data/one_subject_data.csv') # <- replace with the correct path!
+	CSV_PATH = Path(' ... /tscfat/Data/one_subject_data.csv') 
+	
+By the default, the example data will be loaded from the GitHub repository::
 
-While in tscfat root folder, you may run the example file::
+	# Path or Url to the data file to be imported
+	CSV_PATH = "https://raw.githubusercontent.com/ArgonSilicon/tscfat/master/Data/Battery_test_data.csv"
 
-	pipenv run python example_one_subject.py
+If you have cloned the repository, you may run the example file from the tscfat root folder::
 
-The script will run analyisis on each of the dataset columns, saving the resulting figures in dedicated folders.
+	python ./Examples/example_one_subject.py
+
+The script will run analysis on each of the dataset columns, saving the resulting figures in dedicated folders.
 
 You can use your own data, by changing the input data path (CVS_PATH). The input data is expected to be in a CSV file, using the following format:
 
@@ -80,23 +73,30 @@ Each analysis function can also be used independently. For more examples and usa
 Clustering example
 ------------------
 
-tscfat root folder contain a file config_clustering.py. Open it in a text editor and replace following paths.
+tscfat/Examples folder contain a file config_clustering.py. Open it in a text editor and replace the following paths.
 
-Fill in the correct path for data loading::
+If you have the data stored locally, fill in the correct path for data loading::
 	
 	# DATA LOADING:
 	# Path to the data file to be imported
 	CSV_PATH = Path(' ... /tscfat/Data/Battery_test_data.csv')
 
+By the default, the example data will be loaded from the GitHub repository::
+
+	# DATA LOADING:
+	# Path to the data file to be imported
+	CSV_PATH = "https://raw.githubusercontent.com/ArgonSilicon/tscfat/master/Data/Battery_test_data.csv"
+
+
 Fill in the correct path for the output directory::
 
 	# TIMESERIES CLUSTERING
 	# Output folder for similarity plot
-	CLUSTERING_OUT = Path(' ... /tscfat/Results/Clustering') # <- replace with the correct path!
+	CLUSTERING_OUT = Path(' ... /tscfat/Results/Clustering') 
 	
 While in tscfat root folder, you may run the example file::
 
-	pipenv run python example_clustering.py
+	python ./Examples/example_clustering.py
 
 The script will run clustering analysis on dataset, saving the resulting figures in dedicated folders.
 
