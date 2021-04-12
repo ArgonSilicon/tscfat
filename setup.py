@@ -13,9 +13,8 @@ setup(
   name = 'tscfat',  
   package_dir = {'':'tscfat'},       
   packages = find_packages('tscfat',exclude=["Tests",]),  
-  
   #packages = ['tscfat','tscfat.Analysis','tscfat.Utils'],
-  version = '0.0.3',      
+  version = '0.0.4',      
   license='MIT',        
   description = 'A time series co-fluctuation analysis toolbox',   
   author = 'Arsi Ikaheimonen',                   
