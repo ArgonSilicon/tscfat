@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 
 from config_clustering import fn, ap, doi
+os.chdir('/home/arsii/tscfat')
 
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 from tscfat.Utils.doi2int import doi2index

@@ -27,8 +27,8 @@ doi = (2011,3,1),(2011,6,1)
 OUTPUT_DIR = Path('/home/arsii/tscfat/Results')
 
 # Path to the data file to be imported
-CSV_PATH = Path('/home/arsii/tscfat/Data/one_subject_data.csv')
-
+#CSV_PATH = Path('/home/arsii/tscfat/Data/one_subject_data.csv')
+CSV_PATH = "https://raw.githubusercontent.com/ArgonSilicon/tscfat/master/Data/one_subject_data.csv"
 
 #%% Filenames -> CHANGE THESE!!!
 # SUMMARY STATISTICS:

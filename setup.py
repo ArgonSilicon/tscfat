@@ -10,8 +10,11 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-  name = 'tscfat',         
-  packages = find_packages(exclude=["Tests",]),   
+  name = 'tscfat',  
+  package_dir = {'':'tscfat'},       
+  packages = find_packages('tscfat',exclude=["Tests",]),  
+  
+  #packages = ['tscfat','tscfat.Analysis','tscfat.Utils'],
   version = '0.0.3',      
   license='MIT',        
   description = 'A time series co-fluctuation analysis toolbox',   
