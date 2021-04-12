@@ -12,9 +12,9 @@ from setuptools import find_packages
 setup(
   name = 'tscfat',  
   package_dir = {'':'tscfat'},       
-  packages = find_packages('tscfat',exclude=["Tests",]),  
-  #packages = ['tscfat','tscfat.Analysis','tscfat.Utils'],
-  version = '0.0.4',      
+  #packages = find_packages('tscfat',exclude=["Tests",]),  
+  packages = ['Analysis','Utils'],
+  version = '0.0.5',      
   license='MIT',        
   description = 'A time series co-fluctuation analysis toolbox',   
   author = 'Arsi Ikaheimonen',                   
