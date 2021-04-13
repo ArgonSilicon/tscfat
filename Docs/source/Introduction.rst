@@ -6,7 +6,7 @@ A python Toolbox for exploratory time series data analysis
 What is it for?
 ---------------
 
-The toolbox is designed for exploratory data analysis of Ecological Momentaty Assesment (EMA), Experience Sampling Methods (ESM), and Digital phenotyping data. The toolbox enables the inpection of time series interaction and dynamics by providing methods for summary statistics, trend and periodicity evaluation, and linear and nonlinear dependency assesment. The emphasis of the analysis is on the visualizations. 
+The toolbox is designed for exploratory data analysis of Ecological Momentary Assesment (EMA), Experience Sampling Methods (ESM), and Digital phenotyping data. The toolbox enables the inspection of time series interaction and dynamics by providing methods for summary statistics, trend and periodicity evaluation, and linear and nonlinear dependency assesment. The emphasis of the analysis is on the visualizations. 
 
 The toolbox has simple user interface, having a single configuration file for filenames, paths, and variables used in the analysis.
 
