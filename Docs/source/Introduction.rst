@@ -10,7 +10,7 @@ The toolbox is designed for exploratory data analysis of Ecological Momentary As
 
 The toolbox has simple user interface, having a single configuration file for filenames, paths, and variables used in the analysis.
 
-For the toolbox testing purposes, anomymized real life test data set is also provided.
+For the toolbox testing purposes, anomymized real life test data sets are availabe at the GitHub repository.
 
 Main features
 -------------
