@@ -35,7 +35,7 @@ Pip install::
 
 	pip install tscfat
 	
-You may also [clone](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the project.
+You may also `clone <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository>`_ the project.
 
 The source code is currently hosted on GitHub at: <https://github.com/ArgonSilicon/tscfat/>
 
@@ -108,10 +108,10 @@ Each analysis function can be used independently. Functions assume that the inpu
 | 1478037600    |  4    | 2     | 99    |  0.2  | ...   | 0.71  |
 +---------------+-------+-------+-------+-------+-------+-------+
 
-* The Time column contains timestamps in [unix][unix] format.
+* The Time column contains timestamps in [unix] format.
 * Rest of the columns contain observations, which should be in numerical format. Each column represents one variable, rows correspond to the sampling timepoint. 
 
-For more examples and usage, please refer to the [Docs][docs].
+For more examples and usage, please refer to the [Docs].
 
 Release history
 ---------------
