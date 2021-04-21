@@ -17,8 +17,9 @@ import re
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
-from Source.Analysis.sl_process_activity import process_activity
+from StudentLife.process_activity_sl import process_activity
 from binned_conversation import calculate_binned_conversation
+from PAM_encoder import PAM_encoder
 
 
 plt.style.use('seaborn')
@@ -29,7 +30,7 @@ def main():
     #WORK_DIR = Path(r'F:\tscfat')
     #os.chdir(WORK_DIR)
     
-    WORK_DIR = Path(r'/home/arsi/Documents/tscfat')
+    WORK_DIR = Path(r'/home/arsii/tscfat')
     #WORK_DIR = Path(r'/u/26/ikaheia1/data/Documents/SpecialAssignment/tscfat')
     os.chdir(WORK_DIR)
     
@@ -177,6 +178,8 @@ def main():
     
     sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
     
+    #df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
+    
 
 
 
@@ -216,52 +219,97 @@ def main():
     
     for c in cherry:
         df[(df['id'] == int(c)) & (df['type'] == 'conversation')].plot()
+        
+    for c in cherry:
+        df[(df['id'] == int(c)) & (df['type'] == 'activity')].value.rolling(14).mean().plot()
+        plt.show()
+        
+    for c in cherry:
+        df[(df['id'] == int(c)) & (df['type'] == 'conversation')].value.rolling(14).mean().plot()
+        plt.show()
 
+    for c in cherry:
+        df[(df['id'] == int(c)) & (df['type'] == 'sleep')].value.rolling(14).mean().plot()
+        plt.show()
+        
+    
+        
     #%% save the new dataframe
-    df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
+    #df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
     #%%re
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
-    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/EMA/response/PAM')
-    st1 = pd.Timestamp('2013-03-25')
-    st2 = pd.Timestamp('2013-06-04')
+    DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/EMA/response/PAM')
+    st1 = pd.Timestamp('2013-03-27')
+    st2 = pd.Timestamp('2013-06-01')
     ix = pd.date_range(start=st1, end=st2, freq='D')
     
-    pam_mat = np.empty((72,0), int)
+    pam_mat = np.empty((67,0), int)
     pam_miss_dict = {}
+    
+    df_empty = pd.DataFrame(data = None,
+                            index = None,
+                            columns = ['id','type','value'])
+    
     for file in os.listdir(DATA_FOLDER):
         print(file)
         current_file = os.path.join(DATA_FOLDER, file)
         res = re.findall("u(\d+).json", current_file)
         
-        
-        try:
-            df = pd.read_json(current_file)
-            df_filt = df.filter(["resp_time","picture_idx",])
-            df_filt = df_filt.set_index('resp_time')
-            
-            
-            resampled = df_filt.resample("D").mean()
-            re_ix = resampled.reindex(ix)
-            #interpolated = resampled.interpolate()
-            
-            missing = re_ix.picture_idx.isna().astype(int)
-            missing = missing.values.reshape(-1,1)
-            miss_sum = missing.flatten().sum()
-            pam_miss_dict[res[0]] = miss_sum
-            
-            pam_mat = np.append(pam_mat, missing, axis=1)
-            
-            re_ix.plot()
-            
-            resampled_day = df_filt.resample('H').mean()
-            
-            if res[0] in cherry:
-                resampled_day['id'] = res[0]
-                resampled_day['type'] = 'PAM'
-                resampled_day = resampled_day.rename(columns={'picture_idx':'value'})
-                sl = pd.concat([sl,resampled_day])
-        except:
-            print('Something fishy here')
+        if res[0] in cherry:
+            try:
+                df = pd.read_json(current_file)
+                df_filt = df.filter(["resp_time","picture_idx",])
+                df_filt = df_filt.set_index('resp_time')
+                
+                valence = []
+                arousal = []
+                
+                for i in df_filt.values: 
+                    v,a = PAM_encoder(i)
+                    valence.append(v)
+                    arousal.append(a)
+                
+                df_filt['valence'] = valence
+                df_filt['arousal'] = arousal
+                 
+                
+                resampled = df_filt.resample("D").mean()
+                re_ix = resampled.reindex(ix)
+                interpolated = re_ix.interpolate()
+                
+                val = interpolated.valence.to_frame()
+                val.columns = ['value']
+                val['id'] = int(res[0])
+                val['type'] = 'valence'
+                
+                aro = interpolated.arousal.to_frame()
+                aro.columns = ['value']
+                aro['id'] = int(res[0])
+                aro['type'] = 'arousal'
+                
+                df_empty = pd.concat([df_empty,val])
+                df_empty = pd.concat([df_empty,aro])
+                """
+                missing = re_ix.picture_idx.isna().astype(int)
+                missing = missing.values.reshape(-1,1)
+                miss_sum = missing.flatten().sum()
+                pam_miss_dict[res[0]] = miss_sum
+                
+                pam_mat = np.append(pam_mat, missing, axis=1)
+                
+                re_ix.plot()
+                
+                resampled_day = df_filt.resample('H').mean()
+                
+                
+                if res[0] in cherry:
+                    resampled_day['id'] = res[0]
+                    resampled_day['type'] = 'PAM'
+                    resampled_day = resampled_day.rename(columns={'picture_idx':'value'})
+                    sl = pd.concat([sl,resampled_day])
+                """
+            except:
+                print('Something fishy here')
             
         '''
         df = pd.read_json(current_file)
@@ -279,7 +327,7 @@ def main():
         pam_mat = np.append(pam_mat, missing, axis=1)
         
         re_ix.plot()
-        '''
+        
     pam_miss_dict = dict(sorted(pam_miss_dict.items(), key=lambda item: item[1]))
     plt.imshow(np.transpose(pam_mat))
     plt.title('PAM / missing data')
@@ -308,9 +356,17 @@ def main():
     plt.xlabel('Time(day)')
     plt.show()
     
-    sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
-         
-
+    #sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
+         '''
+    df_empty.to_csv(r'/home/arsii/Data/valence_arousal.csv', header=True)
+    
+    for c in cherry:
+        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'arousal')].value.rolling(14).mean().plot(title = 'Arousal: {}'.format(c))
+        plt.show()
+        
+    for c in cherry:
+        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'valence')].value.rolling(14).mean().plot(title = 'Valence: {}'.format(c))
+        plt.show()
             
     #%%
     ids = df.id.unique()
@@ -319,14 +375,114 @@ def main():
     df_act = df_act.reindex(ix)
     df_act.plot()
     
+    #%% Sleep
+    DATA_FOLDER = Path('/home/arsii/StudentLife/dataset/EMA/response/Sleep')
     
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        res = re.findall("u(\d+).json", current_file)
+        
+        if res[0] in cherry:
+            print(res[0])
+           
+            try:
+                df_s = pd.read_json(current_file)
+
+                df_s['resp_time'] = pd.to_datetime(df_s['resp_time'],unit='s',origin='unix')
+                df_s = df_s.set_index('resp_time')
+                df_s.sort_index()
+                
+                df_s = df_s.resample('D').mean()
+                df_s = df_s.reindex(ix)
+                df_s = df_s.interpolate()
+                
+    
+                
+                sleep_df = pd.DataFrame(data = df_s.hour.values,    # values
+                                        index = df_s.index,   # 1st column as index
+                                        columns = ['value'])
+                
+                sleep_df['id'] = int(res[0])
+                sleep_df['type'] = 'sleep'
+                
+                df = pd.concat([df,sleep_df])
+                
+            except:
+                print('fail')
+    
+    #%% Sleep
+    DATA_FOLDER = Path('/home/arsii/StudentLife/dataset/EMA/response/Stress')
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        res = re.findall("u(\d+).json", current_file)
+        
+        if res[0] in cherry:
+            print(res[0])
+           
+            try:
+                df_s = pd.read_json(current_file)
+
+                df_s['resp_time'] = pd.to_datetime(df_s['resp_time'],unit='s',origin='unix')
+                df_s = df_s.set_index('resp_time')
+                df_s.sort_index()
+                
+                df_s = df_s.resample('D').mean()
+                df_s = df_s.reindex(ix)
+                df_s = df_s.interpolate()
+                
+    
+                
+                stress_df = pd.DataFrame(data = df_s.level.values,    # values
+                                        index = df_s.index,   # 1st column as index
+                                        columns = ['value'])
+                
+                stress_df['id'] = int(res[0])
+                stress_df['type'] = 'stress'
+                
+                df = pd.concat([df,stress_df])
+                
+            except:
+                print('fail')
+    #%% Conversation duration
+    
+    DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/sensing/conversation')
+    
+    for file in os.listdir(DATA_FOLDER):
+        print(file)
+        current_file = os.path.join(DATA_FOLDER, file)
+        res = re.findall("u(\d+).csv", current_file)
+        
+        if res[0] in cherry:
+            print(res[0])
+           
+            try:
+                df_c = pd.read_csv(current_file)
+                df_c.columns = ['start_timestamp','end_timestamp'] 
+                df_c['start_timestamp'] = pd.to_datetime(df_c['start_timestamp'],unit='s',origin='unix')
+                df_c['end_timestamp'] = pd.to_datetime(df_c['end_timestamp'],unit='s',origin='unix')
+                ts,tr = calculate_binned_conversation(df_c)
+                
+                duration_df = pd.DataFrame(data = ts,    # values
+                                           index = tr,   # 1st column as index
+                                           columns = ['value'])
+                
+                duration_df['id'] = int(res[0])
+                duration_df['type'] = 'conversation'
+                
+                df = pd.concat([df,duration_df])
+                
+            except:
+                print('fail')
     #%%
     from sklearn import preprocessing
     
     
     for i in cherry:
         print(i)
-        df_pam = df[(df['id'] == i) & (df['type'] == 'PAM') ].value.resample('D').median()
+        df_pam = df[(df['id'] == int(i)) & (df['type'] == 'PAM')].value.resample('D').median()
         df_pam = df_pam.interpolate()
         df_pam = df_pam.reindex(ix)
         df_pam = df_pam.to_frame()
@@ -346,13 +502,31 @@ def main():
         df_pam['valence'] = val
         df_pam['arousal'] = aro
 
-        df_act = df[(df['id'] == i) & (df['type'] == 'activity') ].value.resample('D').sum()
+        df_act = df[(df['id'] == int(i)) & (df['type'] == 'activity') ].value.resample('D').sum()
         df_act = df_act.interpolate()
         df_act = df_act.reindex(ix)
         df_act = df_act.to_frame()
         df_act = df_act.rename(columns={'value':'activity'})
         
-        comb_df = pd.concat([df_pam['valence'],df_pam['arousal'],df_act['activity']], axis=1)
+        df_conv = df[(df['id'] == int(i)) & (df['type'] == 'conversation') ].value.resample('D').sum()
+        df_conv = df_conv.interpolate()
+        df_conv = df_conv.reindex(ix)
+        df_conv = df_conv.to_frame()
+        df_conv = df_conv.rename(columns={'value':'conversation'})
+        
+        df_sleep = df[(df['id'] == int(i)) & (df['type'] == 'sleep') ].value.resample('D').mean()
+        df_sleep = df_sleep.interpolate()
+        df_sleep = df_sleep.reindex(ix)
+        df_sleep = df_sleep.to_frame()
+        df_sleep = df_sleep.rename(columns={'value':'sleep'})
+        
+        df_stress = df[(df['id'] == int(i)) & (df['type'] == 'stress') ].value.resample('D').mean()
+        df_stress = df_stress.interpolate()
+        df_stress = df_stress.reindex(ix)
+        df_stress = df_stress.to_frame()
+        df_stress = df_stress.rename(columns={'value':'stress'})
+        
+        comb_df = pd.concat([df_pam['valence'],df_pam['arousal'],df_act['activity'],df_conv['conversation'],df_sleep['sleep'],df_stress['stress']], axis=1)
         
         
         
@@ -370,7 +544,7 @@ def main():
         #df_pam.rolling(14).valence.mean().plot(label='Valence')
         #df_pam.rolling(14).arousal.mean().plot(label='Arousal')
         #df_act.rolling(14).mean().plot(label='Activity')
-        test_df.rolling(14).mean().plot(title='Subject: {}'.format(i),ylim=(0,1))
+        test_df.rolling(14).mean().plot(title='Subject: {}'.format(i),ylim=(-0.1,1.1))
         #plt.show()
         xcorr = test_df.corr()
         fig,ax = plt.subplots(1,1,figsize=(15,14))
@@ -403,7 +577,50 @@ def main():
         df[(df['id'] == str(i)) & (df['type'] == 'conversation')].resample('D').sum().rolling(14).mean().plot()
     
     
-    #%%            
+    #%%
+    
+    df_cut = df.loc['2013-03-27':'2013-06-01']
+   
+    
+   
+    #%% check some group level means
+    
+    st1 = pd.Timestamp('2013-03-27')
+    st2 = pd.Timestamp('2013-06-01')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
+    # activity
+    df_a = df_cut[df_cut['type'] == 'activity']
+    df_p = df_cut[df_cut['type'] == 'PAM']
+    df_c = df_cut[df_cut['type'] == 'conversation']
+    df_sl = df_cut[df_cut['type'] == 'sleep']
+    df_st = df_cut[df_cut['type'] == 'stress']
+      
+    #df_a = df_a.resample('D').mean()
+    
+    df_test = df_p
+    
+    arr = np.zeros((10,67))
+    
+    for i,j in enumerate(cherry, start=0):
+        df_loop = df_test[df_test['id'] == int(j)]
+        
+        df_loop = df_loop.resample('D').median()
+    
+        df_loop = df_loop.reindex(ix)
+        df_loop = df_loop.interpolate()
+        df_loop = df_loop.fillna(value = df_loop.value.mean(skipna=True))#, method = 'bfill')
+        
+        arr[i,:] = df_loop.value.values
+        plt.plot(df_loop.value.values)
+        plt.show()
+    
+    summary_df = pd.DataFrame(data = np.transpose(arr),    # values
+                               index = ix)  # 1st column as index
+                              
+    summary_df.mean(axis=1).plot(title='PAM Group average',ylabel='Level')
+    plt.show()
+    
 if __name__ == '__main__':
 
     main()

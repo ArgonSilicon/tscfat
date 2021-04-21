@@ -12,7 +12,7 @@ def PAM_encoder(value):
     value = int(np.rint(value))
     value = str(value)
     
-    # Valence / Arousal
+    # Arousal / Valence
     PAM_dict = {'1': (0,0),
                 '2': (1,0),
                 '3': (0,1),
@@ -31,6 +31,6 @@ def PAM_encoder(value):
                 '16': (3,3)
                 }
     
-    val,aro = PAM_dict[value]
+    aro, val = PAM_dict[value]
     
     return val, aro

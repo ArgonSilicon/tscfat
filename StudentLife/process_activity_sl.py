@@ -17,13 +17,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Local application import
-from Source.Analysis.calculate_similarity import calculate_similarity
-from Source.Analysis.calculate_novelty import compute_novelty
-from Source.Analysis.decompose_timeseries import STL_decomposition#, detect_steps
-from Source.Analysis.plot_similarity import plot_similarity
-from Source.Analysis.cluster_timeseries import cluster_timeseries
-from Source.Analysis.rolling_statistics import rolling_statistics
-from Source.Analysis.summary_statistics import summary_statistics
+from tscfat.Analysis.calculate_similarity import calculate_similarity
+from tscfat.Analysis.calculate_novelty import compute_novelty
+from tscfat.Analysis.decompose_timeseries import STL_decomposition#, detect_steps
+from tscfat.Analysis.plot_similarity import plot_similarity
+from tscfat.Analysis.cluster_timeseries import cluster_timeseries
+from tscfat.Analysis.rolling_statistics import rolling_statistics
+from tscfat.Analysis.summary_statistics import summary_statistics
 
 #%%
 def process_activity(df,FIGPATH):
