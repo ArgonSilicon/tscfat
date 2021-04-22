@@ -57,9 +57,9 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "V
         A figure containing the plotted timeseries.
 
     """        
-    
+    print(type(columns))
     assert isinstance(data, pd.DataFrame), "Given data is not a pandas dataframe."
-    assert isinstance(columns, list), "Given columsn is not a list."
+    assert isinstance(columns, list), "Given columns is not a list."
     
     
     fig,ax = plt.subplots(figsize=(15,10))

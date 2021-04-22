@@ -36,6 +36,7 @@ def main():
     
     #%%
     df_path = Path('/home/arsii/Data/Studentlife_cherry_data.csv')
+    df_path = Path('/home/arsii/Data/valence_arousal.csv')
     df = pd.read_csv(df_path, index_col=0,parse_dates=True)
     
     #%%
@@ -48,10 +49,10 @@ def main():
     
     cherry = ['51','02','12','10','57','35','19','36','17','08']
 
-    #%%
+    #%% ACTIVITY
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\sensing\activity')
     #DATA_FOLDER = Path.cwd() / 'StudentLife' / 'dataset' / 'sensing' / 'activity'
-    DATA_FOLDER = Path(r'/home/arsi/Documents/StudentLife/dataset/sensing/activity')
+    DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/sensing/activity')
     first = None
     last = None
     st1 = pd.Timestamp('2013-03-27 04:00:00')
@@ -84,7 +85,8 @@ def main():
             proportions = resampled / resampled_counts
             # STORE THE PROPORTIONS IN A MATRIX AND IMPUTE WITH impute_data.py
           
-            interpolated = proportions.interpolate()
+            interpolated = proportions.fillna(0)
+            #interpolated = proportions.interpolate()
             
             if res[0] in cherry:
                 interpolated['id'] = res[0]
@@ -176,17 +178,30 @@ def main():
     m_day = m_day.sort_index()
     m_day.plot(kind='bar',title="Missing datapoints / day",ylabel='Count')
     
-    sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
+    #sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
     
     #df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
     
+    sl.to_csv(r'/home/arsii/Studentlife_activity_data.csv', header=True)
+    
+    #%% PLOT ACTIVITY
 
-
-
+    for c in cherry:
+        sl[(sl['id'] == c) & (sl['type'] == 'activity')].value.rolling(24*14).mean().plot(title = 'Activity: {}'.format(c),ylim=(0,0.2))
+        plt.show()
     
 
 
-    #%% Converstion duration
+    #%% CONVERSATION
+    
+    dtypes = {
+        "id" : "category",
+        "type": "category",
+        "value": "float64" ,
+        }
+    
+    df_conversation = pd.DataFrame(data=None, index= None, columns = ['id','type','value'])#,dtype = dtypes)
+    
     DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/sensing/conversation')
     for file in os.listdir(DATA_FOLDER):
         print(file)
@@ -210,16 +225,20 @@ def main():
                 duration_df['id'] = int(res[0])
                 duration_df['type'] = 'conversation'
                 
-                df = pd.concat([df,duration_df])
+                df_conversation = pd.concat([df_conversation,duration_df])
                 
             except:
                 print('fail')            
 
-    #%% plot conversationo durations
+    df_conversation.to_csv(r'/home/arsii/Studentlife_conversation.csv', header=True)
+    
+    #%% PLOT CONVERSATION DURATION
     
     for c in cherry:
-        df[(df['id'] == int(c)) & (df['type'] == 'conversation')].plot()
-        
+        df_conversation[(df_conversation['id'] == int(c)) & (df_conversation['type'] == 'conversation')].value.rolling(24).mean().plot()
+        plt.show()
+    #%%
+    '''
     for c in cherry:
         df[(df['id'] == int(c)) & (df['type'] == 'activity')].value.rolling(14).mean().plot()
         plt.show()
@@ -231,12 +250,13 @@ def main():
     for c in cherry:
         df[(df['id'] == int(c)) & (df['type'] == 'sleep')].value.rolling(14).mean().plot()
         plt.show()
-        
+    '''  
     
         
     #%% save the new dataframe
     #df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
-    #%%re
+    
+    #%% PAM -> VALENCE / AROUSAL
     #DATA_FOLDER = Path(r'F:\StudentLife\dataset\EMA\response\PAM')
     DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/EMA/response/PAM')
     st1 = pd.Timestamp('2013-03-27')
@@ -281,11 +301,13 @@ def main():
                 val.columns = ['value']
                 val['id'] = int(res[0])
                 val['type'] = 'valence'
+                val = val.interpolate(method='bfill')
                 
                 aro = interpolated.arousal.to_frame()
                 aro.columns = ['value']
                 aro['id'] = int(res[0])
                 aro['type'] = 'arousal'
+                aro = aro.interpolate(method='bfill')
                 
                 df_empty = pd.concat([df_empty,val])
                 df_empty = pd.concat([df_empty,aro])
@@ -358,7 +380,9 @@ def main():
     
     #sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
          '''
-    df_empty.to_csv(r'/home/arsii/Data/valence_arousal.csv', header=True)
+    df_empty.to_csv(r'/home/arsii/Data/StudentLife_valence_arousal.csv', header=True)
+    
+    print(df_empty.isna().sum())
     
     for c in cherry:
         df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'arousal')].value.rolling(14).mean().plot(title = 'Arousal: {}'.format(c))
@@ -367,7 +391,13 @@ def main():
     for c in cherry:
         df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'valence')].value.rolling(14).mean().plot(title = 'Valence: {}'.format(c))
         plt.show()
-            
+        
+    #%% PLOT VALENCE / AROUSAL       
+    for c in cherry:
+        df[(df['id'] == int(c)) & (df['type'] == 'arousal')].value.rolling(14).mean().plot(title = 'Arousal: {}'.format(c))
+        df[(df['id'] == int(c)) & (df['type'] == 'valence')].value.rolling(14).mean().plot()
+        plt.show()
+        
     #%%
     ids = df.id.unique()
     
@@ -375,7 +405,12 @@ def main():
     df_act = df_act.reindex(ix)
     df_act.plot()
     
-    #%% Sleep
+    #%% SLEEP
+    
+    df_sleep = pd.DataFrame(data = None,
+                            index = None,
+                            columns = ['id','type','value'])
+    
     DATA_FOLDER = Path('/home/arsii/StudentLife/dataset/EMA/response/Sleep')
     
     for file in os.listdir(DATA_FOLDER):
@@ -394,8 +429,9 @@ def main():
                 df_s.sort_index()
                 
                 df_s = df_s.resample('D').mean()
-                df_s = df_s.reindex(ix)
+                df_s = df_s['2013-03-27':'2013-06-01']
                 df_s = df_s.interpolate()
+                df_s = df_s.interpolate(method='bfill')
                 
     
                 
@@ -406,12 +442,28 @@ def main():
                 sleep_df['id'] = int(res[0])
                 sleep_df['type'] = 'sleep'
                 
-                df = pd.concat([df,sleep_df])
+                df_sleep = pd.concat([df_sleep,sleep_df])
                 
             except:
                 print('fail')
     
-    #%% Sleep
+    df_sleep.to_csv(r'/home/arsii/Data/StudentLife_sleep.csv', header=True)
+    #%% PLOT SLEEP
+    
+    for c in cherry:
+        df_sleep[(df_sleep['id'] == int(c)) & (df_sleep['type'] == 'sleep')].value.rolling(7).mean().plot(title = 'Sleep: {}'.format(c))
+        plt.show()
+           
+    #%% STRESS
+    
+    st1 = pd.Timestamp('2013-03-27')
+    st2 = pd.Timestamp('2013-06-01')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
+    df_stress = pd.DataFrame(data = None,
+                            index = None,
+                            columns = ['id','type','value'])
+    
     DATA_FOLDER = Path('/home/arsii/StudentLife/dataset/EMA/response/Stress')
     
     for file in os.listdir(DATA_FOLDER):
@@ -430,8 +482,10 @@ def main():
                 df_s.sort_index()
                 
                 df_s = df_s.resample('D').mean()
+                #df_s = df_s['2013-03-27':'2013-06-01']
                 df_s = df_s.reindex(ix)
                 df_s = df_s.interpolate()
+                df_s = df_s.interpolate(method='bfill')
                 
     
                 
@@ -441,12 +495,71 @@ def main():
                 
                 stress_df['id'] = int(res[0])
                 stress_df['type'] = 'stress'
+                print(stress_df.shape)
                 
-                df = pd.concat([df,stress_df])
+                df_stress = pd.concat([df_stress,stress_df])
                 
             except:
                 print('fail')
-    #%% Conversation duration
+    
+    df_stress.to_csv(r'/home/arsii/Data/StudentLife_stress.csv', header=True)
+    #%% PLOT STRESS
+    
+    for c in cherry:
+        df_stress[(df_stress['id'] == int(c)) & (df_stress['type'] == 'stress')].value.rolling(7).mean().plot(title = 'Stress: {}'.format(c), ylim = (-0.1,5.1))
+        plt.show()
+    
+   
+   #%% COMBINE DATAFRAMES
+ 
+   df_activity = pd.read_csv('/home/arsii/Data/StudentLife_activity.csv', index_col = 0,parse_dates = True)
+   df_conversation = pd.read_csv('/home/arsii/Data/StudentLife_conversation.csv', index_col = 0,parse_dates = True)
+   df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep.csv', index_col = 0,parse_dates = True)
+   df_stress = pd.read_csv('/home/arsii/Data/StudentLife_stress.csv', index_col = 0,parse_dates = True)
+   df_valence_arousal = pd.read_csv('/home/arsii/Data/StudentLife_valence_arousal.csv', index_col = 0,parse_dates = True)
+   
+   df = pd.DataFrame(data=None,
+                     index= None,
+                     columns = ['id','type','value'])
+   
+   df = pd.concat([df,
+                   df_activity,
+                   df_conversation,
+                   df_sleep,
+                   df_stress,
+                   df_valence_arousal])
+   
+   df.to_csv(r'/home/arsii/Data/StudentLife_cherry_data.csv', header=True)
+   
+   print(df_empty.isna().sum())
+   
+   #%% PLOT Xcorr
+   X = df.value.values.reshape(-1,1)
+   min_max_scaler = MinMaxScaler()
+   x_scaled = min_max_scaler.fit_transform(X)
+    
+   df['scaled'] = x_scaled
+   
+    test_df = pd.DataFrame(data = x_scaled,    # values
+                          index = df.index,   # 1st column as index
+                          columns = ['value'])
+    
+   print('eek')
+    
+   #fig = plt.figure(figsize=(10,10))
+   #df_pam.rolling(14).valence.mean().plot(label='Valence')
+   #df_pam.rolling(14).arousal.mean().plot(label='Arousal')
+   #df_act.rolling(14).mean().plot(label='Activity')
+   test_df.rolling(14).mean().plot(title='Subject: {}'.format(i),ylim=(-0.1,1.1))
+   #plt.show()
+   xcorr = df.corr()
+   fig,ax = plt.subplots(1,1,figsize=(15,14))
+   sns.heatmap(xcorr, cmap='RdBu_r',annot=True,ax=ax)
+   ax.set(title="Subject {} crosscorrelations".format(i))
+   
+   
+   
+   #%% CONVERSATOION 2
     
     DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/sensing/conversation')
     
