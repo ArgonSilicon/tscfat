@@ -200,6 +200,10 @@ def main():
         "value": "float64" ,
         }
     
+    st1 = pd.Timestamp('2013-03-27')
+    st2 = pd.Timestamp('2013-06-01')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
     df_conversation = pd.DataFrame(data=None, index= None, columns = ['id','type','value'])#,dtype = dtypes)
     
     DATA_FOLDER = Path(r'/home/arsii/StudentLife/dataset/sensing/conversation')
@@ -222,15 +226,17 @@ def main():
                                            index = tr,   # 1st column as index
                                            columns = ['value'])
                 
+                duration_df = duration_df.reindex(ix)
                 duration_df['id'] = int(res[0])
                 duration_df['type'] = 'conversation'
+                #duration_df = duration_df.reindex(ix)
                 
                 df_conversation = pd.concat([df_conversation,duration_df])
                 
             except:
                 print('fail')            
 
-    df_conversation.to_csv(r'/home/arsii/Studentlife_conversation.csv', header=True)
+    df_conversation.to_csv(r'/home/arsii/Data/StudentLife_conversation.csv', header=True)
     
     #%% PLOT CONVERSATION DURATION
     
@@ -439,6 +445,7 @@ def main():
                                         index = df_s.index,   # 1st column as index
                                         columns = ['value'])
                 
+                sleep_df = sleep_df.reindex(ix)
                 sleep_df['id'] = int(res[0])
                 sleep_df['type'] = 'sleep'
                 
@@ -540,7 +547,7 @@ def main():
     
    df['scaled'] = x_scaled
    
-    test_df = pd.DataFrame(data = x_scaled,    # values
+   test_df = pd.DataFrame(data = x_scaled,    # values
                           index = df.index,   # 1st column as index
                           columns = ['value'])
     

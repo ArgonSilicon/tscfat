@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr 22 23:04:12 2021
+
+@author: arsi
+"""
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+from sklearn.preprocessing import MinMaxScaler
+
+
+#%% load a dataframe and convert the index to datetime
+df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep.csv',index_col=0)
+df_stress= pd.read_csv('/home/arsii/Data/StudentLife_stress.csv',index_col=0)
+df_val_aro = pd.read_csv('/home/arsii/Data/StudentLife_valence_arousal.csv',index_col=0)
+df_activity= pd.read_csv('/home/arsii/Data/StudentLife_activity.csv',index_col=0)
+df_conversation = pd.read_csv('/home/arsii/Data/StudentLife_conversation.csv',index_col=0)
+
+#%% combine dataframes
+st1 = pd.Timestamp('2013-03-27')
+st2 = pd.Timestamp('2013-06-01')
+ix = pd.date_range(start=st1, end=st2, freq='D')
+
+df_activity.index = pd.to_datetime(df_activity.index)
+df_activity = df_activity.groupby('id').resample('D').mean().droplevel(0)
+df_activity['type'] = 'activity'
+
+
+df_conversation.index = pd.to_datetime(df_conversation.index)
+df_conversation = df_conversation.groupby('id').resample('D').mean().droplevel(0) 
+df_conversation['type'] = 'conversation'
+
+df = pd.DataFrame(data = None,
+                  index = None,
+                  columns = ['id','type','value'])
+
+df = pd.concat([df,df_sleep,df_stress,df_val_aro,df_conversation,df_activity])
+df.index = pd.to_datetime(df.index)
+
+#%% Prepare imputer
+imp = IterativeImputer(max_iter=10, random_state=0)
+imp.fit([[1, 2], [3, 6], [4, 8], [np.nan, 3], [7, np.nan]])
+IterativeImputer(random_state=0)
+X_test = [[np.nan, 2], [6, np.nan], [np.nan, 6]]
+# the model learns that the second feature is double the first
+print(np.round(imp.transform(X_test)))
+
+#%% loop subjects and plot
+subjects = [19, 51, 57, 17, 8, 35, 10, 12,  2, 36]
+
+for s in subjects:
+    imp = IterativeImputer(max_iter=10, random_state=0)
+    df_filt = df[df['id'] == s]
+    df_pivot = df_filt.pivot(columns = 'type', values = 'value')
+    df_pivot = df_pivot.reindex(ix)
+
+    #df_pivot = df_pivot.interpolate()
+    imp.fit(df_pivot.values)
+    data = imp.transform(df_pivot.values)
+    df_new = pd.DataFrame(data = data,
+                          index = df_pivot.index,
+                          columns = df_pivot.columns)
+    
+    df_corr = df_new[['activity','conversation','sleep','stress','valence','arousal']]
+    
+    X = df_corr.values
+    min_max_scaler = MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(X)
+    
+    test_df = pd.DataFrame(data = x_scaled,    # values
+                           index = df_corr.index,   # 1st column as index
+                           columns = df_corr.columns)
+    
+    test_df.rolling(14).mean().plot()
+    plt.show()
+    
+    xcorr = df_corr.corr()
+    
+    fig,ax = plt.subplots(1,1,figsize=(15,14))
+    sns.heatmap(xcorr, cmap='RdBu_r',annot=True,ax=ax)
+    ax.set(title="Subject {} crosscorrelations".format(s))
+    plt.show()
+
+    sns.jointplot(x="arousal", y="valence", data = df_corr, kind="reg")
+    
+    sns.jointplot(x="activity", y="conversation", data = df_corr, kind="reg")
+    
+    sns.jointplot(x="sleep", y="stress", data = df_corr, kind="reg")
+    #fig,ax = plt.subplots(1,1,figsize=(15,14))
+    #sns.pairplot(xcorr)
+    #ax.set(title="Subject {} crosscorrelations".format(s))
+    #plt.show()
+    
+#%%
+
+for s in subjects:
+    print(df_conversation[df_conversation['id'] == s].shape)
+    
