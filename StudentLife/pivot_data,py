@@ -14,6 +14,8 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import MinMaxScaler
 
+from tscfat.Analysis.cluster_timeseries import cluster_timeseries
+
 
 #%% load a dataframe and convert the index to datetime
 df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep.csv',index_col=0)
@@ -27,10 +29,19 @@ st1 = pd.Timestamp('2013-03-27')
 st2 = pd.Timestamp('2013-06-01')
 ix = pd.date_range(start=st1, end=st2, freq='D')
 
+df_a_c = df_activity.copy(deep=True)
+df_a_c.index = pd.to_datetime(df_a_c.index)
+df_a_c = df_a_c.groupby('id').resample('H').mean().droplevel(0)
+df_a_c['type'] = 'activity'
+
 df_activity.index = pd.to_datetime(df_activity.index)
 df_activity = df_activity.groupby('id').resample('D').mean().droplevel(0)
 df_activity['type'] = 'activity'
 
+df_c_c = df_conversation.copy(deep=True)
+df_c_c.index = pd.to_datetime(df_c_c.index)
+df_c_c = df_c_c.groupby('id').resample('H').mean().droplevel(0)
+df_c_c['type'] = 'conversation'
 
 df_conversation.index = pd.to_datetime(df_conversation.index)
 df_conversation = df_conversation.groupby('id').resample('D').mean().droplevel(0) 
@@ -102,3 +113,55 @@ for s in subjects:
 for s in subjects:
     print(df_conversation[df_conversation['id'] == s].shape)
     
+#%% PLOT GRUOP AVERAGES
+
+types = ['activity','conversation','sleep','stress','valence','arousal']
+
+for typ in types:
+    df_a = df[df['type'] == typ]
+    t = df_a.pivot_table(values = 'value', index = df_a.index, columns = ['id'])
+    t['median'] = t.median(axis=1)
+    t['median'].rolling(14).mean().plot(title = '{} group average'.format(typ))
+    plt.show()
+    
+#%% TEST CLUSTERING ACTIVITY
+for sub in subjects:
+        
+        print('Processing ACTIVITY Timeseries Clustering: \n')
+
+        df_sub = df_a_c[df_a_c['id'] == int(sub)]
+        
+        df_sub = df_sub.resample('D').apply(list)
+    
+        data = np.stack(df_sub['2013-03-28':'2013-05-31'].value.values)
+        
+        clusters = cluster_timeseries(data,
+                                      FIGNAME = False,
+                                      FIGPATH = False,
+                                      title = 'Activity {}'.format(sub), 
+                                      n = 5, 
+                                      metric = 'dtw', 
+                                      highlight = None,
+                                      ylim_ = None)
+print('Done.')
+
+#%% TEST CLUSTERING CONVERSATION
+for sub in subjects:
+        
+        print('Processing CONVERSATION Timeseries Clustering: \n')
+
+        df_sub = df_c_c[df_c_c['id'] == int(sub)]
+        
+        df_sub = df_sub.resample('D').apply(list)
+    
+        data = np.stack(df_sub['2013-03-28':'2013-05-31'].value.values)
+        
+        clusters = cluster_timeseries(data,
+                                      FIGNAME = False,
+                                      FIGPATH = False,
+                                      title = 'Conversation {}'.format(sub), 
+                                      n = 5, 
+                                      metric = 'dtw', 
+                                      highlight = None,
+                                      ylim_ = None)
+print('Done.')

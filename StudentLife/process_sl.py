@@ -473,6 +473,18 @@ def main():
     
     DATA_FOLDER = Path('/home/arsii/StudentLife/dataset/EMA/response/Stress')
     
+    def map_stress(value):
+        s_dict = {1:3,
+                  2:4,
+                  3:5,
+                  4:2,
+                  5:1}
+        
+        if value in s_dict:
+            return s_dict[value]
+        
+        return np.nan
+        
     for file in os.listdir(DATA_FOLDER):
         print(file)
         current_file = os.path.join(DATA_FOLDER, file)
@@ -488,16 +500,17 @@ def main():
                 df_s = df_s.set_index('resp_time')
                 df_s.sort_index()
                 
-                df_s = df_s.resample('D').mean()
+                df_s['level'] = df_s.level.apply(map_stress)
+                
+                df_r = df_s.resample('D').mean()
                 #df_s = df_s['2013-03-27':'2013-06-01']
-                df_s = df_s.reindex(ix)
-                df_s = df_s.interpolate()
-                df_s = df_s.interpolate(method='bfill')
+                df_r = df_r.reindex(ix)
+                #df_r = df_r.interpolate()
+                #df_r = df_r.interpolate(method='bfill')
                 
-    
                 
-                stress_df = pd.DataFrame(data = df_s.level.values,    # values
-                                        index = df_s.index,   # 1st column as index
+                stress_df = pd.DataFrame(data = df_r.level.values,    # values
+                                        index = df_r.index,   # 1st column as index
                                         columns = ['value'])
                 
                 stress_df['id'] = int(res[0])
