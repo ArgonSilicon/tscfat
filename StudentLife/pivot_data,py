@@ -16,6 +16,17 @@ from sklearn.preprocessing import MinMaxScaler
 
 from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 
+from scipy import stats
+
+from sklearn.feature_selection import mutual_info_classif
+from sklearn.metrics import mutual_info_score, pairwise_distances
+
+#%%
+def calc_MI(x, y, bins=10):
+    c_xy = np.histogram2d(x, y, bins)[0]
+    mi = mutual_info_score(None, None, contingency=c_xy)
+    #mi = mi / np.log(2)
+    return mi
 
 #%% load a dataframe and convert the index to datetime
 df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep.csv',index_col=0)
@@ -88,10 +99,22 @@ for s in subjects:
                            index = df_corr.index,   # 1st column as index
                            columns = df_corr.columns)
     
+
+    D = pairwise_distances(test_df.T, Y=None, metric= calc_MI, force_all_finite=True)
+    
+    axis_labels = ['activity','conversation','sleep','stress','valence','arousal'] # labels for x-axis
+    
+
+    # create seabvorn heatmap with required labels
+    fig,ax = plt.subplots(1,1,figsize=(15,14))
+    sns.heatmap(D, xticklabels = axis_labels, yticklabels = axis_labels, cmap='PuBu_r',annot=True,ax=ax)
+    ax.set(title="Subject {} Mutual Information".format(s))
+    plt.show()
+    
     test_df.rolling(14).mean().plot()
     plt.show()
     
-    xcorr = df_corr.corr()
+    xcorr = test_df.corr()
     
     fig,ax = plt.subplots(1,1,figsize=(15,14))
     sns.heatmap(xcorr, cmap='RdBu_r',annot=True,ax=ax)
@@ -101,6 +124,8 @@ for s in subjects:
     sns.jointplot(x="arousal", y="valence", data = df_corr, kind="reg")
     
     sns.jointplot(x="activity", y="conversation", data = df_corr, kind="reg")
+    
+    sns.jointplot(x="valence", y="conversation", data = df_corr, kind="reg")
     
     sns.jointplot(x="sleep", y="stress", data = df_corr, kind="reg")
     #fig,ax = plt.subplots(1,1,figsize=(15,14))
@@ -152,9 +177,16 @@ for sub in subjects:
 
         df_sub = df_c_c[df_c_c['id'] == int(sub)]
         
+        df_sub.plot()
+        plt.show()
+        
         df_sub = df_sub.resample('D').apply(list)
     
         data = np.stack(df_sub['2013-03-28':'2013-05-31'].value.values)
+        
+        data[np.isnan(data)] = 0
+        
+        print(data.shape)
         
         clusters = cluster_timeseries(data,
                                       FIGNAME = False,
@@ -164,4 +196,21 @@ for sub in subjects:
                                       metric = 'dtw', 
                                       highlight = None,
                                       ylim_ = None)
+        
 print('Done.')
+
+#%% TEST MUTUAL INFORMATION
+
+def calc_MI(x, y, bins=20):
+    c_xy = np.histogram2d(x, y, bins)[0]
+    mi = mutual_info_score(None, None, contingency=c_xy)
+    #mi = mi / np.log(2)
+    return mi
+
+X = df_new.values
+
+D = pairwise_distances(X.T, Y=None, metric= calc_MI, force_all_finite=True)
+fig,ax = plt.subplots(1,1,figsize=(15,14))
+sns.heatmap(D, cmap='RdBu_r',annot=True,ax=ax)
+ax.set(title="Subject {} crosscorrelations".format(s))
+plt.show()

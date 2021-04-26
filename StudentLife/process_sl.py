@@ -202,7 +202,7 @@ def main():
     
     st1 = pd.Timestamp('2013-03-27')
     st2 = pd.Timestamp('2013-06-01')
-    ix = pd.date_range(start=st1, end=st2, freq='D')
+    ix = pd.date_range(start=st1, end=st2, freq='H')
     
     df_conversation = pd.DataFrame(data=None, index= None, columns = ['id','type','value'])#,dtype = dtypes)
     
