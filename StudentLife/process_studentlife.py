@@ -32,12 +32,16 @@ df = pd.read_csv(df_path, index_col=0,parse_dates=True)
 
 subjects = ['51','02','12','10','57','35','19','36','17','08']
 types = ['activity', 'conversation', 'sleep', 'stress', 'valence','arousal']
+n_types = ['sleep', 'stress', 'valence','arousal']
 c_types = ['activity','conversation']
 #%% LOOP ALL THE SUBJECTS AND TYPES
 
+doi = (2013,4,15),(2013,4,26)
+ind_s, ind_e = doi2index(doi,df)
+
 for sub in subjects:
-    for typ in types:
-        '''       
+    for typ in n_types:
+        '''    
         # SUMMARY STATISTICS
         print('Processing Summary Statistics: \n')
         
@@ -45,11 +49,11 @@ for sub in subjects:
         def summary(df,name):
             ser = df[name] 
             _ = summary_statistics(ser,
-                                   "Subject: {} Feature: {}".format(sub,typ),
-                                   24,
-                                   False,
-                                   False,
-                                   False)
+                                   title = "Subject: {} Feature: {}".format(sub,typ),
+                                   window = 14,
+                                   savepath = Path('/home/arsii/tscfat/StudentLife/Results/Summary'),
+                                   savename = 'Summary_{}_{}'.format(typ,sub),
+                                   test = False)
         
         df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
         summary(df_sub,['value'])
@@ -57,14 +61,15 @@ for sub in subjects:
 
         print("\nProcessing Rolling Statistics: \n")
 
+        
         @process_decorator
         def rolling(df,name):
             ser = df[name] 
             _ = rolling_statistics(ser.to_frame(),
-                                   24,
-                                   doi = None,
-                                   savename = False,
-                                   savepath = False,
+                                   14,
+                                   doi = doi,
+                                   savepath = Path('/home/arsii/tscfat/StudentLife/Results/RollingStatistics'),
+                                   savename = 'Rolling_{}_{}'.format(typ,sub),
                                    test = False)
             
         df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
@@ -80,11 +85,12 @@ for sub in subjects:
             ser = df[name].values
     
             # TODO! check additional parameters!
+            # TODO! check dates!!!???
             _ = STL_decomposition(ser,
                                   title = name + '_decomposition',
                                   test = False,
-                                  savepath = False,
-                                  savename = False,
+                                  savepath = Path('/home/arsii/tscfat/StudentLife/Results/Decomposition'),
+                                  savename = 'Decomposition_{}_{}'.format(typ,sub),
                                   ylabel = "{} Level".format(name),
                                   xlabel  = "Date",
                                   dates = False,
@@ -97,6 +103,8 @@ for sub in subjects:
 
         print("\nProcessing Similarity, Noveltym and Stability: \n")
 
+        index = pd.date_range('2013-03-27', '2013-06-01', freq='H')
+        
         @process_decorator
         def similarity(df,name):
             ser = df[name].values.reshape(-1,1)
@@ -108,15 +116,18 @@ for sub in subjects:
             # TODO! How to calculate threshold?
             
             sim = calculate_similarity(ser)
+            print(sim)
             stab = compute_stability(sim)
+            print(stab)
             nov, kernel = compute_novelty(sim,edge=7)
+            print(nov)
             _ = plot_similarity(deepcopy(sim),
                                 nov,
                                 stab,
                                 title="{} {} Similarity, Novelty and Stability".format(sub,typ),
-                                doi = None,
-                                savepath = False, 
-                                savename = False,
+                                doi = (ind_s, ind_e),
+                                savepath = Path('/home/arsii/tscfat/StudentLife/Results/Similarity'),
+                                savename = 'Similarity_{}_{}'.format(typ,sub),
                                 ylim = (0,0.05),
                                 threshold = 0,
                                 axis = None,
@@ -125,6 +136,7 @@ for sub in subjects:
                                 )
 
         df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
+              
         similarity(df_sub,['value'])    
     
         '''
@@ -137,37 +149,17 @@ for sub in subjects:
             _ = plot_timeseries(df,
                                 name,
                                 title = '{} {}'.format(sub,typ),
-                                roll = False, 
+                                roll = 14, 
                                 xlab = "Time", 
                                 ylab = "Value", 
                                 ylim = False, 
-                                savename = False, 
-                                savepath = False, 
-                                highlight = False, 
-                                test=False
+                                savepath = Path('/home/arsii/tscfat/StudentLife/Results/Timeseries'),
+                                savename = 'Timeseries_{}_{}'.format(typ,sub), 
+                                highlight = (ind_s, ind_e),
+                                test = False
                                 )
             
         df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
         
         plotting(df_sub,['value'])
-
-#%% CLUSTERING TEST
-for sub in subjects:
-    for typ in c_types:
         
-        print('Processing Timeseries Clustering: \n')
-
-        df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
-        
-        df_sub = df_sub.resample('D').apply(list)
-        data = np.stack(df_sub.value.values)
-        
-        clusters = cluster_timeseries(data,
-                                      FIGNAME = False,
-                                      FIGPATH = False,
-                                      title = 'Test', 
-                                      n = 5, 
-                                      metric = 'DTW', 
-                                      highlight = None,
-                                      ylim_ = None)
-print('Done.')

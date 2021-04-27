@@ -15,7 +15,7 @@ from tscfat.Utils.plot_decorator import plot_decorator
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
-#TODO! fix xlabel
+#TODO! fix xlabels
 #TODO! remove ylim
 #TODO! fix documentation!
 #TODO! clean the code

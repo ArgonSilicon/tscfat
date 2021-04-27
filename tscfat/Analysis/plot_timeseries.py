@@ -57,25 +57,27 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "V
         A figure containing the plotted timeseries.
 
     """        
-    print(type(columns))
+    #print(type(columns))
     assert isinstance(data, pd.DataFrame), "Given data is not a pandas dataframe."
     assert isinstance(columns, list), "Given columns is not a list."
     
+    fig , ax = plt.subplots(figsize=(15,10))
     
-    fig,ax = plt.subplots(figsize=(15,10))
-    
+    # TODO! fix ax=ax
     if roll:
-        ax = data[columns].rolling(roll).mean().plot()
+        ax = data[columns].rolling(roll).mean().plot(ax=ax)
     else:
         ax = data[columns].plot(ax=ax)
     
     if ylim:
         ax.set(ylim=(ylim))
         
-    # TODO! fix the highlight
+    # TODO! fix the highlight ymax!!!
+    '''
     if highlight:
-        ax.axvspan(highlight[0], highlight[1], ymin=0, ymax=1, facecolor="yellow", alpha=0.13, label="Days of interest")
-
+        ax.axvspan(highlight[0], highlight[1], ymin=0, ymax=100, facecolor="yellow", alpha=0.13, label="Days of interest")
+    '''
+    ax.axvspan(highlight[0], highlight[1], ymin=1, ymax=2, facecolor="yellow", alpha=0.13, label="Days of interest")
     ax.set(title=title)
     ax.set(xlabel=xlab)
     ax.set(ylabel=ylab)
