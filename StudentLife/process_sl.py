@@ -17,7 +17,7 @@ import re
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
-from StudentLife.process_activity_sl import process_activity
+from process_activity_sl import process_activity
 from binned_conversation import calculate_binned_conversation
 from PAM_encoder import PAM_encoder
 
@@ -187,7 +187,8 @@ def main():
     #%% PLOT ACTIVITY
 
     for c in cherry:
-        sl[(sl['id'] == c) & (sl['type'] == 'activity')].value.rolling(24*14).mean().plot(title = 'Activity: {}'.format(c),ylim=(0,0.2))
+        sl[(sl['id'] == c) & (sl['type'] == 'activity')].value.rolling(24*14).mean().plot(title = 'Activity: {}'.format(c),ylim=(0,0.2),ylabel="Activite proportion / hour")
+        print(sl[(sl['id'] == c) & (sl['type'] == 'activity')].shape)
         plt.show()
     
 
@@ -234,7 +235,10 @@ def main():
                 df_conversation = pd.concat([df_conversation,duration_df])
                 
             except:
-                print('fail')            
+                print('fail')   
+                
+            
+    df_conversation = df_conversation.fillna(0)
 
     df_conversation.to_csv(r'/home/arsii/Data/StudentLife_conversation.csv', header=True)
     
@@ -242,6 +246,7 @@ def main():
     
     for c in cherry:
         df_conversation[(df_conversation['id'] == int(c)) & (df_conversation['type'] == 'conversation')].value.rolling(24).mean().plot()
+        print(df_conversation[(df_conversation['id'] == int(c)) & (df_conversation['type'] == 'conversation')].shape)
         plt.show()
     #%%
     '''
@@ -297,24 +302,31 @@ def main():
                 
                 df_filt['valence'] = valence
                 df_filt['arousal'] = arousal
+                
+                df_filt = df_filt.astype({'valence':'int32','arousal':'int32'})
                  
                 
-                resampled = df_filt.resample("D").mean()
+                resampled = df_filt.resample("D").max()
                 re_ix = resampled.reindex(ix)
-                interpolated = re_ix.interpolate()
+                interpolated = resampled
+                #interpolated = re_ix.interpolate()
                 
                 val = interpolated.valence.to_frame()
                 val.columns = ['value']
                 val['id'] = int(res[0])
                 val['type'] = 'valence'
                 val = val.interpolate(method='bfill')
+                val = val.interpolate(method='ffill')
                 
                 aro = interpolated.arousal.to_frame()
                 aro.columns = ['value']
                 aro['id'] = int(res[0])
                 aro['type'] = 'arousal'
                 aro = aro.interpolate(method='bfill')
-                
+                aro = aro.interpolate(method='ffill')
+               
+                val = val.reindex(ix)
+                aro = aro.reindex(ix)
                 df_empty = pd.concat([df_empty,val])
                 df_empty = pd.concat([df_empty,aro])
                 """
@@ -386,22 +398,24 @@ def main():
     
     #sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
          '''
-    df_empty.to_csv(r'/home/arsii/Data/StudentLife_valence_arousal.csv', header=True)
+    #df_empty.to_csv(r'/home/arsii/Data/StudentLife_valence_arousal.csv', header=True)
     
     print(df_empty.isna().sum())
     
     for c in cherry:
-        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'arousal')].value.rolling(14).mean().plot(title = 'Arousal: {}'.format(c))
+        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'arousal')].value.plot(marker ='o', title = 'Arousal: {}'.format(c))
+        print(df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'arousal')].shape)
         plt.show()
         
     for c in cherry:
-        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'valence')].value.rolling(14).mean().plot(title = 'Valence: {}'.format(c))
+        df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'valence')].value.plot(marker = 'o', title = 'Valence: {}'.format(c))
+        print(df_empty[(df_empty['id'] == int(c)) & (df_empty['type'] == 'valence')].shape)
         plt.show()
         
     #%% PLOT VALENCE / AROUSAL       
     for c in cherry:
-        df[(df['id'] == int(c)) & (df['type'] == 'arousal')].value.rolling(14).mean().plot(title = 'Arousal: {}'.format(c))
-        df[(df['id'] == int(c)) & (df['type'] == 'valence')].value.rolling(14).mean().plot()
+        df[(df['id'] == int(c)) & (df['type'] == 'arousal')].value.plot(title = 'Arousal: {}'.format(c))
+        df[(df['id'] == int(c)) & (df['type'] == 'valence')].value.plot()
         plt.show()
         
     #%%
@@ -434,10 +448,16 @@ def main():
                 df_s = df_s.set_index('resp_time')
                 df_s.sort_index()
                 
-                df_s = df_s.resample('D').mean()
-                df_s = df_s['2013-03-27':'2013-06-01']
+                df_s.drop(columns = ['null','location','rate','social'],inplace=True)
+                df_s.dropna(axis=0, inplace=True)
+                df_s = df_s.astype({'hour':'int32'})
+                
+                df_s = df_s.resample('D').max()
+                df_r = df_r.reindex(ix)
+                #df_s = df_s['2013-03-27':'2013-06-01']
                 df_s = df_s.interpolate()
                 df_s = df_s.interpolate(method='bfill')
+                df_s = df_s.interpolate(method='ffill')
                 
     
                 
@@ -499,15 +519,18 @@ def main():
                 df_s['resp_time'] = pd.to_datetime(df_s['resp_time'],unit='s',origin='unix')
                 df_s = df_s.set_index('resp_time')
                 df_s.sort_index()
+                df_s.drop(columns = ['null','location'],inplace=True)
+                df_s.dropna(axis=0, inplace=True)
+                df_s = df_s.astype({'level':'int32'})
                 
                 df_s['level'] = df_s.level.apply(map_stress)
                 
-                df_r = df_s.resample('D').mean()
+                df_r = df_s.resample('D').max()
                 #df_s = df_s['2013-03-27':'2013-06-01']
                 df_r = df_r.reindex(ix)
-                #df_r = df_r.interpolate()
-                #df_r = df_r.interpolate(method='bfill')
-                
+                df_r = df_r.interpolate(method = 'nearest')
+                df_r = df_r.interpolate(method='bfill')
+                df_r = df_r.interpolate(method='ffill')
                 
                 stress_df = pd.DataFrame(data = df_r.level.values,    # values
                                         index = df_r.index,   # 1st column as index
@@ -522,11 +545,12 @@ def main():
             except:
                 print('fail')
     
-    df_stress.to_csv(r'/home/arsii/Data/StudentLife_stress.csv', header=True)
+    #df_stress.to_csv(r'/home/arsii/Data/StudentLife_stress.csv', header=True)
     #%% PLOT STRESS
     
     for c in cherry:
-        df_stress[(df_stress['id'] == int(c)) & (df_stress['type'] == 'stress')].value.rolling(7).mean().plot(title = 'Stress: {}'.format(c), ylim = (-0.1,5.1))
+        #df_stress[(df_stress['id'] == int(c)) & (df_stress['type'] == 'stress')].value.rolling(7).mean().plot(title = 'Stress: {}'.format(c), ylim = (-0.1,5.1))
+        df_stress[(df_stress['id'] == int(c)) & (df_stress['type'] == 'stress')].value.plot(marker = "o", title = 'Stress: {}'.format(c), ylim = (-0.3,5.3))
         plt.show()
     
    
