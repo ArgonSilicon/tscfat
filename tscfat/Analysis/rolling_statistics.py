@@ -108,10 +108,10 @@ def rolling_statistics(ts,
     variance = ts.rolling(window = w).var()
     autocorrelation = ts.rolling(window = w).apply(_autocorr)
     mean = ts.rolling(window = w).mean() 
-    #skew = ts.rolling(window = w).skew()
-    #kurt = ts.rolling(window = w).kurt()
-    #flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
-    #ent = ts.rolling(window = w).apply(entropy)
+    skew = ts.rolling(window = w).skew()
+    kurt = ts.rolling(window = w).kurt()
+    flu_int = ts.rolling(window = w).apply(lambda x: fluctuation_intensity(x.values,100,w))#,args=(100,w))
+    ent = ts.rolling(window = w).apply(entropy)
     #ent = ts.rolling(window = w).apply(nolds.sampen)
     
     var1 = ts.diff(1).fillna(0).rolling(window = w).var()
@@ -122,8 +122,8 @@ def rolling_statistics(ts,
     ac2 = ts.diff(1).diff(7).fillna(0).rolling(window = w).apply(_autocorr)
     ac3 = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).apply(_autocorr)
     
-    fig,ax = plt.subplots(5,2,figsize=(20,20))
-    fig.suptitle("{} Rolling Statistics".format(ts.columns[0]),fontsize=20,y=1.0)
+    fig,ax = plt.subplots(4,2,figsize=(20,20))
+    fig.suptitle("{} Rolling Statistics Window Length {}".format(ts.columns[0],w),fontsize=20,y=1.0)
     
     ax[0,0].plot(ts)
     ax[0,0].set_title('Original timeseries',fontsize=16)
@@ -157,38 +157,39 @@ def rolling_statistics(ts,
     if doi is not None:
         ax[1,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[2,0].plot(var1)
-    ax[2,0].set_title('Variance, diff(1)',fontsize=16)
+    ax[2,0].plot(skew)
+    ax[2,0].set_title('Skewness',fontsize=16)
     ax[2,0].set_xlabel('Date')
     ax[2,0].set_ylabel('Value')
     ax[2,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[2,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[2,1].plot(ac1)
-    ax[2,1].set_title('Autocorrelation, diff(1)',fontsize=16)
+    ax[2,1].plot(kurt)
+    ax[2,1].set_title('Kurtosis',fontsize=16)
     ax[2,1].set_xlabel('Date')
     ax[2,1].set_ylabel('Value')
     ax[2,1].tick_params('x', labelrotation=45)
     if doi is not None:    
         ax[2,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[3,0].plot(var2)
-    ax[3,0].set_title('Variance, diff(1,7)',fontsize=16)
+    ax[3,0].plot(flu_int)
+    ax[3,0].set_title('Fluctuation Intensity',fontsize=16)
     ax[3,0].set_xlabel('Date')
     ax[3,0].set_ylabel('Value')
     ax[3,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[3,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[3,1].plot(ac2)
-    ax[3,1].set_title('Autocorrelation, diff(1,7)',fontsize=16)
+    ax[3,1].plot(ent)
+    ax[3,1].set_title('Entropy',fontsize=16)
     ax[3,1].set_xlabel('Date')
     ax[3,1].set_ylabel('Value')
     ax[3,1].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[3,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
+    '''
     ax[4,0].plot(var3)
     ax[4,0].set_title('Variance, diff(1,7,28)',fontsize=16)
     ax[4,0].set_xlabel('Date')
@@ -204,6 +205,7 @@ def rolling_statistics(ts,
     ax[4,1].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[4,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
+    '''
     
     plt.tight_layout(pad=1)
   

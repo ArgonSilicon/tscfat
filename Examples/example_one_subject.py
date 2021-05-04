@@ -18,7 +18,7 @@ from copy import deepcopy
 from config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
-from tscfat.Analysis.rolling_statistics import rolling_statistics
+#from tscfat.Analysis.rolling_statistics import rolling_statistics
 from tscfat.Analysis.decompose_timeseries import STL_decomposition
 from tscfat.Analysis.calculate_similarity import calculate_similarity
 from tscfat.Analysis.calculate_novelty import compute_novelty
