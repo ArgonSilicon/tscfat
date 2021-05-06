@@ -90,7 +90,7 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)",
     
     for i in range(n):
         ax[i].plot(np.mean(data[filt[i]], axis = 0))
-        ax[i].set_title('Cluster {} average'.format(i))
+        ax[i].set_title('Cluster {} average'.format(i+1))
         ax[i].set(xlabel = xlab, ylabel = ylab) 
         if ylim_:
             ax[i].set(ylim = ylim_)

@@ -34,7 +34,7 @@ data = np.stack(df.battery_level.values)
 #%%
 ind_s, ind_e = doi2index(doi,df)
 
-#%% SUMMARY STATISTICS
+#%% SUMMARY STATISTICS 
 print('Processing Timeseries Clustering: \n')
 
 clusters = cluster_timeseries(data,

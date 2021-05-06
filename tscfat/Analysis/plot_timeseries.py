@@ -18,7 +18,7 @@ from tscfat.Utils.plot_decorator import plot_decorator
 sns.set_theme()
 
 @plot_decorator
-def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "Value", ylim = False, savename = False, savepath = False, highlight = False, test=False):
+def plot_timeseries(data, columns, title, roll = False, xlab = "Date", ylab = "Value", ylim = False, savename = False, savepath = False, highlight = False, test=False):
     """ 
     Plot the selected columns of the given dataframe.  
     The dataframe index should be datetime object.
@@ -63,24 +63,26 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Time", ylab = "V
     
     fig , ax = plt.subplots(figsize=(15,10))
     
-    # TODO! fix ax=ax
     if roll:
-        ax = data[columns].rolling(roll).mean().plot(ax=ax)
+        data[columns].rolling(roll).mean().plot(color = ['g','r','k'], style = ['--','-.','-'], ylim=(0,1), ax=ax)
+        
     else:
-        ax = data[columns].plot(ax=ax)
+        data[columns].plot(color = ['g','r','k'], style = ['--','-.','-'], ylim=(0,1),ax=ax)
     
     if ylim:
         ax.set(ylim=(ylim))
         
-    # TODO! fix the highlight ymax!!!
-    '''
+    # TODO! fix the highlight not showing!
+
     if highlight:
-        ax.axvspan(highlight[0], highlight[1], ymin=0, ymax=100, facecolor="yellow", alpha=0.13, label="Days of interest")
-    '''
-    ax.axvspan(highlight[0], highlight[1], ymin=1, ymax=2, facecolor="yellow", alpha=0.13, label="Days of interest")
-    ax.set(title=title)
-    ax.set(xlabel=xlab)
-    ax.set(ylabel=ylab)
+        ax.axvspan(highlight[0], highlight[1],facecolor="yellow", alpha=0.13, label="Days of interest")
+    
+    #ax.axvspan(highlight[0], highlight[1], ymin=1, ymax=2, facecolor="yellow", alpha=0.13, label="Days of interest")
+    ax.set_title(title, fontsize=24)
+    ax.set_xlabel(xlab, fontsize=18)
+    ax.set_ylabel(ylab, fontsize=18)
+    ax.tick_params(axis='both', labelsize=14)
+    ax.legend(fontsize=14)
     
     return fig
 

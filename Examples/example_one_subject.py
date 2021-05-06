@@ -18,7 +18,7 @@ from copy import deepcopy
 from config import fn, ap, doi
 
 from tscfat.Analysis.summary_statistics import summary_statistics
-#from tscfat.Analysis.rolling_statistics import rolling_statistics
+from tscfat.Analysis.rolling_statistics import rolling_statistics
 from tscfat.Analysis.decompose_timeseries import STL_decomposition
 from tscfat.Analysis.calculate_similarity import calculate_similarity
 from tscfat.Analysis.calculate_novelty import compute_novelty
@@ -73,8 +73,9 @@ print("\nProcessing Timeseries Decomposition: \n")
 @process_decorator
 def decomposition(df,name):
     ser = df[name].values
-    
+     
     # TODO! check additional parameters!
+    # TODO! add doi
     _ = STL_decomposition(ser,
                           title = name + '_decomposition',
                           test = False,
@@ -83,6 +84,7 @@ def decomposition(df,name):
                           ylabel = "{} Level".format(name),
                           xlabel  = "Date",
                           dates = False,
+                          doi = doi,
                           )
 
 decomposition(df,cols)
@@ -114,7 +116,7 @@ def similarity(df,name):
                         threshold = 0,
                         axis = None,
                         kernel = kernel,
-                        test = False
+                        test = False,
                         )
 
 similarity(df,cols)    
@@ -123,17 +125,18 @@ similarity(df,cols)
 print("\nProcessing timeseries plotting: \n")
     
 @process_decorator
-def plotting(df,name):    
+def plotting(df,name): 
+    ind_s, ind_e = doi2index(doi,df)
     _ = plot_timeseries(df,
                         name,
                         title = fn.plotting_base + '_'.join(name),
-                        roll = False, 
-                        xlab = "Time", 
+                        roll = 7, 
+                        xlab = "Date", 
                         ylab = "Value", 
                         ylim = False, 
                         savename = fn.plotting_base + '_'.join(name), 
                         savepath = fn.plotting_out, 
-                        highlight = False, 
+                        highlight = (ind_s,ind_e), 
                         test=False
                         )
     

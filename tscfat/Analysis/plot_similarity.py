@@ -88,7 +88,7 @@ def plot_similarity(sim,
     
     sim[sim < threshold] = 0
 
-    fig, ax = plt.subplots(5,4,figsize=(10,12),sharex=True)  
+    fig, ax = plt.subplots(5,4,figsize=(10,13),sharex=True)  
     gridsize = (5,4)
     ax1 = plt.subplot2grid(gridsize, (0,0), colspan=3,rowspan=3)
     ax2 = plt.subplot2grid(gridsize, (1,3), colspan=1,rowspan=1)

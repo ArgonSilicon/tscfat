@@ -63,7 +63,7 @@ CLUSTERING_BASE = 'aware_clustering_'
 
 # PLOT SELECTED TIMESERIES
 # Output folder for similarity plot
-PLOT_OUT = OUTPUT_DIR / 'Timeseries'
+PLOT_OUT = OUTPUT_DIR / 'Timeseries_raw'
 # BAse name for summary statistics image
 PLOT_BASE = 'aware_timeseries_'
 
@@ -88,10 +88,55 @@ ROLLING_WINDOW = 28
 
 # TIMESERIES PLOTTING
 # Dataframe columns to be plotted as list of lists
-COLUMN_LIST = [['positive', 'negative', 'Average HRV'],
-               ['positive', 'negative', 'app_sum'],
+COLUMN_LIST = [['positive', 'negative', 'Sleep Score'],
+               ['positive', 'negative', 'Average Resting Heart Rate'],
+               ['positive', 'negative', 'Awake Time'],
+               ['positive', 'negative', 'Respiratory Rate'],
+               ['positive', 'negative', 'Sleep Efficiency'],
+               ['positive', 'negative', 'Sleep Latency'],
+               ['positive', 'negative', 'Total Bedtime'],
+               ['positive', 'negative', 'Total Sleep Time'],
+               ['positive', 'negative', 'Average HRV'],
+               ['positive', 'negative', 'Lowest Resting Heart Rate'],
+               ['positive', 'negative', 'Temperature Deviation (°C)'],
+               ['positive', 'negative', 'Activity Score'],
+               ['positive', 'negative', 'Activity Burn'],
+               ['positive', 'negative', 'Inactive Time'],
+               ['positive', 'negative', 'Rest Time'],
+               ['positive', 'negative', 'Total Burn'],
+               ['positive', 'negative', 'Non-wear Time'],
+               ['positive', 'negative', 'Steps'],
+               ['positive', 'negative', 'Readiness Score'],
+               ['positive', 'negative', 'light'],
+               ['positive', 'negative', 'Communication'],
+               ['positive', 'negative', 'Entertainment'],
+               ['positive', 'negative', 'Shop'],
+               ['positive', 'negative', 'Social_media'],
+               ['positive', 'negative', 'Sports'],
+               ['positive', 'negative', 'Transportation'],
+               ['positive', 'negative', 'Travel'],
+               ['positive', 'negative', 'Health'],
+               ['positive', 'negative', 'Notifications_total'],
+               ['positive', 'negative', 'battery_level'],
+               ['positive', 'negative', 'screen_status'],
+               ['positive', 'negative', 'sms_out'],
+               ['positive', 'negative', 'sms_total'],
+               ['positive', 'negative', 'sms_in'],
+               ['positive', 'negative', 'call_out_duration'],
+               ['positive', 'negative', 'call_in_duration'],
+               ['positive', 'negative', 'call_total_duration'],
+               ['positive', 'negative', 'call_out_count'],
+               ['positive', 'negative', 'call_in_count'], 
+               ['positive', 'negative', 'call_total_count'],
+               ['positive', 'negative', 'Battery_average'],
+               ['positive', 'negative', 'Battery_stability'],
                ['positive', 'negative', 'screen_activations'],
+               ['positive', 'negative', 'screen_stability'],
+               ['positive', 'negative', 'app_sum'],
+               ['positive', 'negative', 'app_stability']
               ]
+
+
 
 ######################################################              
 # Create a filename object -> DO NOT CHANGE THESE!!!
