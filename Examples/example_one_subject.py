@@ -37,18 +37,19 @@ df = df.drop(columns=['date'])
 cols = df.columns.to_list()
 
 
-#%% SUMMARY STATISTICS
+#%% SUMMARY STATISTICS   
 print('Processing Summary Statistics: \n')
 
 @process_decorator
 def summary(df,name):
     ser = df[name] 
     _ = summary_statistics(ser,
-                           "test_title",
+                           doi,
+                           fn.summary_base + name,
                            ap.summary_window,
                            fn.summary_out,
                            fn.summary_base + name,
-                           False)
+                           test = False)
 
 summary(df,cols)
 
