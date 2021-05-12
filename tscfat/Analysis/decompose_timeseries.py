@@ -66,38 +66,46 @@ def _plot_decomposition(Result,
 
     """
     
-   
+    
     fig, ax = plt.subplots(4,1,figsize=(10,10))
     
-    plt.suptitle(title, fontsize=22, y=0.95)
+    plt.suptitle(title, fontsize=22, y=1)
     
     ax[0].plot(Result.observed)
+    #Result.observed.plot(ax=ax[0])
     if doi is not None:
-        ax[0].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")    
-    
+        #ax[0].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")    
+        ax[0].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
+        
     ax[0].set_title('Observations',fontsize=18)
     ax[0].set_ylabel(ylabel,fontsize=14)
     ax[0].set_xlabel(xlabel,fontsize=14)
     
     ax[1].plot(Result.trend)
+    #Result.trend.plot(ax=ax[1])
     if doi is not None:
-        ax[1].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        #ax[1].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        ax[1].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1].set_title('Trend',fontsize=18)
     ax[1].set_ylabel(ylabel,fontsize=14)
     ax[1].set_xlabel(xlabel,fontsize=14)
     
     ax[2].plot(Result.seasonal)
+    #Result.seasonal.plot(ax=ax[2])
     if doi is not None:
-        ax[2].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        #ax[2].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        ax[2].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2].set_title('Seasonal',fontsize=18)
     ax[2].set_ylabel(ylabel,fontsize=14)
     ax[2].set_xlabel(xlabel,fontsize=14)
     
     ax[3].plot(Result.resid)
+    #Result.resid.plot(ax=ax[3])
     if doi is not None:
-        ax[3].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        #ax[3].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        ax[3].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[3].set_title('Residuals',fontsize=18)
     ax[3].set_ylabel(ylabel,fontsize=14)
@@ -147,7 +155,7 @@ def _plot_decomposition(Result,
     plt.ylabel(ylabel,fontsize=14)
     plt.xlabel(xlabel,fontsize=14)
     '''
-    fig.tight_layout(pad=2)
+    fig.tight_layout(pad=1)
     
     return fig
 
@@ -211,13 +219,15 @@ def STL_decomposition(series,
 
     if test == False:
         _plot_decomposition(Result,
-                          title,
-                          savepath = savepath,
-                          savename = savename,
-                          ylabel = "Value",
-                          xlabel  = "Date",
-                          dates = False,
-                          )
+                            title,
+                            savepath = savepath,
+                            savename = savename,
+                            ylabel = "Value",
+                            xlabel  = "Date",
+                            dates = False,
+                            test = False,
+                            doi = doi,
+                            )
         
     return Result
     

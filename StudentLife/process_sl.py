@@ -36,7 +36,7 @@ def main():
     
     #%%
     df_path = Path('/home/arsii/Data/Studentlife_cherry_data.csv')
-    df_path = Path('/home/arsii/Data/valence_arousal.csv')
+    #df_path = Path('/home/arsii/Data/valence_arousal.csv')
     df = pd.read_csv(df_path, index_col=0,parse_dates=True)
     
     #%%
@@ -182,7 +182,7 @@ def main():
     
     #df.to_csv(r'/home/arsii/Data/Studentlife_cherry_data.csv', header=True)
     
-    sl.to_csv(r'/home/arsii/Studentlife_activity_data.csv', header=True)
+    sl.to_csv(r'/home/arsii/Data/Studentlife_activity_data_r.csv', header=True)
     
     #%% PLOT ACTIVITY
 
@@ -240,7 +240,7 @@ def main():
             
     df_conversation = df_conversation.fillna(0)
 
-    df_conversation.to_csv(r'/home/arsii/Data/StudentLife_conversation.csv', header=True)
+    df_conversation.to_csv(r'/home/arsii/Data/StudentLife_conversation_r.csv', header=True)
     
     #%% PLOT CONVERSATION DURATION
     
@@ -313,6 +313,7 @@ def main():
                 
                 val = interpolated.valence.to_frame()
                 val.columns = ['value']
+                val = val.reindex(ix)
                 val['id'] = int(res[0])
                 val['type'] = 'valence'
                 val = val.interpolate(method='bfill')
@@ -320,13 +321,12 @@ def main():
                 
                 aro = interpolated.arousal.to_frame()
                 aro.columns = ['value']
+                aro = aro.reindex(ix)
                 aro['id'] = int(res[0])
                 aro['type'] = 'arousal'
                 aro = aro.interpolate(method='bfill')
                 aro = aro.interpolate(method='ffill')
-               
-                val = val.reindex(ix)
-                aro = aro.reindex(ix)
+              
                 df_empty = pd.concat([df_empty,val])
                 df_empty = pd.concat([df_empty,aro])
                 """
@@ -398,7 +398,7 @@ def main():
     
     #sl.to_csv(r'/home/arsi/Documents/Data/Studentlife_cherry_data.csv', header=True)
          '''
-    #df_empty.to_csv(r'/home/arsii/Data/StudentLife_valence_arousal.csv', header=True)
+    df_empty.to_csv(r'/home/arsii/Data/StudentLife_valence_arousal_i.csv', header=True)
     
     print(df_empty.isna().sum())
     
@@ -427,6 +427,10 @@ def main():
     
     #%% SLEEP
     
+    st1 = pd.Timestamp('2013-03-27')
+    st2 = pd.Timestamp('2013-06-01')
+    ix = pd.date_range(start=st1, end=st2, freq='D')
+    
     df_sleep = pd.DataFrame(data = None,
                             index = None,
                             columns = ['id','type','value'])
@@ -448,21 +452,20 @@ def main():
                 df_s = df_s.set_index('resp_time')
                 df_s.sort_index()
                 
-                df_s.drop(columns = ['null','location','rate','social'],inplace=True)
-                df_s.dropna(axis=0, inplace=True)
-                df_s = df_s.astype({'hour':'int32'})
+                df_s = df_s.filter(items = ['hour'])
+                #df_s.dropna(axis=0, inplace=True)
+                #df_s = df_s.astype({'hour':'int32'})
                 
-                df_s = df_s.resample('D').max()
-                df_r = df_r.reindex(ix)
-                #df_s = df_s['2013-03-27':'2013-06-01']
-                df_s = df_s.interpolate()
-                df_s = df_s.interpolate(method='bfill')
-                df_s = df_s.interpolate(method='ffill')
+                df_r = df_s.resample('D').max()
+                df_r = df_r.reindex(ix)                
+                df_r = df_r.interpolate()
+                df_r = df_r.interpolate(method='bfill')
+                df_r = df_r.interpolate(method='ffill')
                 
     
                 
-                sleep_df = pd.DataFrame(data = df_s.hour.values,    # values
-                                        index = df_s.index,   # 1st column as index
+                sleep_df = pd.DataFrame(data = df_r.hour.values,    # values
+                                        index = df_r.index,   # 1st column as index
                                         columns = ['value'])
                 
                 sleep_df = sleep_df.reindex(ix)
@@ -474,13 +477,14 @@ def main():
             except:
                 print('fail')
     
-    df_sleep.to_csv(r'/home/arsii/Data/StudentLife_sleep.csv', header=True)
+    df_sleep.to_csv(r'/home/arsii/Data/StudentLife_sleep_i.csv', header=True)
     #%% PLOT SLEEP
     
     for c in cherry:
-        df_sleep[(df_sleep['id'] == int(c)) & (df_sleep['type'] == 'sleep')].value.rolling(7).mean().plot(title = 'Sleep: {}'.format(c))
+        #df_sleep[(df_sleep['id'] == int(c)) & (df_sleep['type'] == 'sleep')].value.rolling(7).mean().plot(title = 'Sleep: {}'.format(c))
+        df_sleep[(df_sleep['id'] == int(c)) & (df_sleep['type'] == 'sleep')].value.plot(marker = 'o',title = 'Sleep: {}'.format(c))
         plt.show()
-           
+        print(df_sleep[(df_sleep['id'] == int(c)) & (df_sleep['type'] == 'sleep')].mean())   
     #%% STRESS
     
     st1 = pd.Timestamp('2013-03-27')
@@ -519,18 +523,19 @@ def main():
                 df_s['resp_time'] = pd.to_datetime(df_s['resp_time'],unit='s',origin='unix')
                 df_s = df_s.set_index('resp_time')
                 df_s.sort_index()
-                df_s.drop(columns = ['null','location'],inplace=True)
-                df_s.dropna(axis=0, inplace=True)
-                df_s = df_s.astype({'level':'int32'})
+                df_s = df_s.filter(items = ['level'])
+                #df_s.drop(columns = ['null','location'],inplace=True)
+                #df_s.dropna(axis=0, inplace=True)
+                #df_s = df_s.astype({'level':'int32'})
                 
                 df_s['level'] = df_s.level.apply(map_stress)
                 
                 df_r = df_s.resample('D').max()
                 #df_s = df_s['2013-03-27':'2013-06-01']
                 df_r = df_r.reindex(ix)
-                df_r = df_r.interpolate(method = 'nearest')
-                df_r = df_r.interpolate(method='bfill')
-                df_r = df_r.interpolate(method='ffill')
+                #df_r = df_r.interpolate(method = 'nearest')
+                #df_r = df_r.interpolate(method='bfill')
+                #df_r = df_r.interpolate(method='ffill')
                 
                 stress_df = pd.DataFrame(data = df_r.level.values,    # values
                                         index = df_r.index,   # 1st column as index
@@ -538,14 +543,14 @@ def main():
                 
                 stress_df['id'] = int(res[0])
                 stress_df['type'] = 'stress'
-                print(stress_df.shape)
+                print(stress_df.shape) 
                 
                 df_stress = pd.concat([df_stress,stress_df])
                 
             except:
                 print('fail')
     
-    #df_stress.to_csv(r'/home/arsii/Data/StudentLife_stress.csv', header=True)
+    df_stress.to_csv(r'/home/arsii/Data/StudentLife_stress_r.csv', header=True)
     #%% PLOT STRESS
     
     for c in cherry:

@@ -12,6 +12,8 @@ import pandas as pd
 import numpy as np
 from copy import deepcopy
 
+from sklearn.preprocessing import MinMaxScaler
+
 from tscfat.Analysis.summary_statistics import summary_statistics
 from tscfat.Analysis.rolling_statistics import rolling_statistics
 from tscfat.Analysis.decompose_timeseries import STL_decomposition
@@ -28,19 +30,26 @@ from tscfat.Analysis.cluster_timeseries import cluster_timeseries
 df_path = Path('/home/arsii/Data/StudentLife_cherry_data.csv')
 df = pd.read_csv(df_path, index_col=0,parse_dates=True)
 
+
 #%% LOOP ALL THE SUBJECTS
 
 subjects = ['51','02','12','10','57','35','19','36','17','08']
 types = ['activity', 'conversation', 'sleep', 'stress', 'valence','arousal']
 n_types = ['sleep', 'stress', 'valence','arousal']
 c_types = ['activity','conversation']
+
+plot_columns = [['valence','arousal','activity'],
+                ['valence','arousal','conversation'],
+                ['valence','arousal','sleep'],
+                ['valence','arousal','stress']]
+                
 #%% LOOP ALL THE SUBJECTS AND TYPES
 
 doi = (2013,4,15),(2013,4,26)
 ind_s, ind_e = doi2index(doi,df)
 
 for sub in subjects:
-    for typ in n_types:
+    for typ in types:
         '''    
         # SUMMARY STATISTICS
         print('Processing Summary Statistics: \n')
@@ -140,26 +149,38 @@ for sub in subjects:
         similarity(df_sub,['value'])    
     
         '''
-       
+#%%
+for sub in subjects:
+    for cols in plot_columns:
         print("\nProcessing timeseries plotting: \n")
-
-        @process_decorator
-        def plotting(df,name): 
-            name = [name]
+        
+    
+        def plotting(df,cols):
+            
+            name = "_".join(cols)
             _ = plot_timeseries(df,
-                                name,
-                                title = '{} {}'.format(sub,typ),
+                                cols,
+                                title = 'Subject {} : {}'.format(sub,name),
                                 roll = 14, 
                                 xlab = "Time", 
                                 ylab = "Value", 
-                                ylim = False, 
+                                ylim = (-0.05,1.05), 
                                 savepath = Path('/home/arsii/tscfat/StudentLife/Results/Timeseries'),
-                                savename = 'Timeseries_{}_{}'.format(typ,sub), 
-                                highlight = (ind_s, ind_e),
+                                savename = 'Timeseries_{}_{}'.format(sub,name), 
+                                highlight = doi,
                                 test = False
                                 )
             
-        df_sub = df[(df['id'] == int(sub)) & (df['type'] == typ)]
+        df_sub = df[(df['id'] == int(sub))] 
+        piv = pd.pivot_table(df_sub, index = df_sub.index, values = 'value', columns = ['type'])
         
-        plotting(df_sub,['value'])
+        X = piv.values
+        min_max_scaler = MinMaxScaler()
+        x_scaled = min_max_scaler.fit_transform(X)
+    
+        piv_df = pd.DataFrame(data = x_scaled,    # values
+                              index = piv.index,   # 1st column as index
+                              columns = piv.columns)
+        
+        plotting(piv_df,cols)
         

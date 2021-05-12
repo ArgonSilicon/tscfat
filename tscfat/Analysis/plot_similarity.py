@@ -12,6 +12,8 @@ Plot and save self similarity matrix, convolution kernel and novelty score.
 import numpy as np
 import matplotlib.pyplot as plt
 from tscfat.Utils.plot_decorator import plot_decorator
+from datetime import datetime
+from matplotlib.dates import date2num
 
 plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -138,8 +140,9 @@ def plot_similarity(sim,
     
     
     #plt.suptitle(title + " Daily Patterns",fontsize=20,y=1)
-    plt.suptitle(title, fontsize=20, y = 1.02)
+    plt.suptitle(title, fontsize=22, y = 1)
     plt.grid(True)
+    
     plt.tight_layout(pad=1)
     
     return fig

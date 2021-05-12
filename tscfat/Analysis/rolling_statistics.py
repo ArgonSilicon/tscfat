@@ -123,68 +123,68 @@ def rolling_statistics(ts,
     ac3 = ts.diff(1).diff(7).diff(28).fillna(0).rolling(window = w).apply(_autocorr)
     
     fig,ax = plt.subplots(4,2,figsize=(20,20))
-    fig.suptitle("{} Rolling Statistics Window Length {}".format(ts.columns[0],w),fontsize=20,y=1.0)
+    fig.suptitle("{} Rolling Statistics Window Length {}".format(ts.columns[0],w),fontsize=22,y=1.0)
     
     ax[0,0].plot(ts)
-    ax[0,0].set_title('Original timeseries',fontsize=16)
-    ax[0,0].set_xlabel('Date')
-    ax[0,0].set_ylabel('Value')
+    ax[0,0].set_title('Original timeseries',fontsize=18)
+    ax[0,0].set_xlabel('Date',fontsize=14)
+    ax[0,0].set_ylabel('Value',fontsize=14)
     ax[0,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[0,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[0,1].plot(mean)
-    ax[0,1].set_title('Mean',fontsize=16)
-    ax[0,1].set_xlabel('Date')
-    ax[0,1].set_ylabel('Value')
+    ax[0,1].set_title('Mean',fontsize=18)
+    ax[0,1].set_xlabel('Date',fontsize=14)
+    ax[0,1].set_ylabel('Value',fontsize=14)
     ax[0,1].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[0,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1,0].plot(variance)
-    ax[1,0].set_title('Variance',fontsize=16)
-    ax[1,0].set_xlabel('Date')
-    ax[1,0].set_ylabel('Value')
+    ax[1,0].set_title('Variance',fontsize=18)
+    ax[1,0].set_xlabel('Date',fontsize=14)
+    ax[1,0].set_ylabel('Value',fontsize=14)
     ax[1,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[1,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1,1].plot(autocorrelation)
-    ax[1,1].set_title('Autocorrelation',fontsize=16)
-    ax[1,1].set_xlabel('Date')
-    ax[1,1].set_ylabel('Value')
+    ax[1,1].set_title('Autocorrelation',fontsize=18)
+    ax[1,1].set_xlabel('Date',fontsize=14)
+    ax[1,1].set_ylabel('Value',fontsize=14)
     ax[1,1].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[1,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2,0].plot(skew)
-    ax[2,0].set_title('Skewness',fontsize=16)
-    ax[2,0].set_xlabel('Date')
-    ax[2,0].set_ylabel('Value')
+    ax[2,0].set_title('Skewness',fontsize=18)
+    ax[2,0].set_xlabel('Date',fontsize=14)
+    ax[2,0].set_ylabel('Value',fontsize=14)
     ax[2,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[2,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2,1].plot(kurt)
-    ax[2,1].set_title('Kurtosis',fontsize=16)
-    ax[2,1].set_xlabel('Date')
-    ax[2,1].set_ylabel('Value')
+    ax[2,1].set_title('Kurtosis',fontsize=18)
+    ax[2,1].set_xlabel('Date',fontsize=14)
+    ax[2,1].set_ylabel('Value',fontsize=14)
     ax[2,1].tick_params('x', labelrotation=45)
     if doi is not None:    
         ax[2,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[3,0].plot(flu_int)
-    ax[3,0].set_title('Fluctuation Intensity',fontsize=16)
-    ax[3,0].set_xlabel('Date')
-    ax[3,0].set_ylabel('Value')
+    ax[3,0].set_title('Fluctuation Intensity',fontsize=18)
+    ax[3,0].set_xlabel('Date',fontsize=14)
+    ax[3,0].set_ylabel('Value',fontsize=14)
     ax[3,0].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[3,0].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[3,1].plot(ent)
-    ax[3,1].set_title('Entropy',fontsize=16)
-    ax[3,1].set_xlabel('Date')
-    ax[3,1].set_ylabel('Value')
+    ax[3,1].set_title('Entropy',fontsize=18)
+    ax[3,1].set_xlabel('Date',fontsize=14)
+    ax[3,1].set_ylabel('Value',fontsize=14)
     ax[3,1].tick_params('x', labelrotation=45)
     if doi is not None:
         ax[3,1].axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")

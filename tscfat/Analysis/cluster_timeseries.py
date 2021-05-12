@@ -86,7 +86,7 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)",
         filt[i,:] = clusters == i
             
     fig,ax = plt.subplots(n,1,figsize=(10,20))
-    fig.suptitle(title + ' cluster averages', fontsize = 20, y=1.02)
+    fig.suptitle(title + ' cluster averages', fontsize = 20, y=1)
     
     for i in range(n):
         ax[i].plot(np.mean(data[filt[i]], axis = 0))
@@ -170,7 +170,7 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3,
                           n, 
                           title, 
                           xlab = "Time (hour)", 
-                          ylab = None, 
+                          ylab = 'Value', 
                           ylim_ = ylim_,
                           savename = FIGNAME, 
                           savepath = FIGPATH,

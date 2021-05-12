@@ -70,6 +70,7 @@ rolling(df,cols)
 
 #%% TIMESERIES DECOMPOSITION
 print("\nProcessing Timeseries Decomposition: \n")
+ind_s, ind_e = doi2index(doi,df)
 
 @process_decorator
 def decomposition(df,name):
@@ -85,7 +86,7 @@ def decomposition(df,name):
                           ylabel = "{} Level".format(name),
                           xlabel  = "Date",
                           dates = False,
-                          doi = doi,
+                          doi = (ind_s,ind_e),
                           )
 
 decomposition(df,cols)
@@ -104,17 +105,19 @@ def similarity(df,name):
     # TODO! How to calculate threshold?
     
     sim = calculate_similarity(ser)
-    stab = compute_stability(sim)
-    nov, kernel = compute_novelty(sim,edge=7)
+    stab = compute_stability(sim,edge=14)
+    nov, kernel = compute_novelty(sim,edge=14)
     _ = plot_similarity(deepcopy(sim),
                         nov,
                         stab,
                         title="{} Similarity, Novelty and Stability".format(name),
                         doi = (ind_s,ind_e),
-                        savepath = fn.similarity_out, 
-                        savename = fn.similarity_base + name,
+                        #savepath = fn.similarity_out,
+                        savepath = False,
+                        #savename = fn.similarity_base + name,
+                        savename = False,
                         ylim = (0,0.05),
-                        threshold = 0,
+                        threshold = 0.9,
                         axis = None,
                         kernel = kernel,
                         test = False,

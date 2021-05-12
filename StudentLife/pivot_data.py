@@ -27,6 +27,9 @@ from sklearn.metrics import mutual_info_score, pairwise_distances
 
 from sl_config_clustering import fn, ap, doi
 
+from datetime import datetime
+from matplotlib.dates import date2num
+
 #%%
 def calc_MI(x, y, bins=10):
     c_xy = np.histogram2d(x, y, bins)[0]
@@ -35,17 +38,20 @@ def calc_MI(x, y, bins=10):
     return mi
 
 #%% load a dataframe and convert the index to datetime
-df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep.csv',index_col=0)
-df_stress= pd.read_csv('/home/arsii/Data/StudentLife_stress.csv',index_col=0)
-df_val_aro = pd.read_csv('/home/arsii/Data/StudentLife_valence_arousal.csv',index_col=0)
-df_activity= pd.read_csv('/home/arsii/Data/StudentLife_activity.csv',index_col=0)
-df_conversation = pd.read_csv('/home/arsii/Data/StudentLife_conversation.csv',index_col=0)
+# imputed versions
+df_sleep = pd.read_csv('/home/arsii/Data/StudentLife_sleep_i.csv',index_col=0)
+df_stress= pd.read_csv('/home/arsii/Data/StudentLife_stress_i.csv',index_col=0)
+df_val_aro = pd.read_csv('/home/arsii/Data/StudentLife_valence_arousal_i.csv',index_col=0)
+# not imputed
+df_activity= pd.read_csv('/home/arsii/Data/Studentlife_activity_data_r.csv',index_col=0)
+df_conversation = pd.read_csv('/home/arsii/Data/StudentLife_conversation_r.csv',index_col=0)
 
 #%% combine dataframes
 st1 = pd.Timestamp('2013-03-27')
 st2 = pd.Timestamp('2013-06-01')
 ix = pd.date_range(start=st1, end=st2, freq='D')
 
+# Activity
 df_a_c = df_activity.copy(deep=True)
 df_a_c.index = pd.to_datetime(df_a_c.index)
 df_a_c = df_a_c.groupby('id').resample('H').mean().droplevel(0)
@@ -55,6 +61,7 @@ df_activity.index = pd.to_datetime(df_activity.index)
 df_activity = df_activity.groupby('id').resample('D').mean().droplevel(0)
 df_activity['type'] = 'activity'
 
+# Conversation
 df_c_c = df_conversation.copy(deep=True)
 df_c_c.index = pd.to_datetime(df_c_c.index)
 df_c_c = df_c_c.groupby('id').resample('H').mean().droplevel(0)
@@ -68,9 +75,13 @@ df = pd.DataFrame(data = None,
                   index = None,
                   columns = ['id','type','value'])
 
+# Concatenate DataFrames
 df = pd.concat([df,df_sleep,df_stress,df_val_aro,df_conversation,df_activity])
 df.index = pd.to_datetime(df.index)
 
+# save the dataframe
+df.to_csv(r'/home/arsii/Data/StudentLife_cherry_data.csv', header=True)
+print(df.isna().sum())
 #%% Prepare imputer
 imp = IterativeImputer(max_iter=10, random_state=0)
 imp.fit([[1, 2], [3, 6], [4, 8], [np.nan, 3], [7, np.nan]])
@@ -166,7 +177,20 @@ for sub in subjects:
 
         df_sub = df_a_c[df_a_c['id'] == int(sub)]
         
+        savename = 'StudentLife_activity_duration_{}.png'.format(sub)
+        
+        df_daily = df_sub.resample('D').sum()
+        df_daily.value.plot(ylabel='Activity duration (h)',title="Daily activity duration \n subject: {}".format(sub),label='Activity')
+        df_daily.value.rolling(14).mean().plot(style='k--',label='Rolling Average (14 days)')
+        plt.axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        plt.legend()
+        plt.savefig(savename, format="png")
+        
+        plt.show()
+        
+        
         df_sub = df_sub.resample('D').apply(list)
+        
     
         data = np.stack(df_sub['2013-03-28':'2013-05-31'].value.values)
         
@@ -190,7 +214,12 @@ for sub in subjects:
         df_w.rolling(14).mean().plot(title = 'Activity cluster stability / rolling average (14 days) \n Subject: {}'.format(sub),
                                      xlabel = 'Date',
                                      ylabel='Stability', 
-                                     ylim = (0.45,0.95))
+                                     ylim = (0.40,1))
+        
+        savename2 = 'StudentLife_activity_stability_{}.png'.format(sub)
+        plt.savefig(savename2, format="png")
+        plt.show()
+        
 print('Done.')
 
 #%% TEST CLUSTERING CONVERSATION
@@ -206,6 +235,16 @@ for sub in subjects:
         df_sub = df_c_c[df_c_c['id'] == int(sub)]
         df_sub = df_sub.reindex(index)
         df_sub.plot()
+        plt.show()
+        
+        savename = 'StudentLife_conversation_duration_{}.png'.format(sub)
+        
+        df_daily = df_sub.resample('D').sum()
+        df_daily.value.plot(ylabel='Conversation duration (min)',xlabel='Date',title="Daily conversation duration \n subject: {}".format(sub))
+        df_daily.value.rolling(14).mean().plot(style='k--',label='Rolling Average (14 days)')
+        plt.axvspan(date2num(datetime(*doi[0])),date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
+        plt.legend()
+        plt.savefig(savename, format="png")
         plt.show()
         
         df_sub = df_sub.resample('D').apply(list)
@@ -231,11 +270,17 @@ for sub in subjects:
         df_w = pd.DataFrame(data = weights,
                             index = pd.date_range('2013-03-28', '2013-05-31', freq='D'),
                             columns = ['weight'])
+        
+        
         df_w.weight = df_w.weight / df_w.weight.max()
         df_w.rolling(14).mean().plot(title = 'Conversation cluster stability / rolling average (14 days) \n Subject: {}'.format(sub),
                                      xlabel = 'Date',
                                      ylabel='Stability', 
                                      ylim = (0.45,0.95))
+        
+        savename2 = 'StudentLife_conversation_stability_{}.png'.format(sub)
+        plt.savefig(savename2, format="png")
+        plt.show()
         
 print('Done.')
 
@@ -248,6 +293,12 @@ def calc_MI(x, y, bins=20):
     return mi
 
 X = df_new.values
+min_max_scaler = MinMaxScaler()
+x_scaled = min_max_scaler.fit_transform(X)
+    
+test_df = pd.DataFrame(data = x_scaled,    # values
+                           index = df_corr.index,   # 1st column as index
+                           columns = df_corr.columns)
 
 D = pairwise_distances(X.T, Y=None, metric= calc_MI, force_all_finite=True)
 fig,ax = plt.subplots(1,1,figsize=(15,14))

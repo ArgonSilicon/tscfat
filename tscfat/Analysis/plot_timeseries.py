@@ -14,6 +14,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tscfat.Utils.plot_decorator import plot_decorator
 
+from datetime import datetime
+from matplotlib.dates import date2num
+
 
 sns.set_theme()
 
@@ -57,7 +60,7 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Date", ylab = "V
         A figure containing the plotted timeseries.
 
     """        
-    #print(type(columns))
+
     assert isinstance(data, pd.DataFrame), "Given data is not a pandas dataframe."
     assert isinstance(columns, list), "Given columns is not a list."
     
@@ -75,14 +78,17 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Date", ylab = "V
     # TODO! fix the highlight not showing!
 
     if highlight:
-        ax.axvspan(highlight[0], highlight[1],facecolor="yellow", alpha=0.13, label="Days of interest")
-    
+        print('highlight')
+        #ax.axvspan(highlight[0], highlight[1],facecolor="yellow", alpha=0.13, label="Days of interest")
+        ax.axvspan(int(date2num(datetime(*highlight[0]))),int(date2num(datetime(*highlight[1]))),facecolor="yellow", alpha=0.13, label="Days of interest")
     #ax.axvspan(highlight[0], highlight[1], ymin=1, ymax=2, facecolor="yellow", alpha=0.13, label="Days of interest")
     ax.set_title(title, fontsize=24)
     ax.set_xlabel(xlab, fontsize=18)
     ax.set_ylabel(ylab, fontsize=18)
     ax.tick_params(axis='both', labelsize=14)
     ax.legend(fontsize=14)
+    
+    plt.tight_layout(pad=1)
     
     return fig
 
