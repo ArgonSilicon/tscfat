@@ -15,8 +15,12 @@ import numpy as np
 from tscfat.Utils.plot_decorator import plot_decorator
 
 @plot_decorator
-def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",
-                   savename = False, savepath = False, highlight = False, 
+def _plot_clusters(clusters,title,
+                   xlab="Timepoint",
+                   ylab="Cluster",
+                   savename = False,
+                   savepath = False,
+                   highlight = False, 
                    test=False):
     """ Plot a scatterplot showing the clusters.
 
@@ -41,15 +45,17 @@ def _plot_clusters(clusters,title,xlab="Timepoint",ylab="Cluster",
     assert isinstance(clusters, np.ndarray), "Given Time series is not a numpy array."
     
     fig = plt.figure(figsize=(10,10))
-    
-    plt.plot(clusters +1 ,'o:')
+    #TODO! please remove this
+    dayz = pd.date_range(start='29/06/2011', end='02/12/2012')
+    plt.plot(clusters +1, dayz ,'o:')
     if highlight:
         plt.axvspan(highlight[0],highlight[1],ymin=0, ymax=1,
                     facecolor="yellow",alpha=0.13,label="Days of interest")
-    plt.title(title)
-    plt.xlabel(xlab)
-    plt.ylabel(ylab)
+    plt.title(title,fontsize=26)
+    plt.xlabel(xlab, fontsize=24)
+    plt.ylabel(ylab, fontsize=24)
     plt.yticks(np.arange(1,6))
+    plt.tick_params(axis='both', labelsize=20)
     
     return fig
 
@@ -85,13 +91,16 @@ def _plot_cluster_averages(data, clusters, n, title, xlab = "Time (hour)",
     for i in range(n):
         filt[i,:] = clusters == i
             
-    fig,ax = plt.subplots(n,1,figsize=(10,20))
-    fig.suptitle(title + ' cluster averages', fontsize = 20, y=1)
+    fig,ax = plt.subplots(n,1,figsize=(10,22))
+    fig.suptitle(title + ' cluster averages', fontsize = 28, y=1)
     
     for i in range(n):
         ax[i].plot(np.mean(data[filt[i]], axis = 0))
-        ax[i].set_title('Cluster {} average'.format(i+1))
-        ax[i].set(xlabel = xlab, ylabel = ylab) 
+        ax[i].set_title('Cluster {} average'.format(i+1), fontsize=26)
+        #ax[i].set(xlabel = xlab, ylabel = ylab)
+        ax[i].set_xlabel(xlabel = xlab,fontsize=24)
+        ax[i].set_ylabel(ylabel = ylab,fontsize=24)
+        ax[i].tick_params(axis='both', labelsize=20)
         if ylim_:
             ax[i].set(ylim = ylim_)
         

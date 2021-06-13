@@ -67,9 +67,9 @@ def _plot_decomposition(Result,
     """
     
     
-    fig, ax = plt.subplots(4,1,figsize=(10,10))
+    fig, ax = plt.subplots(4,1,figsize=(15,17))
     
-    plt.suptitle(title, fontsize=22, y=1)
+    plt.suptitle(title, fontsize=42, y=1)
     
     ax[0].plot(Result.observed)
     #Result.observed.plot(ax=ax[0])
@@ -77,9 +77,10 @@ def _plot_decomposition(Result,
         #ax[0].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")    
         ax[0].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
         
-    ax[0].set_title('Observations',fontsize=18)
-    ax[0].set_ylabel(ylabel,fontsize=14)
-    ax[0].set_xlabel(xlabel,fontsize=14)
+    ax[0].set_title('Observations',fontsize=38)
+    ax[0].tick_params(axis='both', labelsize=24)
+    ax[0].set_ylabel(ylabel,fontsize=32)
+    ax[0].set_xlabel(xlabel,fontsize=32)
     
     ax[1].plot(Result.trend)
     #Result.trend.plot(ax=ax[1])
@@ -87,9 +88,10 @@ def _plot_decomposition(Result,
         #ax[1].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[1].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[1].set_title('Trend',fontsize=18)
-    ax[1].set_ylabel(ylabel,fontsize=14)
-    ax[1].set_xlabel(xlabel,fontsize=14)
+    ax[1].tick_params(axis='both', labelsize=24)
+    ax[1].set_title('Trend',fontsize=38)
+    ax[1].set_ylabel(ylabel,fontsize=32)
+    ax[1].set_xlabel(xlabel,fontsize=32)
     
     ax[2].plot(Result.seasonal)
     #Result.seasonal.plot(ax=ax[2])
@@ -97,9 +99,10 @@ def _plot_decomposition(Result,
         #ax[2].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[2].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[2].set_title('Seasonal',fontsize=18)
-    ax[2].set_ylabel(ylabel,fontsize=14)
-    ax[2].set_xlabel(xlabel,fontsize=14)
+    ax[2].tick_params(axis='both', labelsize=24)
+    ax[2].set_title('Seasonal',fontsize=38)
+    ax[2].set_ylabel(ylabel,fontsize=32)
+    ax[2].set_xlabel(xlabel,fontsize=32)
     
     ax[3].plot(Result.resid)
     #Result.resid.plot(ax=ax[3])
@@ -107,9 +110,10 @@ def _plot_decomposition(Result,
         #ax[3].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[3].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
-    ax[3].set_title('Residuals',fontsize=18)
-    ax[3].set_ylabel(ylabel,fontsize=14)
-    ax[3].set_xlabel(xlabel,fontsize=14)
+    ax[3].tick_params(axis='both', labelsize=24)
+    ax[3].set_title('Residuals',fontsize=38)
+    ax[3].set_ylabel(ylabel,fontsize=32)
+    ax[3].set_xlabel(xlabel,fontsize=32)
     
     '''
     fig1 = plt.figure(figsize=(10,10))
@@ -118,7 +122,7 @@ def _plot_decomposition(Result,
     
     plt.subplot(4,1,1)
     plt.plot(Result.observed)
-    plt.title('Observations',fontsize=18)
+    plt.title('Observations',fontsize=26)
     if type(dates) != bool:       
         for d in dates:
             plt.axvline(x=d,linestyle =":", color ='black')
@@ -223,7 +227,7 @@ def STL_decomposition(series,
                             savepath = savepath,
                             savename = savename,
                             ylabel = "Value",
-                            xlabel  = "Date",
+                            xlabel  = "Day",
                             dates = False,
                             test = False,
                             doi = doi,

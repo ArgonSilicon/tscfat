@@ -98,21 +98,23 @@ def plot_similarity(sim,
     ax4 = plt.subplot2grid(gridsize, (4,0), colspan=4,rowspan=1)
     
     ax1.imshow(sim,cmap="Blues", origin='lower')
-    ax1.set_title("Similarity matrix", fontsize=18)
-    ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
-    ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
+    ax1.set_title("Similarity matrix", fontsize=28)
+    #ax1.set_xlabel('$m = {}$'.format(sim.shape[0]),fontsize=16)
+    #ax1.set_ylabel('$n = {}$'.format(sim.shape[1]),fontsize=16)
+    ax1.set_xlabel('Day',fontsize=26)
+    ax1.set_ylabel('Day'.fontsize=26)
     if doi is not None:
         ax1.axvspan(doi[0], doi[1], ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     
     if type(kernel) != bool:
         ax2.imshow(kernel,cmap='Blues')
-        ax2.set_title('Kernel',fontsize=18)
+        ax2.set_title('Kernel',fontsize=28)
         #ax[1,3].text(-0.1, 1.05, "B", fontsize=26, fontweight='bold', transform=ax1.transAxes,va='top', ha='right')
     
     ax3.plot(nov,label="Novelty")
-    ax3.set_title("Novelty score", fontsize=18)
-    ax3.set_xlabel('Time (day)',fontsize=16)
-    ax3.set_ylabel('Novelty',fontsize=16)
+    ax3.set_title("Novelty score", fontsize=28)
+    ax3.set_xlabel('Day',fontsize=26)
+    ax3.set_ylabel('Novelty',fontsize=26)
     #ax3.set_xticks(np.arange(len(axis))[::7])
     #ax3.set_xticklabels(axis[::7])
     #ax2.axvspan(datetime(2020,7,1),datetime(2020,7,15),facecolor="red",alpha=0.15,label="Days of interest")
@@ -120,17 +122,17 @@ def plot_similarity(sim,
     if doi is not None:
         ax3.axvspan(doi[0], doi[1] ,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     #ax3.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
-    ax3.legend(fontsize=16)
+    #ax3.legend(fontsize=16)
     ax3.set_ylim((0.95*np.min(nov[7:-7]),1.05*(np.max(nov[7:-7]))))
     
     ax4.plot(stab,label="Stability")
-    ax4.set_title("Stability score", fontsize=18)
-    ax4.set_xlabel('Time (day)',fontsize=16)
-    ax4.set_ylabel('Stability',fontsize=16)        
+    ax4.set_title("Stability score", fontsize=28)
+    ax4.set_xlabel('Day',fontsize=26)
+    ax4.set_ylabel('Stability',fontsize=26)        
     #ax4.axvspan(98,182,ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
     if doi is not None:
         ax4.axvspan(doi[0], doi[1], ymin=0, ymax=1,facecolor="yellow",alpha=0.13,label="Days of interest")
-    ax4.legend(fontsize=16)
+    #ax4.legend(fontsize=16)
     ax4.set_ylim((0.95*np.min(stab[7:-7]),1.05*(np.max(stab[7:-7]))))
         
     

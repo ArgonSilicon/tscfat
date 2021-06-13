@@ -136,7 +136,9 @@ COLUMN_LIST = [['positive', 'negative', 'Sleep Score'],
                ['positive', 'negative', 'app_stability']
               ]
 
-
+COLUMN_LIST = [['positive', 'negative', 'Average Resting Heart Rate'],
+               ['positive', 'negative', 'screen_activations'],
+              ]
 
 ######################################################              
 # Create a filename object -> DO NOT CHANGE THESE!!!

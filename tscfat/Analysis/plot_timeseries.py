@@ -79,14 +79,15 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Date", ylab = "V
 
     if highlight:
         print('highlight')
+        print(highlight[0],highlight[1])
         #ax.axvspan(highlight[0], highlight[1],facecolor="yellow", alpha=0.13, label="Days of interest")
         ax.axvspan(int(date2num(datetime(*highlight[0]))),int(date2num(datetime(*highlight[1]))),facecolor="yellow", alpha=0.13, label="Days of interest")
     #ax.axvspan(highlight[0], highlight[1], ymin=1, ymax=2, facecolor="yellow", alpha=0.13, label="Days of interest")
-    ax.set_title(title, fontsize=24)
-    ax.set_xlabel(xlab, fontsize=18)
-    ax.set_ylabel(ylab, fontsize=18)
-    ax.tick_params(axis='both', labelsize=14)
-    ax.legend(fontsize=14)
+    ax.set_title(title, fontsize=26)
+    ax.set_xlabel(xlab, fontsize=24)
+    ax.set_ylabel(ylab, fontsize=24)
+    ax.tick_params(axis='both', labelsize=20)
+    ax.legend(loc = 'upper left',fontsize=18)
     
     plt.tight_layout(pad=1)
     

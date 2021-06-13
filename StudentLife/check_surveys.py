@@ -23,7 +23,7 @@ def decode_phq9(value):
 
 def decode_stress(value):
     stress_dict = {'Never' : 0,
-                   "Rarely" : 2,
+                   "Almost never" : 1,
                    "Sometime" : 2,
                    "Fairly often" : 3,
                    "Very often" : 4

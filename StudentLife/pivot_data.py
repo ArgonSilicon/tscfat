@@ -80,7 +80,7 @@ df = pd.concat([df,df_sleep,df_stress,df_val_aro,df_conversation,df_activity])
 df.index = pd.to_datetime(df.index)
 
 # save the dataframe
-df.to_csv(r'/home/arsii/Data/StudentLife_cherry_data.csv', header=True)
+#df.to_csv(r'/home/arsii/Data/StudentLife_cherry_data.csv', header=True)
 print(df.isna().sum())
 #%% Prepare imputer
 imp = IterativeImputer(max_iter=10, random_state=0)
@@ -156,16 +156,52 @@ for s in subjects:
     print(df_conversation[df_conversation['id'] == s].shape)
     
 #%% PLOT GRUOP AVERAGES
+doi = (2013,4,15),(2013,4,26)
+ind_s, ind_e = doi2index(doi,df)
 
 types = ['activity','conversation','sleep','stress','valence','arousal']
+
+types = ['valence','arousal','stress']
+#types = ['activity','conversation','sleep']
+
+
+fig, ax = plt.subplots(1,figsize=(12,8))
 
 for typ in types:
     df_a = df[df['type'] == typ]
     t = df_a.pivot_table(values = 'value', index = df_a.index, columns = ['id'])
     t['median'] = t.median(axis=1)
-    t['median'].rolling(14).mean().plot(title = '{} group average'.format(typ))
-    plt.show()
     
+    min_max_scaler = MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(t['median'].values.reshape(-1,1))
+    
+    t['median'] = x_scaled
+    
+    t['median'].rolling(14).mean().plot(ax=ax,label='{}'.format(typ))
+    
+    
+ax.set_title(fontsize=20, label ='Valence, Arousal, and Stress group averages' )
+ax.set_xlabel(xlabel='Date', fontsize=14)
+ax.set_ylabel(ylabel='Value', fontsize=14)
+
+ax.axvspan(int(date2num(datetime(*doi[0]))),int(date2num(datetime(*doi[1]))),
+                    facecolor="yellow",alpha=0.13,label="Days of interest")
+ax.legend()
+plt.show()
+    
+#%% plot some
+df_a = df[df['type'] == 'stress']
+df_a = df_a[df_a['id'] == 19]
+
+fig, ax = plt.subplots(1,figsize=(10,8))
+df_a.value.rolling(7).mean().plot(title = 'subject 19 {} (rolling window 7 average)'.format(typ),xlabel='Date',ylabel='Value',ax=ax,label='{}'.format(typ))
+ax.axvspan(int(date2num(datetime(*doi[0]))),int(date2num(datetime(*doi[1]))),facecolor="yellow",alpha=0.13,label="Days of interest")
+ax.legend()
+plt.show()
+   
+#%%
+df_b = df_val_aro[df_val_aro['type'] == 'arousal']
+df_c = df_b[df_b['id'] == 17] 
 #%% TEST CLUSTERING ACTIVITY
 
 doi = (2013,4,15),(2013,4,26)

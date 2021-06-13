@@ -184,3 +184,32 @@ for sub in subjects:
         
         plotting(piv_df,cols)
         
+#%%
+
+df_sub = df[(df['id'] == int(35))]
+piv = pd.pivot_table(df_sub, index = df_sub.index, values = 'value', columns = ['type'])
+
+df_path = Path('/home/arsii/Data/StudentLife_conversation.csv')
+df_activity = pd.read_csv(df_path, index_col=0,parse_dates=True)
+df_sub = df_activity[(df_activity['id'] == int(2))]
+
+#%%
+df = df_sub.resample('D').apply(list)
+#df = df['2015-03-26':'2015-12-03']
+df = df[:-1]
+data = np.stack(df.value.values)
+#%%
+print('Processing Timeseries Clustering: \n')
+
+clusters = cluster_timeseries(data,
+                              FIGNAME = False,
+                              FIGPATH = False,
+                              title = '{} clusters'.format('Subject 2 conversation'), 
+                              n = 5, 
+                              mi = 5, 
+                              mib = 5, 
+                              rs = 0, 
+                              metric = 'dtw', 
+                              highlight = (ind_s,ind_e),
+                              ylim_ = (-50,3200))    
+print('Done.')

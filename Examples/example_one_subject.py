@@ -35,11 +35,26 @@ df['date'] = pd.to_datetime(df['date'])
 df = df.set_index(df['date'])
 df = df.drop(columns=['date'])
 cols = df.columns.to_list()
-
+#TODO! please remove this!
+df.index = df.index.shift(200,freq='D')
 
 #%% SUMMARY STATISTICS   
 print('Processing Summary Statistics: \n')
 
+@process_decorator
+def summary(df,name):
+    ser = df[name] 
+    _ = summary_statistics(ser,
+                           doi,
+                           title = 'Summary statistics: Average resting HR',
+                           window = 14,
+                           savepath = False,
+                           savename = False,
+                           test = False)
+    
+summary(df,cols)
+
+'''
 @process_decorator
 def summary(df,name):
     ser = df[name] 
@@ -52,10 +67,25 @@ def summary(df,name):
                            test = False)
 
 summary(df,cols)
+'''
 
 #%% ROLLING STATISTICS 
 print("\nProcessing Rolling Statistics: \n")
 
+@process_decorator
+def rolling(df,name):
+    ser = df[name] 
+    _ = rolling_statistics(ser.to_frame(),
+                           ap.rolling_window,
+                           doi = doi,
+                           savename = False,
+                           savepath = False,
+                           test = False)
+
+rolling(df,cols)
+
+
+'''
 @process_decorator
 def rolling(df,name):
     ser = df[name] 
@@ -67,11 +97,32 @@ def rolling(df,name):
                            test = False)
 
 rolling(df,cols)
+'''
 
 #%% TIMESERIES DECOMPOSITION
 print("\nProcessing Timeseries Decomposition: \n")
 ind_s, ind_e = doi2index(doi,df)
 
+@process_decorator
+def decomposition(df,name):
+    ser = df[name].values
+     
+    # TODO! check additional parameters!
+    # TODO! add doi
+    _ = STL_decomposition(ser,
+                          title = 'Time series decomposition: negative',
+                          test = False,
+                          savepath = False,
+                          savename = False,
+                          ylabel = "{} Level".format(name),
+                          xlabel  = "Day",
+                          dates = False,
+                          doi = (ind_s,ind_e),
+                          )
+
+decomposition(df,cols)
+
+'''
 @process_decorator
 def decomposition(df,name):
     ser = df[name].values
@@ -90,6 +141,7 @@ def decomposition(df,name):
                           )
 
 decomposition(df,cols)
+'''
 
 #%% SIMILARITY, NOVELTY, AND STABILITY
 print("\nProcessing Similarity, Noveltym and Stability: \n")
@@ -130,6 +182,25 @@ print("\nProcessing timeseries plotting: \n")
     
 @process_decorator
 def plotting(df,name): 
+    doi = ((2011, 10, 1), (2011, 12, 24))
+    _ = plot_timeseries(df,
+                        name,
+                        title = 'Rolling window average: positive, negative, screen activations',
+                        roll = 28, 
+                        xlab = "Date", 
+                        ylab = "Value", 
+                        ylim = False,
+                        savename = False, 
+                        savepath = False,
+                        highlight = doi, 
+                        test=False
+                        )
+    
+plotting(df,ap.plot_cols)
+
+'''
+@process_decorator
+def plotting(df,name): 
     ind_s, ind_e = doi2index(doi,df)
     _ = plot_timeseries(df,
                         name,
@@ -137,11 +208,12 @@ def plotting(df,name):
                         roll = 7, 
                         xlab = "Date", 
                         ylab = "Value", 
-                        ylim = False, 
+                        ylim = False,
                         savename = fn.plotting_base + '_'.join(name), 
-                        savepath = fn.plotting_out, 
+                        savepath = fn.plotting_out,
                         highlight = (ind_s,ind_e), 
                         test=False
                         )
     
 plotting(df,ap.plot_cols)
+'''
