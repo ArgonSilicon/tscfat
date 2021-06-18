@@ -185,14 +185,14 @@ def plotting(df,name):
     doi = ((2011, 10, 1), (2011, 12, 24))
     _ = plot_timeseries(df,
                         name,
-                        title = 'Rolling window average: positive, negative, screen activations',
-                        roll = 28, 
+                        title = 'Rolling window average: positive, negative, average resting heart rate',
+                        roll = 7, 
                         xlab = "Date", 
                         ylab = "Value", 
                         ylim = False,
                         savename = False, 
                         savepath = False,
-                        highlight = doi, 
+                        highlight = doi,  
                         test=False
                         )
     
