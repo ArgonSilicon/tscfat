@@ -8,7 +8,7 @@ Created on Thu Dec 17 12:29:57 2020
 Functions for time series clustering and for cluster visualization.
 Plot decorartor is used to handle image saving.
 """
-
+import pandas as pd
 from tslearn.clustering import TimeSeriesKMeans
 import matplotlib.pyplot as plt
 import numpy as np
@@ -46,8 +46,8 @@ def _plot_clusters(clusters,title,
     
     fig = plt.figure(figsize=(10,10))
     #TODO! please remove this
-    dayz = pd.date_range(start='29/06/2011', end='02/12/2012')
-    plt.plot(clusters +1, dayz ,'o:')
+    #dayz = pd.date_range(start='27/03/2013', end='31/5/2013')
+    plt.plot(clusters +1,'o:')
     if highlight:
         plt.axvspan(highlight[0],highlight[1],ymin=0, ymax=1,
                     facecolor="yellow",alpha=0.13,label="Days of interest")
@@ -165,7 +165,7 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3,
    
     _plot_clusters(labels, 
                   title=title, 
-                  xlab="Timepoint", 
+                  xlab="Day", 
                   ylab="Cluster", 
                   savename = FIGNAME, 
                   savepath = FIGPATH, 
@@ -179,7 +179,7 @@ def cluster_timeseries(ts, FIGNAME, FIGPATH, title="Clustered timeseries", n=3,
                           n, 
                           title, 
                           xlab = "Time (hour)", 
-                          ylab = 'Value', 
+                          ylab = 'Duration (min)', 
                           ylim_ = ylim_,
                           savename = FIGNAME, 
                           savepath = FIGPATH,

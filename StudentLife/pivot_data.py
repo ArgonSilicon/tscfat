@@ -154,39 +154,54 @@ for s in subjects:
 
 for s in subjects:
     print(df_conversation[df_conversation['id'] == s].shape)
-    
+ 
+#%%
+df_c = df[df['id'] == 35] 
+
+
+
+
 #%% PLOT GRUOP AVERAGES
 doi = (2013,4,15),(2013,4,26)
 ind_s, ind_e = doi2index(doi,df)
 
-types = ['activity','conversation','sleep','stress','valence','arousal']
-
-types = ['valence','arousal','stress']
+#types = ['activity','conversation','sleep','stress','valence','arousal']
+#types = [('valence','r'),('arousal','b'),('stress','k')]
+types = [('activity','k')]
 #types = ['activity','conversation','sleep']
-
+#types = [('activity','k'),('conversation','c'),('sleep','m')]
 
 fig, ax = plt.subplots(1,figsize=(12,8))
 
 for typ in types:
-    df_a = df[df['type'] == typ]
+    #df_a = df[df['type'] == typ[0]]
+    #t = df_a.pivot_table(values = 'value', index = df_a.index, columns = ['id'])
+    
+    df_a = df_c[df_c['type'] == typ[0]]
     t = df_a.pivot_table(values = 'value', index = df_a.index, columns = ['id'])
+    
     t['median'] = t.median(axis=1)
     
     min_max_scaler = MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(t['median'].values.reshape(-1,1))
     
-    t['median'] = x_scaled
+    #t['median'] = x_scaled
+    t['median'] = t['median']*24  
+    #t['median'].rolling(14).mean()[13:].plot(color=typ[1],ax=ax,label='{}'.format(typ[0]))
+    t['median'].rolling(1).mean().plot(color='b',ax=ax,label='Activity')
+    t['median'].rolling(14).mean().plot(linestyle='dashed', color='k', ax=ax, label='Averaged activity')
     
-    t['median'].rolling(14).mean().plot(ax=ax,label='{}'.format(typ))
-    
-    
-ax.set_title(fontsize=20, label ='Valence, Arousal, and Stress group averages' )
-ax.set_xlabel(xlabel='Date', fontsize=14)
-ax.set_ylabel(ylabel='Value', fontsize=14)
+ax.set_title(fontsize=24, label ='Subject 35: Daily activity duration' )
+ax.set_xlabel(xlabel='Date', fontsize=22)
+ax.set_ylabel(ylabel='Duration (h)', fontsize=22)
+
+ax.tick_params(axis='both', labelsize=20)
+ax.set_yticks(np.round(np.linspace(0, 5, 6), 1))
+ax.set_ylim((-0.1,4.5))
 
 ax.axvspan(int(date2num(datetime(*doi[0]))),int(date2num(datetime(*doi[1]))),
-                    facecolor="yellow",alpha=0.13,label="Days of interest")
-ax.legend()
+                    facecolor="yellow",alpha=0.13,label="Mid-terms")
+ax.legend(fontsize=18)
 plt.show()
     
 #%% plot some

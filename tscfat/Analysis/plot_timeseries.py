@@ -67,7 +67,7 @@ def plot_timeseries(data, columns, title, roll = False, xlab = "Date", ylab = "V
     fig , ax = plt.subplots(figsize=(15,10))
     
     if roll:
-        data[columns].rolling(roll).mean().plot(color = ['g','r','k'], style = ['--','-.','-'], ylim=(0,1), ax=ax)
+        data[columns].rolling(roll).mean().plot(color = ['g','r','b'], style = ['--','-.','-'], ylim=(0,1), ax=ax)
         
     else:
         data[columns].plot(color = ['g','r','k'], style = ['--','-.','-'], ylim=(0,1),ax=ax)

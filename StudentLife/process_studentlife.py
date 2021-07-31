@@ -150,6 +150,11 @@ for sub in subjects:
     
         '''
 #%%
+df_b = df[df_val_aro['type'] == 'arousal']
+df_c = df_b[df_b['id'] == 19] 
+cols = ['valence','arousal','stress']
+
+#%%
 for sub in subjects:
     for cols in plot_columns:
         print("\nProcessing timeseries plotting: \n")
@@ -185,31 +190,33 @@ for sub in subjects:
         plotting(piv_df,cols)
         
 #%%
-
 df_sub = df[(df['id'] == int(35))]
 piv = pd.pivot_table(df_sub, index = df_sub.index, values = 'value', columns = ['type'])
 
-df_path = Path('/home/arsii/Data/StudentLife_conversation.csv')
+#%%
+#df_path = Path('/home/arsii/Data/StudentLife_conversation.csv')
+df_path = Path('/home/arsii/Data/StudentLife_activity.csv')
 df_activity = pd.read_csv(df_path, index_col=0,parse_dates=True)
-df_sub = df_activity[(df_activity['id'] == int(2))]
+df_sub = df_activity[(df_activity['id'] == int(35))]
 
 #%%
-df = df_sub.resample('D').apply(list)
+df = df_sub['2013-03-28':'2013-05-31']
+df_re = df.resample('D').apply(list)
 #df = df['2015-03-26':'2015-12-03']
-df = df[:-1]
-data = np.stack(df.value.values)
+#df_re = df_re[:-1]
+data = np.stack(df_re.value.values)
 #%%
 print('Processing Timeseries Clustering: \n')
 
 clusters = cluster_timeseries(data,
                               FIGNAME = False,
                               FIGPATH = False,
-                              title = '{} clusters'.format('Subject 2 conversation'), 
+                              title = '{} clusters'.format('Subject 35 activity'), 
                               n = 5, 
                               mi = 5, 
                               mib = 5, 
                               rs = 0, 
                               metric = 'dtw', 
                               highlight = (ind_s,ind_e),
-                              ylim_ = (-50,3200))    
+                              ylim_ = (-1,60))  
 print('Done.')

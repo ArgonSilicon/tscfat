@@ -65,13 +65,14 @@ def _plot_decomposition(Result,
     None.
 
     """
-    
+    Ft = max(0,1-(np.var(Result.resid)/(np.var(Result.trend + Result.resid))))
+    Fs = max(0,1-(np.var(Result.resid)/(np.var(Result.seasonal + Result.resid))))
     
     fig, ax = plt.subplots(4,1,figsize=(15,17))
     
     plt.suptitle(title, fontsize=42, y=1)
     
-    ax[0].plot(Result.observed)
+    ax[0].plot(Result.observed,'k')
     #Result.observed.plot(ax=ax[0])
     if doi is not None:
         #ax[0].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")    
@@ -82,29 +83,29 @@ def _plot_decomposition(Result,
     ax[0].set_ylabel(ylabel,fontsize=32)
     ax[0].set_xlabel(xlabel,fontsize=32)
     
-    ax[1].plot(Result.trend)
+    ax[1].plot(Result.trend,'k')
     #Result.trend.plot(ax=ax[1])
     if doi is not None:
         #ax[1].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[1].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[1].tick_params(axis='both', labelsize=24)
-    ax[1].set_title('Trend',fontsize=38)
+    ax[1].set_title('Trend / strenght: {0:.2g}'.format(Ft),fontsize=38)
     ax[1].set_ylabel(ylabel,fontsize=32)
     ax[1].set_xlabel(xlabel,fontsize=32)
     
-    ax[2].plot(Result.seasonal)
+    ax[2].plot(Result.seasonal,'k')
     #Result.seasonal.plot(ax=ax[2])
     if doi is not None:
         #ax[2].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
         ax[2].axvspan(doi[0], doi[1],facecolor="yellow",alpha=0.13,label="Days of interest")
     
     ax[2].tick_params(axis='both', labelsize=24)
-    ax[2].set_title('Seasonal',fontsize=38)
+    ax[2].set_title('Seasonal / strength: {0:.2g}'.format(Fs),fontsize=38)
     ax[2].set_ylabel(ylabel,fontsize=32)
     ax[2].set_xlabel(xlabel,fontsize=32)
     
-    ax[3].plot(Result.resid)
+    ax[3].plot(Result.resid,'k')
     #Result.resid.plot(ax=ax[3])
     if doi is not None:
         #ax[3].axvspan(date2num(datetime(*doi[0])), date2num(datetime(*doi[1])),facecolor="yellow",alpha=0.13,label="Days of interest")
